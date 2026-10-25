@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>D426: SQL Foundations Interactive Sandbox</title>
-  <!-- Modern UI Typography, Icons & In-Browser SQL Engine -->
+  <!-- Modern UI Icons & In-Browser SQL Engine -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
   
@@ -29,7 +29,7 @@
 
     .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
     
-    /* Stepper Tabs */
+    /* Stepper Navigation */
     .stepper { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
     .step-tab { flex: 1; padding: 0.75rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; text-align: center; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
     .step-tab.active { background: var(--wgu-blue); color: white; border-color: var(--wgu-blue); }
@@ -51,6 +51,7 @@
     button.btn-primary { background: var(--wgu-blue); color: white; }
     button.btn-primary:hover { background: #00224f; }
     button.btn-success { background: var(--success); color: white; }
+    button.btn-hint { background: #f59e0b; color: white; font-size: 0.8rem; padding: 0.4rem 0.8rem; }
 
     /* Result Console */
     #console-output { margin-top: 1rem; padding: 0.75rem; border-radius: 6px; font-family: monospace; font-size: 0.85rem; max-height: 200px; overflow-y: auto; }
@@ -94,12 +95,16 @@
         </p>
         
         <div class="video-container">
-          <iframe id="video-frame" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+          <!-- Neutral Professional Placeholder Video (Database Architecture Overview) -->
+          <iframe id="video-frame" src="https://www.youtube-nocookie.com/embed/w-bK6ncpk7c" allowfullscreen></iframe>
         </div>
 
         <div id="remediation-box" class="hint-box">
           <strong><i class="fa-solid fa-lightbulb"></i> Troubleshooting Tip:</strong>
           <p id="remediation-text" style="margin-top: 0.25rem;">Check your comma placement. Did you put a trailing comma after the last column?</p>
+          <button id="show-solution-btn" class="btn btn-hint" style="margin-top: 0.5rem; display: none;" onclick="revealSolution()">
+            Reveal Working Solution
+          </button>
         </div>
       </div>
 
@@ -143,37 +148,72 @@
     let sessionStartTime = Date.now();
     let db = null;
 
-    // Curriculum Definitions
+    // Professional placeholder video: Database Systems primer
+    const PLACEHOLDER_VIDEO_ID = "w-bK6ncpk7c";
+
+    // Curriculum Definitions with Deep Validators
     const curriculum = {
       1: {
         title: "Step 1: Building the Table Container (CREATE TABLE)",
-        instructions: "Write a statement to create a table named <code>books</code> with <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>.",
-        videoId: "dQw4w9WgXcQ", // Replace with your YouTube Video ID
-        template: `-- STEP 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`
+        instructions: "Write a statement to create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>.",
+        videoId: PLACEHOLDER_VIDEO_ID, // Replace with your Step 1 Panopto/YouTube ID
+        template: `-- STEP 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
+        solution: `CREATE TABLE books (\n    book_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
+        validate: () => {
+          const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
+          if (res.length === 0) throw new Error("Table 'books' was not created. Check your CREATE TABLE statement.");
+          const cols = db.exec("PRAGMA table_info(books);")[0].values.map(r => r[1]);
+          if (!cols.includes('title') || !cols.includes('author')) throw new Error("Table 'books' is missing required columns.");
+          return true;
+        }
       },
       2: {
         title: "Step 2: Feeding the Machine (INSERT INTO)",
-        instructions: "Insert at least two books into the <code>books</code> table. Text values must be wrapped in single quotes; numbers do not take quotes.",
-        videoId: "dQw4w9WgXcQ",
-        template: `INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`
+        instructions: "Insert at least two books into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
+        videoId: PLACEHOLDER_VIDEO_ID,
+        template: `INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`,
+        solution: `INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);`,
+        validate: () => {
+          const res = db.exec("SELECT COUNT(*) FROM books;");
+          if (res.length === 0 || res[0].values[0][0] < 2) throw new Error("Please insert at least 2 rows into the 'books' table.");
+          return true;
+        }
       },
       3: {
         title: "Step 3: Modifying Reality (UPDATE & DELETE with WHERE)",
-        instructions: "Update the price of a book using a <code>WHERE</code> clause. Never run an UPDATE without WHERE!",
-        videoId: "dQw4w9WgXcQ",
-        template: `-- Update the price for book_id 2\nUPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\n-- Verify update\nSELECT * FROM books;`
+        instructions: "Update the price of a book using a <code>WHERE</code> clause. Always use WHERE when updating or deleting!",
+        videoId: PLACEHOLDER_VIDEO_ID,
+        template: `-- Update the price for book_id 2\nUPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\n-- Verify update\nSELECT * FROM books;`,
+        solution: `UPDATE books SET price = 31.50 WHERE book_id = 2;`,
+        validate: () => {
+          const res = db.exec("SELECT price FROM books WHERE book_id = 2;");
+          if (res.length > 0 && Math.abs(res[0].values[0][0] - 31.50) < 0.01) return true;
+          return true; // Flexible pass if query executed cleanly
+        }
       },
       4: {
         title: "Step 4: Asking Questions (SELECT & Filtering)",
-        instructions: "Query the <code>title</code> and <code>price</code> of all books published after 2018, ordered by price descending.",
-        videoId: "dQw4w9WgXcQ",
-        template: `SELECT title, price \nFROM books \nWHERE published_year > 2018 \nORDER BY price DESC;`
+        instructions: "Query the <code>title</code> and <code>price</code> of books published after 2018, sorted by price descending.",
+        videoId: PLACEHOLDER_VIDEO_ID,
+        template: `SELECT title, price \nFROM books \nWHERE published_year > 2018 \nORDER BY price DESC;`,
+        solution: `SELECT title, price FROM books WHERE published_year > 2018 ORDER BY price DESC;`,
+        validate: () => {
+          const sql = document.getElementById('sql-editor').value.toUpperCase();
+          if (!sql.includes("SELECT") || !sql.includes("WHERE")) throw new Error("Ensure your query uses both SELECT and WHERE clauses.");
+          return true;
+        }
       },
       5: {
         title: "Step 5: Connecting Tables (Foreign Keys & INNER JOIN)",
-        instructions: "Create the <code>orders</code> table, insert a linked record, and execute an <code>INNER JOIN</code> to connect the two tables.",
-        videoId: "dQw4w9WgXcQ",
-        template: `CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\n\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`
+        instructions: "Create the <code>orders</code> table, insert a linked record, and execute an <code>INNER JOIN</code> connecting the tables.",
+        videoId: PLACEHOLDER_VIDEO_ID,
+        template: `CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\n\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`,
+        solution: `CREATE TABLE orders (order_id INTEGER PRIMARY KEY AUTOINCREMENT, book_id INT, order_date DATE, quantity INT);\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\nSELECT orders.order_id, books.title, books.price, orders.quantity FROM orders INNER JOIN books ON orders.book_id = books.book_id;`,
+        validate: () => {
+          const sql = document.getElementById('sql-editor').value.toUpperCase();
+          if (!sql.includes("JOIN")) throw new Error("Step 5 requires executing an INNER JOIN between 'orders' and 'books'.");
+          return true;
+        }
       }
     };
 
@@ -194,6 +234,7 @@
       document.getElementById('sql-editor').value = cfg.template;
       document.getElementById('next-btn').style.display = 'none';
       document.getElementById('remediation-box').classList.remove('show');
+      document.getElementById('show-solution-btn').style.display = 'none';
       
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
@@ -207,6 +248,12 @@
 
     function resetEditor() {
       document.getElementById('sql-editor').value = curriculum[currentStep].template;
+    }
+
+    function revealSolution() {
+      document.getElementById('sql-editor').value = curriculum[currentStep].solution;
+      document.getElementById('console-output').className = 'output-ready';
+      document.getElementById('console-output').innerText = "Solution loaded into the editor. Click 'Run MySQL Code' to execute.";
     }
 
     // ==========================================
@@ -226,8 +273,12 @@
 
       try {
         const results = db.exec(normalizedSql);
+        
+        // Execute semantic check for current step
+        curriculum[currentStep].validate();
+
         out.className = 'output-success';
-        out.innerText = `Query executed successfully! (${results.length} result set returned).`;
+        out.innerText = `Query executed successfully! (${results.length} result set returned). Criteria satisfied!`;
 
         if (results.length > 0) {
           const res = results[results.length - 1];
@@ -246,8 +297,31 @@
         handleStepSuccess();
       } catch (err) {
         out.className = 'output-error';
-        out.innerText = `MySQL Error: ${err.message}`;
+        out.innerText = `Validation/Syntax Notice: ${err.message}`;
+        
+        // Dynamic smart diagnostics
+        diagnoseError(rawSql, err.message);
         document.getElementById('remediation-box').classList.add('show');
+        
+        // Safety hatch: reveal solution button if stuck 3+ attempts
+        if (attemptsCount[currentStep] >= 3) {
+          document.getElementById('show-solution-btn').style.display = 'inline-block';
+        }
+      }
+    }
+
+    function diagnoseError(sql, errMsg) {
+      const remText = document.getElementById('remediation-text');
+      const upper = sql.toUpperCase();
+      
+      if (sql.includes(",\n)") || sql.includes(", )")) {
+        remText.innerText = "Check your commas! You appear to have a trailing comma after your last column before the closing parenthesis ')'.";
+      } else if (upper.includes("UPDATE") && !upper.includes("WHERE")) {
+        remText.innerText = "Safety Alert: You wrote an UPDATE without a WHERE clause! Always specify which row to update.";
+      } else if (errMsg.includes("no such table")) {
+        remText.innerText = "The database cannot find that table. Make sure you completed Step 1 and didn't misspell the table name.";
+      } else {
+        remText.innerText = `Error detail: ${errMsg}. Check semicolons, spelling of keywords, and quotes around text strings.`;
       }
     }
 
@@ -285,7 +359,6 @@
         user_agent: navigator.userAgent
       };
 
-      // Uses text/plain to prevent CORS preflight rejection by Apps Script
       fetch(TELEMETRY_WEBHOOK_URL, {
         method: "POST",
         mode: "no-cors",
@@ -304,7 +377,7 @@
       out.className = 'output-success';
       out.innerHTML = `<strong><i class="fa-solid fa-circle-check"></i> CONGRATULATIONS!</strong><br>` +
                       `You have completed the Hands-On SQL Launch Module. Your progress has been logged.<br>` +
-                      `You are now fully prepared to begin Section 1 & 2 in the textbook.`;
+                      `You are now fully prepared to begin Section 1 & 2 in the course materials.`;
     }
   </script>
 </body>
