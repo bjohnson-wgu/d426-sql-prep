@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D426: SQL Foundations Interactive Sandbox</title>
+  <!-- Modern UI Typography, Icons & In-Browser SQL Engine -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+  
+  <style>
+    :root {
+      --wgu-blue: #002f6c;
+      --wgu-gold: #ffc220;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --danger: #ef4444;
+      --editor-bg: #0f172a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 60px; }
+    
+    header { background: var(--wgu-blue); color: white; padding: 1.25rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    header h1 { font-size: 1.25rem; font-weight: 600; }
+    #student-badge { background: rgba(255,255,255,0.15); padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.85rem; }
+
+    .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+    
+    /* Stepper Tabs */
+    .stepper { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .step-tab { flex: 1; padding: 0.75rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; text-align: center; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+    .step-tab.active { background: var(--wgu-blue); color: white; border-color: var(--wgu-blue); }
+    .step-tab.completed { border-left: 4px solid var(--success); }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; background: #000; margin-bottom: 1rem; }
+    .video-container iframe { position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0; }
+
+    /* SQL Editor & Console */
+    .editor-wrapper { display: flex; flex-direction: column; gap: 0.75rem; }
+    textarea#sql-editor { width: 100%; height: 160px; background: var(--editor-bg); color: #38bdf8; font-family: "Courier New", Courier, monospace; font-size: 0.95rem; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; resize: vertical; }
+    
+    .actions { display: flex; justify-content: space-between; align-items: center; }
+    button.btn { padding: 0.6rem 1.2rem; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+    button.btn-primary { background: var(--wgu-blue); color: white; }
+    button.btn-primary:hover { background: #00224f; }
+    button.btn-success { background: var(--success); color: white; }
+
+    /* Result Console */
+    #console-output { margin-top: 1rem; padding: 0.75rem; border-radius: 6px; font-family: monospace; font-size: 0.85rem; max-height: 200px; overflow-y: auto; }
+    .output-ready { background: #f1f5f9; color: #475569; }
+    .output-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .output-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+    /* Data Table Output */
+    table.data-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.85rem; }
+    table.data-table th, table.data-table td { border: 1px solid var(--border); padding: 0.4rem 0.6rem; text-align: left; }
+    table.data-table th { background: #f8fafc; font-weight: 600; }
+
+    /* Branching Remediation Box */
+    .hint-box { margin-top: 1rem; border-left: 3px solid var(--wgu-gold); background: #fffbeb; padding: 0.75rem; border-radius: 0 4px 4px 0; font-size: 0.85rem; display: none; }
+    .hint-box.show { display: block; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>D426: SQL Foundations Interactive Sandbox</h1>
+    <div id="student-badge">Student ID: <span id="display-sid">Loading...</span></div>
+  </header>
+
+  <div class="container">
+    <!-- Stepper Navigation -->
+    <div class="stepper">
+      <div class="step-tab active" id="tab-1" onclick="switchStep(1)">1. CREATE</div>
+      <div class="step-tab" id="tab-2" onclick="switchStep(2)">2. INSERT</div>
+      <div class="step-tab" id="tab-3" onclick="switchStep(3)">3. UPDATE/DEL</div>
+      <div class="step-tab" id="tab-4" onclick="switchStep(4)">4. SELECT</div>
+      <div class="step-tab" id="tab-5" onclick="switchStep(5)">5. JOIN</div>
+    </div>
+
+    <div class="grid">
+      <!-- Left Column: Instructions & Video -->
+      <div class="card">
+        <h2 id="step-title" style="margin-bottom: 0.5rem; font-size: 1.15rem;">Step 1: Building the Table Container</h2>
+        <p id="step-instructions" style="font-size: 0.9rem; color: #475569; margin-bottom: 1rem;">
+          Learn how to define a schema in MySQL using <code>CREATE TABLE</code> with strict column data types.
+        </p>
+        
+        <div class="video-container">
+          <iframe id="video-frame" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+        </div>
+
+        <div id="remediation-box" class="hint-box">
+          <strong><i class="fa-solid fa-lightbulb"></i> Troubleshooting Tip:</strong>
+          <p id="remediation-text" style="margin-top: 0.25rem;">Check your comma placement. Did you put a trailing comma after the last column?</p>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Sandbox -->
+      <div class="card editor-wrapper">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.85rem; font-weight: 600; color: #64748b;">MySQL Sandbox Editor</span>
+          <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="resetEditor()">Reset Template</button>
+        </div>
+
+        <textarea id="sql-editor" spellcheck="false"></textarea>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="run-btn" onclick="executeUserQuery()">
+            <i class="fa-solid fa-play"></i> Run MySQL Code
+          </button>
+          <button class="btn btn-success" id="next-btn" style="display: none;" onclick="advanceStep()">
+            Proceed to Next Step <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+        <div id="console-output" class="output-ready">Ready to execute query.</div>
+        <div id="table-output" style="overflow-x: auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // 1. TELEMETRY CONFIGURATION
+    // ==========================================
+    const TELEMETRY_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxsw1AJtmsn9rwmqc5AIh15owBo909L0NchTVAJw7tX4offSpxDloWKS2wJ1Mf31LdOKQ/exec";
+
+    // URL Parsing & State Tracking
+    const urlParams = new URLSearchParams(window.location.search);
+    const studentId = urlParams.get('sid') || "STUDENT_NOT_PASSED";
+    document.getElementById('display-sid').innerText = studentId;
+
+    let currentStep = 1;
+    let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    let sessionStartTime = Date.now();
+    let db = null;
+
+    // Curriculum Definitions
+    const curriculum = {
+      1: {
+        title: "Step 1: Building the Table Container (CREATE TABLE)",
+        instructions: "Write a statement to create a table named <code>books</code> with <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>.",
+        videoId: "dQw4w9WgXcQ", // Replace with your YouTube Video ID
+        template: `-- STEP 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`
+      },
+      2: {
+        title: "Step 2: Feeding the Machine (INSERT INTO)",
+        instructions: "Insert at least two books into the <code>books</code> table. Text values must be wrapped in single quotes; numbers do not take quotes.",
+        videoId: "dQw4w9WgXcQ",
+        template: `INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`
+      },
+      3: {
+        title: "Step 3: Modifying Reality (UPDATE & DELETE with WHERE)",
+        instructions: "Update the price of a book using a <code>WHERE</code> clause. Never run an UPDATE without WHERE!",
+        videoId: "dQw4w9WgXcQ",
+        template: `-- Update the price for book_id 2\nUPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\n-- Verify update\nSELECT * FROM books;`
+      },
+      4: {
+        title: "Step 4: Asking Questions (SELECT & Filtering)",
+        instructions: "Query the <code>title</code> and <code>price</code> of all books published after 2018, ordered by price descending.",
+        videoId: "dQw4w9WgXcQ",
+        template: `SELECT title, price \nFROM books \nWHERE published_year > 2018 \nORDER BY price DESC;`
+      },
+      5: {
+        title: "Step 5: Connecting Tables (Foreign Keys & INNER JOIN)",
+        instructions: "Create the <code>orders</code> table, insert a linked record, and execute an <code>INNER JOIN</code> to connect the two tables.",
+        videoId: "dQw4w9WgXcQ",
+        template: `CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\n\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`
+      }
+    };
+
+    // ==========================================
+    // 2. IN-BROWSER WASM INITIALIZATION
+    // ==========================================
+    initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}` }).then(SQL => {
+      db = new SQL.Database();
+      loadStep(1);
+    });
+
+    function loadStep(step) {
+      currentStep = step;
+      const cfg = curriculum[step];
+      document.getElementById('step-title').innerText = cfg.title;
+      document.getElementById('step-instructions').innerHTML = cfg.instructions;
+      document.getElementById('video-frame').src = `https://www.youtube-nocookie.com/embed/${cfg.videoId}`;
+      document.getElementById('sql-editor').value = cfg.template;
+      document.getElementById('next-btn').style.display = 'none';
+      document.getElementById('remediation-box').classList.remove('show');
+      
+      const out = document.getElementById('console-output');
+      out.className = 'output-ready';
+      out.innerText = `Step ${step} loaded. Write or modify your SQL and click 'Run MySQL Code'.`;
+      document.getElementById('table-output').innerHTML = '';
+
+      document.querySelectorAll('.step-tab').forEach((t, i) => {
+        t.classList.toggle('active', i + 1 === step);
+      });
+    }
+
+    function resetEditor() {
+      document.getElementById('sql-editor').value = curriculum[currentStep].template;
+    }
+
+    // ==========================================
+    // 3. EXECUTION & AUTO-NORMALIZATION
+    // ==========================================
+    function executeUserQuery() {
+      attemptsCount[currentStep]++;
+      const rawSql = document.getElementById('sql-editor').value;
+      const out = document.getElementById('console-output');
+      const tblContainer = document.getElementById('table-output');
+      tblContainer.innerHTML = '';
+
+      // Normalize MySQL keywords for SQLite Wasm execution
+      let normalizedSql = rawSql
+        .replace(/\bINT\s+PRIMARY\s+KEY\s+AUTO_INCREMENT\b/gi, 'INTEGER PRIMARY KEY AUTOINCREMENT')
+        .replace(/\bAUTO_INCREMENT\b/gi, 'AUTOINCREMENT');
+
+      try {
+        const results = db.exec(normalizedSql);
+        out.className = 'output-success';
+        out.innerText = `Query executed successfully! (${results.length} result set returned).`;
+
+        if (results.length > 0) {
+          const res = results[results.length - 1];
+          let html = '<table class="data-table"><thead><tr>';
+          res.columns.forEach(c => html += `<th>${c}</th>`);
+          html += '</tr></thead><tbody>';
+          res.values.forEach(row => {
+            html += '<tr>';
+            row.forEach(v => html += `<td>${v !== null ? v : 'NULL'}</td>`);
+            html += '</tr>';
+          });
+          html += '</tbody></table>';
+          tblContainer.innerHTML = html;
+        }
+
+        handleStepSuccess();
+      } catch (err) {
+        out.className = 'output-error';
+        out.innerText = `MySQL Error: ${err.message}`;
+        document.getElementById('remediation-box').classList.add('show');
+      }
+    }
+
+    function handleStepSuccess() {
+      document.getElementById(`tab-${currentStep}`).classList.add('completed');
+      if (currentStep < 5) {
+        document.getElementById('next-btn').style.display = 'inline-flex';
+      } else {
+        // Step 5 Finished: Transmit Telemetry
+        fireTelemetryWebhook();
+      }
+    }
+
+    function advanceStep() {
+      if (currentStep < 5) {
+        loadStep(currentStep + 1);
+      }
+    }
+
+    function switchStep(step) {
+      loadStep(step);
+    }
+
+    // ==========================================
+    // 4. TELEMETRY TRANSMISSION TO GOOGLE SHEET
+    // ==========================================
+    function fireTelemetryWebhook() {
+      const totalTimeSpent = Math.round((Date.now() - sessionStartTime) / 1000);
+      const payload = {
+        student_id: studentId,
+        step: "STEP_5_COMPLETED",
+        attempts: JSON.stringify(attemptsCount),
+        time_spent_seconds: totalTimeSpent,
+        status: "SUCCESS_ALL_STEPS",
+        user_agent: navigator.userAgent
+      };
+
+      // Uses text/plain to prevent CORS preflight rejection by Apps Script
+      fetch(TELEMETRY_WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      }).then(() => {
+        showCompletionModal();
+      }).catch(err => {
+        console.error("Telemetry error:", err);
+        showCompletionModal();
+      });
+    }
+
+    function showCompletionModal() {
+      const out = document.getElementById('console-output');
+      out.className = 'output-success';
+      out.innerHTML = `<strong><i class="fa-solid fa-circle-check"></i> CONGRATULATIONS!</strong><br>` +
+                      `You have completed the Hands-On SQL Launch Module. Your progress has been logged.<br>` +
+                      `You are now fully prepared to begin Section 1 & 2 in the textbook.`;
+    }
+  </script>
+</body>
+</html>
