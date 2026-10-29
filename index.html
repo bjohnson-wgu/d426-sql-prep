@@ -50,7 +50,7 @@
     .btn-secondary { background: #e2e8f0; color: #334155; }
     .btn-hint { background: #f59e0b; color: white; font-size: 0.8rem; padding: 0.4rem 0.8rem; }
 
-    /* Sandbox Stepper */
+    /* Stepper Navigation */
     .stepper { display: flex; gap: 0.4rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
     .step-tab { flex: 1; min-width: 60px; padding: 0.6rem 0.4rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; text-align: center; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
     .step-tab.active { background: var(--wgu-blue); color: white; border-color: var(--wgu-blue); }
@@ -90,7 +90,7 @@
 
   <div class="container">
 
-    <!-- SCREEN 1: DIAGNOSTIC & CONSENT -->
+    <!-- SCREEN 1: DIAGNOSTIC & AGE/CONSENT GATE -->
     <div id="survey-screen" class="card">
       <div class="survey-intro">
         <h2>Course Navigation & Learning Strategy Diagnostic</h2>
@@ -103,15 +103,26 @@
       </div>
 
       <form id="diagnostic-form" onsubmit="handleSurveySubmit(event)">
+        <!-- Age Eligibility & Implied Consent -->
         <div class="question-block">
-          <div class="question-title">1. Do you agree to participate in this 3-minute diagnostic?</div>
+          <div class="question-title">1. Study Eligibility & Voluntary Participation Attestation:</div>
+          <p style="font-size: 0.84rem; color: #475569; margin-bottom: 0.4rem;">
+            To participate in this instructional evaluation, you must be at least 18 years of age.
+          </p>
           <div class="option-list">
-            <label class="option-label"><input type="radio" name="consent" value="yes" required> Yes, continue to the diagnostic</label>
-            <label class="option-label"><input type="radio" name="consent" value="no" required> No, take me directly to standard course materials</label>
+            <label class="option-label">
+              <input type="radio" name="consent" value="yes" required> 
+              I confirm that I am 18 years of age or older, and I agree to participate in this diagnostic.
+            </label>
+            <label class="option-label">
+              <input type="radio" name="consent" value="no" required> 
+              I am under 18 years of age, OR I choose not to participate (take me directly to standard course materials).
+            </label>
           </div>
         </div>
 
         <div id="survey-questions">
+          <!-- Prior Knowledge Covariate -->
           <div class="question-block">
             <div class="question-title">2. Prior to starting D426, how would you rate your experience with SQL and relational databases?</div>
             <div class="option-list">
@@ -143,7 +154,7 @@
       </div>
     </div>
 
-    <!-- SCREEN 2A: CONTROL ARM -->
+    <!-- SCREEN 2A: CONTROL ARM LANDING -->
     <div id="control-screen" class="card" style="display: none; text-align: center; padding: 2.5rem 1.5rem;">
       <i class="fa-solid fa-circle-check" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
       <h2 style="color: var(--wgu-blue); margin-bottom: 0.75rem;">Diagnostic Complete</h2>
@@ -160,8 +171,9 @@
       </div>
     </div>
 
-    <!-- SCREEN 2B: INTERVENTION SANDBOX -->
+    <!-- SCREEN 2B: INTERVENTION ARM (SANDBOX + ORIENTATION CONTEXT) -->
     <div id="sandbox-screen" style="display: none;">
+      
       <div class="card" style="background: #f8fafc; border-left: 4px solid var(--wgu-blue);">
         <h3 style="color: var(--wgu-blue); font-size: 1.1rem; margin-bottom: 0.4rem;">
           <i class="fa-solid fa-compass"></i> Why Start with the SQL Sandbox?
@@ -344,7 +356,7 @@
       });
     }
 
-    // Toggle Survey visibility on consent selection
+    // Toggle Survey visibility based on eligibility and consent
     document.querySelectorAll('input[name="consent"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
         const qBlock = document.getElementById('survey-questions');
@@ -368,7 +380,7 @@
       const consent = formData.get('consent');
 
       if (consent === 'no') {
-        alert("You chose not to participate. You are being redirected to standard course materials.");
+        alert("You have been redirected to standard course materials. Thank you!");
         document.getElementById('survey-screen').style.display = 'none';
         document.getElementById('control-screen').style.display = 'block';
         saveState({ surveyCompleted: true });
@@ -487,7 +499,6 @@
       initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}` }).then(SQL => {
         db = new SQL.Database();
         
-        // Restore step state from localStorage
         const state = getStoredState();
         if (state) {
           if (state.attemptsCount) attemptsCount = state.attemptsCount;
@@ -514,7 +525,6 @@
       document.getElementById('step-instructions').innerHTML = cfg.instructions;
       document.getElementById('video-frame').src = `https://www.youtube-nocookie.com/embed/${cfg.videoId}`;
       
-      // Load saved draft or fall back to template
       const state = getStoredState();
       const savedCode = (state && state.codeDrafts && state.codeDrafts[step]) ? state.codeDrafts[step] : cfg.template;
       document.getElementById('sql-editor').value = savedCode;
