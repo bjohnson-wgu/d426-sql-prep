@@ -38,9 +38,9 @@
     .question-block { margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9; }
     .question-title { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.5rem; color: #0f172a; }
     .option-list { display: flex; flex-direction: column; gap: 0.4rem; }
-    .option-label { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.88rem; cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 4px; min-height: 44px; align-items: center; }
+    .option-label { display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 4px; min-height: 44px; }
     .option-label:hover { background: #f8fafc; }
-    .option-label input { margin-top: 0.1rem; width: 18px; height: 18px; }
+    .option-label input { width: 18px; height: 18px; }
 
     /* Buttons */
     .btn { padding: 0.65rem 1.25rem; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.92rem; text-decoration: none; justify-content: center; }
@@ -50,7 +50,7 @@
     .btn-secondary { background: #e2e8f0; color: #334155; }
     .btn-hint { background: #f59e0b; color: white; font-size: 0.8rem; padding: 0.4rem 0.8rem; }
 
-    /* Sandbox Interface Styles */
+    /* Sandbox Stepper */
     .stepper { display: flex; gap: 0.4rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
     .step-tab { flex: 1; min-width: 60px; padding: 0.6rem 0.4rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; text-align: center; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
     .step-tab.active { background: var(--wgu-blue); color: white; border-color: var(--wgu-blue); }
@@ -65,7 +65,7 @@
     .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; background: #000; margin-bottom: 1rem; }
     .video-container iframe { position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0; }
 
-    textarea#sql-editor { width: 100%; height: 160px; background: var(--editor-bg); color: #38bdf8; font-family: "Courier New", Courier, monospace; font-size: 0.92rem; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; resize: vertical; -webkit-text-size-adjust: 100%; }
+    textarea#sql-editor { width: 100%; height: 160px; background: var(--editor-bg); color: #38bdf8; font-family: "Courier New", Courier, monospace; font-size: 0.92rem; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; resize: vertical; }
     .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
     #console-output { margin-top: 1rem; padding: 0.75rem; border-radius: 6px; font-family: monospace; font-size: 0.85rem; max-height: 200px; overflow-y: auto; }
     .output-ready { background: #f1f5f9; color: #475569; }
@@ -90,7 +90,7 @@
 
   <div class="container">
 
-    <!-- SCREEN 1: DIAGNOSTIC & CONSENT INSTRUMENT -->
+    <!-- SCREEN 1: DIAGNOSTIC & CONSENT -->
     <div id="survey-screen" class="card">
       <div class="survey-intro">
         <h2>Course Navigation & Learning Strategy Diagnostic</h2>
@@ -103,21 +103,15 @@
       </div>
 
       <form id="diagnostic-form" onsubmit="handleSurveySubmit(event)">
-        <!-- Implied Consent -->
         <div class="question-block">
           <div class="question-title">1. Do you agree to participate in this 3-minute diagnostic?</div>
           <div class="option-list">
-            <label class="option-label">
-              <input type="radio" name="consent" value="yes" required> Yes, continue to the diagnostic
-            </label>
-            <label class="option-label">
-              <input type="radio" name="consent" value="no" required> No, take me directly to standard course materials
-            </label>
+            <label class="option-label"><input type="radio" name="consent" value="yes" required> Yes, continue to the diagnostic</label>
+            <label class="option-label"><input type="radio" name="consent" value="no" required> No, take me directly to standard course materials</label>
           </div>
         </div>
 
         <div id="survey-questions">
-          <!-- Prior Knowledge Covariate -->
           <div class="question-block">
             <div class="question-title">2. Prior to starting D426, how would you rate your experience with SQL and relational databases?</div>
             <div class="option-list">
@@ -136,7 +130,6 @@
             For each of the following items, select the option that best reflects your general learning preferences.
           </p>
 
-          <!-- Dynamic Container for Randomized ILS Questions -->
           <div id="randomized-ils-container"></div>
         </div>
 
@@ -150,7 +143,7 @@
       </div>
     </div>
 
-    <!-- SCREEN 2A: CONTROL ARM LANDING -->
+    <!-- SCREEN 2A: CONTROL ARM -->
     <div id="control-screen" class="card" style="display: none; text-align: center; padding: 2.5rem 1.5rem;">
       <i class="fa-solid fa-circle-check" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
       <h2 style="color: var(--wgu-blue); margin-bottom: 0.75rem;">Diagnostic Complete</h2>
@@ -167,24 +160,21 @@
       </div>
     </div>
 
-    <!-- SCREEN 2B: INTERVENTION ARM (SANDBOX + ORIENTATION CONTEXT) -->
+    <!-- SCREEN 2B: INTERVENTION SANDBOX -->
     <div id="sandbox-screen" style="display: none;">
-      
-      <!-- Pedagogical Briefing & Instructions -->
       <div class="card" style="background: #f8fafc; border-left: 4px solid var(--wgu-blue);">
         <h3 style="color: var(--wgu-blue); font-size: 1.1rem; margin-bottom: 0.4rem;">
           <i class="fa-solid fa-compass"></i> Why Start with the SQL Sandbox?
         </h3>
         <p style="font-size: 0.88rem; color: #334155; margin-bottom: 0.6rem;">
-          Many students find relational theory (such as normal forms and cardinality) easier to master after seeing how tables are structured and manipulated in actual code. This 5-step module builds foundational query mechanics before you read abstract concepts in the text.
+          Relational concepts (cardinality, keys, and normal forms) are easier to understand once you see tables created and manipulated in code. This module builds core query mechanics before you tackle abstract theory in the text.
         </p>
         <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.82rem; color: #64748b;">
           <span><i class="fa-solid fa-clock"></i> <strong>Estimated Time:</strong> ~15–20 minutes</span>
-          <span><i class="fa-solid fa-bookmark"></i> <strong>Can't Finish Now?</strong> Bookmark this URL and return at any time.</span>
+          <span><i class="fa-solid fa-floppy-disk"></i> <strong>Progress Autosaved:</strong> Your work is saved locally in this browser.</span>
         </div>
       </div>
 
-      <!-- Stepper Navigation -->
       <div class="stepper">
         <div class="step-tab active" id="tab-1" onclick="switchStep(1)">1. CREATE</div>
         <div class="step-tab" id="tab-2" onclick="switchStep(2)">2. INSERT</div>
@@ -194,7 +184,6 @@
       </div>
 
       <div class="grid">
-        <!-- Left: Instruction & Video -->
         <div class="card">
           <h2 id="step-title" style="margin-bottom: 0.5rem; font-size: 1.1rem;">Step 1: Building the Table Container</h2>
           <p id="step-instructions" style="font-size: 0.88rem; color: #475569; margin-bottom: 1rem;">
@@ -207,14 +196,13 @@
 
           <div id="remediation-box" class="hint-box">
             <strong><i class="fa-solid fa-lightbulb"></i> Troubleshooting Tip:</strong>
-            <p id="remediation-text" style="margin-top: 0.25rem;">Check your comma placement. Did you put a trailing comma after the last column?</p>
+            <p id="remediation-text" style="margin-top: 0.25rem;">Check your comma placement.</p>
             <button id="show-solution-btn" class="btn btn-hint" style="margin-top: 0.5rem; display: none;" onclick="revealSolution()">
               Reveal Working Solution
             </button>
           </div>
         </div>
 
-        <!-- Right: Code Editor & Console -->
         <div class="card" style="display: flex; flex-direction: column; gap: 0.75rem;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <span style="font-size: 0.85rem; font-weight: 600; color: #64748b;">MySQL Sandbox Editor</span>
@@ -225,7 +213,8 @@
                     autocapitalize="none" 
                     autocomplete="off" 
                     autocorrect="off" 
-                    spellcheck="false"></textarea>
+                    spellcheck="false"
+                    oninput="saveCurrentEditorText()"></textarea>
 
           <div class="actions">
             <button class="btn btn-primary" id="run-btn" onclick="executeUserQuery()">
@@ -260,8 +249,45 @@
       assignedArm = (!isNaN(lastChar) && parseInt(lastChar) % 2 === 0) ? 'ctrl' : 'interv';
     }
 
+    const STORAGE_KEY = `d426_state_${studentId}`;
+
     // ==========================================
-    // 2. FELDER-SOLOMAN RANDOMIZED GENERATOR
+    // 2. LOCALSTORAGE STATE PERSISTENCE
+    // ==========================================
+    function getStoredState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function saveState(patch) {
+      try {
+        const current = getStoredState() || {
+          surveyCompleted: false,
+          currentStep: 1,
+          completedSteps: [],
+          attemptsCount: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+          codeDrafts: {}
+        };
+        const updated = Object.assign({}, current, patch);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      } catch (e) {
+        console.warn("localStorage save failed", e);
+      }
+    }
+
+    function saveCurrentEditorText() {
+      const state = getStoredState() || {};
+      const drafts = state.codeDrafts || {};
+      drafts[currentStep] = document.getElementById('sql-editor').value;
+      saveState({ codeDrafts: drafts });
+    }
+
+    // ==========================================
+    // 3. FELDER-SOLOMAN RANDOMIZED GENERATOR
     // ==========================================
     const ilsBank = [
       { id: "ils_1", q: "When I solve math or logic problems, I usually:", 
@@ -303,7 +329,6 @@
       shuffledItems.forEach((item, index) => {
         const qDiv = document.createElement('div');
         qDiv.className = 'question-block';
-        
         const shuffledOpts = shuffle([...item.opts]);
         
         let html = `<div class="question-title">${index + 3}. ${item.q}</div><div class="option-list">`;
@@ -318,9 +343,8 @@
         container.appendChild(qDiv);
       });
     }
-    renderDiagnosticSurvey();
 
-    // Toggle Survey visibility based on consent
+    // Toggle Survey visibility on consent selection
     document.querySelectorAll('input[name="consent"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
         const qBlock = document.getElementById('survey-questions');
@@ -335,7 +359,7 @@
     });
 
     // ==========================================
-    // 3. SURVEY SUBMISSION & TELEMETRY
+    // 4. SURVEY SUBMISSION & TELEMETRY
     // ==========================================
     function handleSurveySubmit(e) {
       e.preventDefault();
@@ -347,6 +371,7 @@
         alert("You chose not to participate. You are being redirected to standard course materials.");
         document.getElementById('survey-screen').style.display = 'none';
         document.getElementById('control-screen').style.display = 'block';
+        saveState({ surveyCompleted: true });
         return;
       }
 
@@ -372,6 +397,7 @@
         body: JSON.stringify(surveyPayload)
       }).catch(err => console.error("Telemetry error:", err));
 
+      saveState({ surveyCompleted: true });
       document.getElementById('survey-screen').style.display = 'none';
 
       if (assignedArm === 'ctrl') {
@@ -383,7 +409,7 @@
     }
 
     // ==========================================
-    // 4. SANDBOX ENGINE & CURRICULUM
+    // 5. SANDBOX ENGINE & CURRICULUM
     // ==========================================
     let currentStep = 1;
     let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -460,17 +486,39 @@
       if (db) return;
       initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}` }).then(SQL => {
         db = new SQL.Database();
-        loadStep(1);
+        
+        // Restore step state from localStorage
+        const state = getStoredState();
+        if (state) {
+          if (state.attemptsCount) attemptsCount = state.attemptsCount;
+          if (state.completedSteps) {
+            state.completedSteps.forEach(s => {
+              const el = document.getElementById(`tab-${s}`);
+              if (el) el.classList.add('completed');
+            });
+          }
+          const targetStep = state.currentStep || 1;
+          loadStep(targetStep);
+        } else {
+          loadStep(1);
+        }
       });
     }
 
     function loadStep(step) {
       currentStep = step;
+      saveState({ currentStep: step });
+
       const cfg = curriculum[step];
       document.getElementById('step-title').innerText = cfg.title;
       document.getElementById('step-instructions').innerHTML = cfg.instructions;
       document.getElementById('video-frame').src = `https://www.youtube-nocookie.com/embed/${cfg.videoId}`;
-      document.getElementById('sql-editor').value = cfg.template;
+      
+      // Load saved draft or fall back to template
+      const state = getStoredState();
+      const savedCode = (state && state.codeDrafts && state.codeDrafts[step]) ? state.codeDrafts[step] : cfg.template;
+      document.getElementById('sql-editor').value = savedCode;
+
       document.getElementById('next-btn').style.display = 'none';
       document.getElementById('remediation-box').classList.remove('show');
       document.getElementById('show-solution-btn').style.display = 'none';
@@ -487,16 +535,20 @@
 
     function resetEditor() {
       document.getElementById('sql-editor').value = curriculum[currentStep].template;
+      saveCurrentEditorText();
     }
 
     function revealSolution() {
       document.getElementById('sql-editor').value = curriculum[currentStep].solution;
+      saveCurrentEditorText();
       document.getElementById('console-output').className = 'output-ready';
       document.getElementById('console-output').innerText = "Solution loaded into editor. Click 'Run MySQL Code' to execute.";
     }
 
     function executeUserQuery() {
       attemptsCount[currentStep]++;
+      saveState({ attemptsCount: attemptsCount });
+
       const rawSql = document.getElementById('sql-editor').value;
       const out = document.getElementById('console-output');
       const tblContainer = document.getElementById('table-output');
@@ -555,6 +607,12 @@
 
     function handleStepSuccess() {
       document.getElementById(`tab-${currentStep}`).classList.add('completed');
+      
+      const state = getStoredState() || {};
+      const completed = state.completedSteps || [];
+      if (!completed.includes(currentStep)) completed.push(currentStep);
+      saveState({ completedSteps: completed });
+
       if (currentStep < 5) {
         document.getElementById('next-btn').style.display = 'inline-flex';
       } else {
@@ -596,6 +654,22 @@
       out.innerHTML = `<strong><i class="fa-solid fa-circle-check"></i> CONGRATULATIONS!</strong><br>` +
                       `You have completed the Hands-On SQL Launch Module. Your progress has been logged.<br>` +
                       `You are now prepared to begin Section 1 & 2 in the course materials.`;
+    }
+
+    // ==========================================
+    // 6. INITIALIZATION & REHYDRATION
+    // ==========================================
+    renderDiagnosticSurvey();
+
+    const savedState = getStoredState();
+    if (savedState && savedState.surveyCompleted) {
+      document.getElementById('survey-screen').style.display = 'none';
+      if (assignedArm === 'ctrl') {
+        document.getElementById('control-screen').style.display = 'block';
+      } else {
+        document.getElementById('sandbox-screen').style.display = 'block';
+        initWasmEngine();
+      }
     }
   </script>
 </body>
