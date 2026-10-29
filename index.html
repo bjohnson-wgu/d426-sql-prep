@@ -23,14 +23,15 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 60px; }
     
+    .review-banner { background: #fffbeb; border-bottom: 2px solid #f59e0b; padding: 0.6rem 1rem; text-align: center; font-size: 0.82rem; color: #92400e; font-weight: 600; }
+
     header { background: var(--wgu-blue); color: white; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    header h1 { font-size: 1.1rem; font-weight: 600; }
+    header h1 { font-size: 1.15rem; font-weight: 700; }
     #student-badge { background: rgba(255,255,255,0.15); padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem; }
 
     .container { max-width: 980px; margin: 1.5rem auto; padding: 0 1rem; }
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
 
-    /* Diagnostic Survey Styles */
     .survey-intro { margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
     .survey-intro h2 { color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.5rem; }
     .info-callout { background: #f0f7ff; border-left: 4px solid var(--wgu-blue); padding: 0.9rem; font-size: 0.88rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
@@ -42,7 +43,6 @@
     .option-label:hover { background: #f8fafc; }
     .option-label input { width: 18px; height: 18px; }
 
-    /* Buttons */
     .btn { padding: 0.65rem 1.25rem; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.92rem; text-decoration: none; justify-content: center; }
     .btn-primary { background: var(--wgu-blue); color: white; }
     .btn-primary:hover { background: #00224f; }
@@ -50,9 +50,8 @@
     .btn-secondary { background: #e2e8f0; color: #334155; }
     .btn-hint { background: #f59e0b; color: white; font-size: 0.8rem; padding: 0.4rem 0.8rem; }
 
-    /* Stepper Navigation */
     .stepper { display: flex; gap: 0.4rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
-    .step-tab { flex: 1; min-width: 60px; padding: 0.6rem 0.4rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; text-align: center; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+    .step-tab { flex: 1; min-width: 140px; padding: 0.6rem 0.4rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; text-align: center; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
     .step-tab.active { background: var(--wgu-blue); color: white; border-color: var(--wgu-blue); }
     .step-tab.completed { border-bottom: 3px solid var(--success); }
 
@@ -83,14 +82,21 @@
 </head>
 <body>
 
+  <div class="review-banner">
+    <i class="fa-solid fa-flask"></i> RESEARCH PROTOCOL REVIEW DEMONSTRATION — DRAFT STAGING ENVIRONMENT
+  </div>
+
   <header>
-    <h1>D426: Data Management Foundations</h1>
+    <div>
+      <h1>D426: Data Management Foundations</h1>
+      <div style="font-size: 0.78rem; opacity: 0.85;">Inductive Relational Scaffolding Module (WGU IT Faculty Research)</div>
+    </div>
     <div id="student-badge">Student ID: <span id="display-sid">Loading...</span></div>
   </header>
 
   <div class="container">
 
-    <!-- SCREEN 1: DIAGNOSTIC & AGE/CONSENT GATE -->
+    <!-- SCREEN 1: INTAKE DIAGNOSTIC & AGE/CONSENT GATE -->
     <div id="survey-screen" class="card">
       <div class="survey-intro">
         <h2>Course Navigation & Learning Strategy Diagnostic</h2>
@@ -103,7 +109,6 @@
       </div>
 
       <form id="diagnostic-form" onsubmit="handleSurveySubmit(event)">
-        <!-- Age Eligibility & Implied Consent -->
         <div class="question-block">
           <div class="question-title">1. Study Eligibility & Voluntary Participation Attestation:</div>
           <p style="font-size: 0.84rem; color: #475569; margin-bottom: 0.4rem;">
@@ -122,7 +127,6 @@
         </div>
 
         <div id="survey-questions">
-          <!-- Prior Knowledge Covariate -->
           <div class="question-block">
             <div class="question-title">2. Prior to starting D426, how would you rate your experience with SQL and relational databases?</div>
             <div class="option-list">
@@ -150,7 +154,7 @@
       </form>
 
       <div class="citation-footer">
-        Index of Learning Styles © Richard M. Felder and Barbara A. Soloman, North Carolina State University. Administered under non-commercial educational research provisions.
+        Index of Learning Styles (c) Richard M. Felder and Barbara A. Soloman, North Carolina State University. Administered under non-commercial educational research provisions.
       </div>
     </div>
 
@@ -171,7 +175,7 @@
       </div>
     </div>
 
-    <!-- SCREEN 2B: INTERVENTION ARM (SANDBOX + ORIENTATION CONTEXT) -->
+    <!-- SCREEN 2B: INTERVENTION ARM (5-MODULE SANDBOX) -->
     <div id="sandbox-screen" style="display: none;">
       
       <div class="card" style="background: #f8fafc; border-left: 4px solid var(--wgu-blue);">
@@ -187,17 +191,18 @@
         </div>
       </div>
 
+      <!-- 5-Module Progression Tabs -->
       <div class="stepper">
-        <div class="step-tab active" id="tab-1" onclick="switchStep(1)">1. CREATE</div>
-        <div class="step-tab" id="tab-2" onclick="switchStep(2)">2. INSERT</div>
-        <div class="step-tab" id="tab-3" onclick="switchStep(3)">3. UPDATE/DEL</div>
-        <div class="step-tab" id="tab-4" onclick="switchStep(4)">4. SELECT</div>
-        <div class="step-tab" id="tab-5" onclick="switchStep(5)">5. JOIN</div>
+        <div class="step-tab active" id="tab-1" onclick="switchStep(1)">Module 1: DDL Schema</div>
+        <div class="step-tab" id="tab-2" onclick="switchStep(2)">Module 2: DML Population</div>
+        <div class="step-tab" id="tab-3" onclick="switchStep(3)">Module 3: DML Updates</div>
+        <div class="step-tab" id="tab-4" onclick="switchStep(4)">Module 4: DQL Queries</div>
+        <div class="step-tab" id="tab-5" onclick="switchStep(5)">Module 5: Relational Joins</div>
       </div>
 
       <div class="grid">
         <div class="card">
-          <h2 id="step-title" style="margin-bottom: 0.5rem; font-size: 1.1rem;">Step 1: Building the Table Container</h2>
+          <h2 id="step-title" style="margin-bottom: 0.5rem; font-size: 1.1rem;">Module 1: Schema Architecture (CREATE TABLE)</h2>
           <p id="step-instructions" style="font-size: 0.88rem; color: #475569; margin-bottom: 1rem;">
             Learn how to define a schema in MySQL using <code>CREATE TABLE</code> with strict column data types.
           </p>
@@ -233,7 +238,7 @@
               <i class="fa-solid fa-play"></i> Run MySQL Code
             </button>
             <button class="btn btn-success" id="next-btn" style="display: none;" onclick="advanceStep()">
-              Proceed to Next Step <i class="fa-solid fa-arrow-right"></i>
+              Proceed to Next Module <i class="fa-solid fa-arrow-right"></i>
             </button>
           </div>
 
@@ -246,9 +251,7 @@
   </div>
 
   <script>
-    // ==========================================
     // 1. CONFIGURATION & URL PARSING
-    // ==========================================
     const TELEMETRY_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxsw1AJtmsn9rwmqc5AIh15owBo909L0NchTVAJw7tX4offSpxDloWKS2wJ1Mf31LdOKQ/exec";
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -263,9 +266,7 @@
 
     const STORAGE_KEY = `d426_state_${studentId}`;
 
-    // ==========================================
     // 2. LOCALSTORAGE STATE PERSISTENCE
-    // ==========================================
     function getStoredState() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -298,9 +299,7 @@
       saveState({ codeDrafts: drafts });
     }
 
-    // ==========================================
     // 3. FELDER-SOLOMAN RANDOMIZED GENERATOR
-    // ==========================================
     const ilsBank = [
       { id: "ils_1", q: "When I solve math or logic problems, I usually:", 
         opts: [{ text: "Work one step at a time.", val: 1 }, { text: "Just see solutions, then have to figure out the steps to get to them.", val: -1 }] },
@@ -356,7 +355,6 @@
       });
     }
 
-    // Toggle Survey visibility based on eligibility and consent
     document.querySelectorAll('input[name="consent"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
         const qBlock = document.getElementById('survey-questions');
@@ -370,9 +368,7 @@
       });
     });
 
-    // ==========================================
     // 4. SURVEY SUBMISSION & TELEMETRY
-    // ==========================================
     function handleSurveySubmit(e) {
       e.preventDefault();
       const form = document.getElementById('diagnostic-form');
@@ -420,9 +416,7 @@
       }
     }
 
-    // ==========================================
     // 5. SANDBOX ENGINE & CURRICULUM
-    // ==========================================
     let currentStep = 1;
     let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     let sessionStartTime = Date.now();
@@ -431,10 +425,10 @@
 
     const curriculum = {
       1: {
-        title: "Step 1: Building the Table Container (CREATE TABLE)",
+        title: "Module 1: Schema Architecture (CREATE TABLE)",
         instructions: "Write a statement to create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>.",
         videoId: VIDEO_ID,
-        template: `-- STEP 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
+        template: `-- MODULE 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
         solution: `CREATE TABLE books (\n    book_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
         validate: () => {
           const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
@@ -445,7 +439,7 @@
         }
       },
       2: {
-        title: "Step 2: Feeding the Machine (INSERT INTO)",
+        title: "Module 2: Data Population (INSERT INTO)",
         instructions: "Insert at least two books into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
         videoId: VIDEO_ID,
         template: `INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`,
@@ -457,7 +451,7 @@
         }
       },
       3: {
-        title: "Step 3: Modifying Reality (UPDATE & DELETE with WHERE)",
+        title: "Module 3: Controlled Updates (UPDATE & DELETE with WHERE)",
         instructions: "Update the price of a book using a <code>WHERE</code> clause. Always use WHERE when updating or deleting!",
         videoId: VIDEO_ID,
         template: `-- Update the price for book_id 2\nUPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\n-- Verify update\nSELECT * FROM books;`,
@@ -469,7 +463,7 @@
         }
       },
       4: {
-        title: "Step 4: Asking Questions (SELECT & Filtering)",
+        title: "Module 4: Data Retrieval Foundations (SELECT & Filtering)",
         instructions: "Query the <code>title</code> and <code>price</code> of books published after 2018, sorted by price descending.",
         videoId: VIDEO_ID,
         template: `SELECT title, price \nFROM books \nWHERE published_year > 2018 \nORDER BY price DESC;`,
@@ -481,14 +475,14 @@
         }
       },
       5: {
-        title: "Step 5: Connecting Tables (Foreign Keys & INNER JOIN)",
+        title: "Module 5: Relational Bridges (Foreign Keys & INNER JOIN)",
         instructions: "Create the <code>orders</code> table, insert a linked record, and execute an <code>INNER JOIN</code> connecting the tables.",
         videoId: VIDEO_ID,
         template: `CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\n\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`,
         solution: `CREATE TABLE orders (order_id INTEGER PRIMARY KEY AUTOINCREMENT, book_id INT, order_date DATE, quantity INT);\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\nSELECT orders.order_id, books.title, books.price, orders.quantity FROM orders INNER JOIN books ON orders.book_id = books.book_id;`,
         validate: () => {
           const sql = document.getElementById('sql-editor').value.toUpperCase();
-          if (!sql.includes("JOIN")) throw new Error("Step 5 requires executing an INNER JOIN between 'orders' and 'books'.");
+          if (!sql.includes("JOIN")) throw new Error("Module 5 requires executing an INNER JOIN between 'orders' and 'books'.");
           return true;
         }
       }
@@ -535,7 +529,7 @@
       
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
-      out.innerText = `Step ${step} loaded. Write or modify your SQL and click 'Run MySQL Code'.`;
+      out.innerText = `Module ${step} loaded. Write or modify your SQL and click 'Run MySQL Code'.`;
       document.getElementById('table-output').innerHTML = '';
 
       document.querySelectorAll('.step-tab').forEach((t, i) => {
@@ -666,9 +660,7 @@
                       `You are now prepared to begin Section 1 & 2 in the course materials.`;
     }
 
-    // ==========================================
-    // 6. INITIALIZATION & REHYDRATION
-    // ==========================================
+    // 6. INITIALIZATION
     renderDiagnosticSurvey();
 
     const savedState = getStoredState();
