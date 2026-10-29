@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>D426: Data Management Foundations Launch</title>
   <!-- UI Icons & In-Browser SQL Engine -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -23,57 +23,62 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 60px; }
     
-    header { background: var(--wgu-blue); color: white; padding: 1.25rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    header h1 { font-size: 1.2rem; font-weight: 600; }
-    #student-badge { background: rgba(255,255,255,0.15); padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.85rem; }
+    header { background: var(--wgu-blue); color: white; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    header h1 { font-size: 1.1rem; font-weight: 600; }
+    #student-badge { background: rgba(255,255,255,0.15); padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem; }
 
-    .container { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
-    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
+    .container { max-width: 980px; margin: 1.5rem auto; padding: 0 1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
 
     /* Diagnostic Survey Styles */
     .survey-intro { margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
-    .survey-intro h2 { color: var(--wgu-blue); font-size: 1.35rem; margin-bottom: 0.75rem; }
-    .info-callout { background: #f0f7ff; border-left: 4px solid var(--wgu-blue); padding: 1rem; font-size: 0.9rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+    .survey-intro h2 { color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.5rem; }
+    .info-callout { background: #f0f7ff; border-left: 4px solid var(--wgu-blue); padding: 0.9rem; font-size: 0.88rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
     
-    .question-block { margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid #f1f5f9; }
-    .question-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.6rem; color: #0f172a; }
+    .question-block { margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9; }
+    .question-title { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.5rem; color: #0f172a; }
     .option-list { display: flex; flex-direction: column; gap: 0.4rem; }
-    .option-label { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.9rem; cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 4px; transition: background 0.15s; }
+    .option-label { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.88rem; cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 4px; min-height: 44px; align-items: center; }
     .option-label:hover { background: #f8fafc; }
-    .option-label input { margin-top: 0.2rem; cursor: pointer; }
+    .option-label input { margin-top: 0.1rem; width: 18px; height: 18px; }
 
     /* Buttons */
-    .btn { padding: 0.65rem 1.4rem; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; }
+    .btn { padding: 0.65rem 1.25rem; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.92rem; text-decoration: none; justify-content: center; }
     .btn-primary { background: var(--wgu-blue); color: white; }
     .btn-primary:hover { background: #00224f; }
     .btn-success { background: var(--success); color: white; }
+    .btn-secondary { background: #e2e8f0; color: #334155; }
     .btn-hint { background: #f59e0b; color: white; font-size: 0.8rem; padding: 0.4rem 0.8rem; }
 
     /* Sandbox Interface Styles */
-    .stepper { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
-    .step-tab { flex: 1; padding: 0.75rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; text-align: center; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+    .stepper { display: flex; gap: 0.4rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .step-tab { flex: 1; min-width: 60px; padding: 0.6rem 0.4rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; text-align: center; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
     .step-tab.active { background: var(--wgu-blue); color: white; border-color: var(--wgu-blue); }
-    .step-tab.completed { border-left: 4px solid var(--success); }
+    .step-tab.completed { border-bottom: 3px solid var(--success); }
 
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    @media (max-width: 860px) { 
+      .grid { grid-template-columns: 1fr; }
+      header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    }
 
     .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; background: #000; margin-bottom: 1rem; }
     .video-container iframe { position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0; }
 
-    textarea#sql-editor { width: 100%; height: 160px; background: var(--editor-bg); color: #38bdf8; font-family: "Courier New", Courier, monospace; font-size: 0.95rem; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; resize: vertical; }
-    .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; }
+    textarea#sql-editor { width: 100%; height: 160px; background: var(--editor-bg); color: #38bdf8; font-family: "Courier New", Courier, monospace; font-size: 0.92rem; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; resize: vertical; -webkit-text-size-adjust: 100%; }
+    .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
     #console-output { margin-top: 1rem; padding: 0.75rem; border-radius: 6px; font-family: monospace; font-size: 0.85rem; max-height: 200px; overflow-y: auto; }
     .output-ready { background: #f1f5f9; color: #475569; }
     .output-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
     .output-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
 
-    table.data-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.85rem; }
-    table.data-table th, table.data-table td { border: 1px solid var(--border); padding: 0.4rem 0.6rem; text-align: left; }
+    table.data-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.82rem; }
+    table.data-table th, table.data-table td { border: 1px solid var(--border); padding: 0.4rem 0.5rem; text-align: left; }
     table.data-table th { background: #f8fafc; font-weight: 600; }
 
     .hint-box { margin-top: 1rem; border-left: 3px solid var(--wgu-gold); background: #fffbeb; padding: 0.75rem; border-radius: 0 4px 4px 0; font-size: 0.85rem; display: none; }
     .hint-box.show { display: block; }
+    .citation-footer { font-size: 0.75rem; color: #64748b; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 0.5rem; }
   </style>
 </head>
 <body>
@@ -90,7 +95,7 @@
       <div class="survey-intro">
         <h2>Course Navigation & Learning Strategy Diagnostic</h2>
         <div class="info-callout">
-          <strong>Institutional Research & Diagnostic Disclosure:</strong><br>
+          <strong>Instructional Research & Diagnostic Disclosure:</strong><br>
           Welcome to D426! As part of an ongoing instructional initiative to optimize course navigation, study pacing, and technical preparation for adult learners, you are invited to complete this brief 3-minute diagnostic.<br><br>
           • <strong>Voluntary Participation:</strong> Participation is completely voluntary. Choosing not to participate or stopping at any time will have zero impact on your course grade, academic standing, or access to course materials and instructors.<br>
           • <strong>Confidentiality:</strong> Responses are analyzed in de-identified aggregate formats for instructional evaluation.
@@ -124,120 +129,61 @@
             </div>
           </div>
 
-          <!-- 11-Item Felder-Soloman Index of Learning Styles (Global vs Sequential) -->
-          <div style="margin: 1.5rem 0 1rem 0; font-weight: 700; color: var(--wgu-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.3rem;">
+          <div style="margin: 1.5rem 0 0.5rem 0; font-weight: 700; color: var(--wgu-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.3rem;">
             Study & Problem Solving Preferences (Felder-Soloman ILS)
           </div>
+          <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 1rem;">
+            For each of the following items, select the option that best reflects your general learning preferences.
+          </p>
 
-          <div class="question-block">
-            <div class="question-title">3. When I solve math or logic problems, I usually:</div>
-            <div class="option-list">
-              <label class="option-label"><input type="radio" name="ils_1" value="1" required> Work one step at a time.</label>
-              <label class="option-label"><input type="radio" name="ils_1" value="-1" required> Just see solutions, then have to figure out the steps to get to them.</label>
-            </div>
-          </div>
-
-          <div class="question-block">
-            <div class="question-title">4. I tend to:</div>
-            <div class="option-list">
-              <label class="option-label"><input type="radio" name="ils_2" value="1" required> Understand details of a subject but may be fuzzy about its overall structure.</label>
-              <label class="option-label"><input type="radio" name="ils_2" value="-1" required> Understand overall structure but may be fuzzy about the details.</label>
-            </div>
-          </div>
-
-          <div class="question-block">
-            <div class="question-title">5. When I am learning a new subject, I prefer to:</div>
-            <div class="option-list">
-              <label class="option-label"><input type="radio" name="ils_3" value="1" required> Stay focused on that subject, learning as much about it as I can.</label>
-              <label class="option-label"><input type="radio" name="ils_3" value="-1" required> Try to make connections between that subject and related subjects.</label>
-            </div>
-          </div>
-
-          <div class="question-block">
-            <div class="question-title">6. When I consider what I did yesterday, I am most likely to recall:</div>
-            <div class="option-list">
-              <label class="option-label"><input type="radio" name="ils_4" value="1" required> A series of specific events in the order they happened.</label>
-              <label class="option-label"><input type="radio" name="ils_4" value="-1" required> A general master plan or overall picture.</label>
-            </div>
-          </div>
-
-          <div class="question-block">
-            <div class="question-title">7. Once I understand:</div>
-            <div class="option-list">
-              <label class="option-label"><input type="radio" name="ils_5" value="1" required> All the individual parts, I understand the whole thing.</label>
-              <label class="option-label"><input type="radio" name="ils_5" value="-1" required> The whole thing, I see how the individual parts fit together.</label>
-            </div>
-          </div>
-
-          <div class="question-block">
-            <div class="question-title">8. When writing a paper or report, I am more likely to:</div>
-            <div class="option-list">
-              <label class="option-label"><input type="radio" name="ils_6" value="1" required> Work on the beginning and write straight through sequentially.</label>
-              <label class="option-label"><input type="radio" name="ils_6" value="-1" required> Write different parts in any order and assemble them later.</label>
-            </div>
-          </div>
-
-          <div class="question-block">
-            <div class="question-title">9. When learning complex topics, I prefer to progress:</div>
-            <div class="option-list">
-              <label class="option-label"><input type="radio" name="ils_7" value="1" required> At a steady pace, building incrementally step-by-step.</label>
-              <label class="option-label"><input type="radio" name="ils_7" value="-1" required> In fits and starts; feeling confused until the whole picture suddenly "clicks."</label>
-            </div>
-          </div>
-
-          <div class="question-block">
-            <div class="question-title">10. When reading technical texts, I prefer writers to:</div>
-            <div class="option-list">
-              <label class="option-label"><input type="radio" name="ils_8" value="1" required> Lay out the instructions and facts directly and in clear order.</label>
-              <label class="option-label"><input type="radio" name="ils_8" value="-1" required> Explain the broad conceptual context and analogies before the details.</label>
-            </div>
-          </div>
-
-          <div class="question-block">
-            <div class="question-title">11. It is more important to me that an instructor:</div>
-            <div class="option-list">
-              <label class="option-label"><input type="radio" name="ils_9" value="1" required> Lay out the material in clear, sequential stages.</label>
-              <label class="option-label"><input type="radio" name="ils_9" value="-1" required> Give me an overall big picture and relate the material to other subjects.</label>
-            </div>
-          </div>
-
-          <div class="question-block">
-            <div class="question-title">12. When analyzing data or technical scenarios:</div>
-            <div class="option-list">
-              <label class="option-label"><input type="radio" name="ils_10" value="1" required> I examine individual records/data points to deduce patterns.</label>
-              <label class="option-label"><input type="radio" name="ils_10" value="-1" required> I form a general impression first, then drill down for evidence.</label>
-            </div>
-          </div>
-
-          <div class="question-block">
-            <div class="question-title">13. When someone walks through a solution:</div>
-            <div class="option-list">
-              <label class="option-label"><input type="radio" name="ils_11" value="1" required> I prefer seeing each intermediate step written out completely.</label>
-              <label class="option-label"><input type="radio" name="ils_11" value="-1" required> I prefer seeing the final outcome first, then how it was reached.</label>
-            </div>
-          </div>
+          <!-- Dynamic Container for Randomized ILS Questions -->
+          <div id="randomized-ils-container"></div>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+        <button type="submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
           <i class="fa-solid fa-paper-plane"></i> Submit Diagnostic & Continue
         </button>
       </form>
+
+      <div class="citation-footer">
+        Index of Learning Styles © Richard M. Felder and Barbara A. Soloman, North Carolina State University. Administered under non-commercial educational research provisions.
+      </div>
     </div>
 
     <!-- SCREEN 2A: CONTROL ARM LANDING -->
-    <div id="control-screen" class="card" style="display: none; text-align: center; padding: 3rem 1.5rem;">
+    <div id="control-screen" class="card" style="display: none; text-align: center; padding: 2.5rem 1.5rem;">
       <i class="fa-solid fa-circle-check" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
       <h2 style="color: var(--wgu-blue); margin-bottom: 0.75rem;">Diagnostic Complete</h2>
-      <p style="max-width: 600px; margin: 0 auto 1.5rem auto; color: #475569;">
-        Thank you for submitting your course preferences! Your responses have been securely logged. You are now prepared to begin Section 1 of the official course material.
+      <p style="max-width: 600px; margin: 0 auto 1.5rem auto; color: #475569; font-size: 0.95rem;">
+        Thank you for submitting your course preferences! Your responses have been securely logged. You are ready to begin Section 1 of the official course material.
       </p>
-      <p style="font-size: 0.9rem; color: #64748b;">
-        Please return to your student portal or LMS view to continue your study plan.
-      </p>
+      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+        <a href="https://my.wgu.edu" class="btn btn-primary" target="_blank" rel="noopener">
+          <i class="fa-solid fa-graduation-cap"></i> Return to WGU Student Portal
+        </a>
+        <a href="https://lrps.wgu.edu/provision/115160353" class="btn btn-secondary" target="_blank" rel="noopener">
+          <i class="fa-solid fa-book-open"></i> Launch Course Material
+        </a>
+      </div>
     </div>
 
-    <!-- SCREEN 2B: INTERVENTION ARM (THE 5-STEP SQL SANDBOX) -->
+    <!-- SCREEN 2B: INTERVENTION ARM (SANDBOX + ORIENTATION CONTEXT) -->
     <div id="sandbox-screen" style="display: none;">
+      
+      <!-- Pedagogical Briefing & Instructions -->
+      <div class="card" style="background: #f8fafc; border-left: 4px solid var(--wgu-blue);">
+        <h3 style="color: var(--wgu-blue); font-size: 1.1rem; margin-bottom: 0.4rem;">
+          <i class="fa-solid fa-compass"></i> Why Start with the SQL Sandbox?
+        </h3>
+        <p style="font-size: 0.88rem; color: #334155; margin-bottom: 0.6rem;">
+          Many students find relational theory (such as normal forms and cardinality) easier to master after seeing how tables are structured and manipulated in actual code. This 5-step module builds foundational query mechanics before you read abstract concepts in the text.
+        </p>
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.82rem; color: #64748b;">
+          <span><i class="fa-solid fa-clock"></i> <strong>Estimated Time:</strong> ~15–20 minutes</span>
+          <span><i class="fa-solid fa-bookmark"></i> <strong>Can't Finish Now?</strong> Bookmark this URL and return at any time.</span>
+        </div>
+      </div>
+
       <!-- Stepper Navigation -->
       <div class="stepper">
         <div class="step-tab active" id="tab-1" onclick="switchStep(1)">1. CREATE</div>
@@ -250,8 +196,8 @@
       <div class="grid">
         <!-- Left: Instruction & Video -->
         <div class="card">
-          <h2 id="step-title" style="margin-bottom: 0.5rem; font-size: 1.15rem;">Step 1: Building the Table Container</h2>
-          <p id="step-instructions" style="font-size: 0.9rem; color: #475569; margin-bottom: 1rem;">
+          <h2 id="step-title" style="margin-bottom: 0.5rem; font-size: 1.1rem;">Step 1: Building the Table Container</h2>
+          <p id="step-instructions" style="font-size: 0.88rem; color: #475569; margin-bottom: 1rem;">
             Learn how to define a schema in MySQL using <code>CREATE TABLE</code> with strict column data types.
           </p>
           
@@ -275,7 +221,11 @@
             <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="resetEditor()">Reset Template</button>
           </div>
 
-          <textarea id="sql-editor" spellcheck="false"></textarea>
+          <textarea id="sql-editor" 
+                    autocapitalize="none" 
+                    autocomplete="off" 
+                    autocorrect="off" 
+                    spellcheck="false"></textarea>
 
           <div class="actions">
             <button class="btn btn-primary" id="run-btn" onclick="executeUserQuery()">
@@ -304,14 +254,73 @@
     const studentId = urlParams.get('sid') || "STUDENT_UNASSIGNED";
     document.getElementById('display-sid').innerText = studentId;
 
-    // Automatic Arm Detection: Check URL param 'arm', or determine via SID parity (Odd = interv, Even = ctrl)
     let assignedArm = urlParams.get('arm');
     if (!assignedArm || (assignedArm !== 'interv' && assignedArm !== 'ctrl')) {
       const lastChar = studentId.slice(-1);
       assignedArm = (!isNaN(lastChar) && parseInt(lastChar) % 2 === 0) ? 'ctrl' : 'interv';
     }
 
-    // Toggle Survey visibility based on consent choice
+    // ==========================================
+    // 2. FELDER-SOLOMAN RANDOMIZED GENERATOR
+    // ==========================================
+    const ilsBank = [
+      { id: "ils_1", q: "When I solve math or logic problems, I usually:", 
+        opts: [{ text: "Work one step at a time.", val: 1 }, { text: "Just see solutions, then have to figure out the steps to get to them.", val: -1 }] },
+      { id: "ils_2", q: "I tend to:", 
+        opts: [{ text: "Understand details of a subject but may be fuzzy about its overall structure.", val: 1 }, { text: "Understand overall structure but may be fuzzy about the details.", val: -1 }] },
+      { id: "ils_3", q: "When I am learning a new subject, I prefer to:", 
+        opts: [{ text: "Stay focused on that subject, learning as much about it as I can.", val: 1 }, { text: "Try to make connections between that subject and related subjects.", val: -1 }] },
+      { id: "ils_4", q: "When I consider what I did yesterday, I am most likely to recall:", 
+        opts: [{ text: "A series of specific events in the order they happened.", val: 1 }, { text: "A general master plan or overall picture.", val: -1 }] },
+      { id: "ils_5", q: "Once I understand:", 
+        opts: [{ text: "All the individual parts, I understand the whole thing.", val: 1 }, { text: "The whole thing, I see how the individual parts fit together.", val: -1 }] },
+      { id: "ils_6", q: "When writing a paper or report, I am more likely to:", 
+        opts: [{ text: "Work on the beginning and write straight through sequentially.", val: 1 }, { text: "Write different parts in any order and assemble them later.", val: -1 }] },
+      { id: "ils_7", q: "When learning complex topics, I prefer to progress:", 
+        opts: [{ text: "At a steady pace, building incrementally step-by-step.", val: 1 }, { text: "In fits and starts; feeling confused until the whole picture suddenly 'clicks.'", val: -1 }] },
+      { id: "ils_8", q: "When reading technical texts, I prefer writers to:", 
+        opts: [{ text: "Lay out the instructions and facts directly and in clear order.", val: 1 }, { text: "Explain the broad conceptual context and analogies before the details.", val: -1 }] },
+      { id: "ils_9", q: "It is more important to me that an instructor:", 
+        opts: [{ text: "Lay out the material in clear, sequential stages.", val: 1 }, { text: "Give me an overall big picture and relate the material to other subjects.", val: -1 }] },
+      { id: "ils_10", q: "When analyzing data or technical scenarios:", 
+        opts: [{ text: "I examine individual records/data points to deduce patterns.", val: 1 }, { text: "I form a general impression first, then drill down for evidence.", val: -1 }] },
+      { id: "ils_11", q: "When someone walks through a solution:", 
+        opts: [{ text: "I prefer seeing each intermediate step written out completely.", val: 1 }, { text: "I prefer seeing the final outcome first, then how it was reached.", val: -1 }] }
+    ];
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderDiagnosticSurvey() {
+      const container = document.getElementById('randomized-ils-container');
+      const shuffledItems = shuffle([...ilsBank]);
+
+      shuffledItems.forEach((item, index) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'question-block';
+        
+        const shuffledOpts = shuffle([...item.opts]);
+        
+        let html = `<div class="question-title">${index + 3}. ${item.q}</div><div class="option-list">`;
+        shuffledOpts.forEach(opt => {
+          html += `
+            <label class="option-label">
+              <input type="radio" name="${item.id}" value="${opt.val}" required> ${opt.text}
+            </label>`;
+        });
+        html += `</div>`;
+        qDiv.innerHTML = html;
+        container.appendChild(qDiv);
+      });
+    }
+    renderDiagnosticSurvey();
+
+    // Toggle Survey visibility based on consent
     document.querySelectorAll('input[name="consent"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
         const qBlock = document.getElementById('survey-questions');
@@ -326,7 +335,7 @@
     });
 
     // ==========================================
-    // 2. SURVEY SUBMISSION & TELEMETRY
+    // 3. SURVEY SUBMISSION & TELEMETRY
     // ==========================================
     function handleSurveySubmit(e) {
       e.preventDefault();
@@ -341,14 +350,12 @@
         return;
       }
 
-      // Calculate Felder ILS Score (Sum of 11 items: Sequential = +1, Global = -1)
       let ilsScore = 0;
       for (let i = 1; i <= 11; i++) {
         ilsScore += parseInt(formData.get(`ils_${i}`) || 0);
       }
       const priorExp = formData.get('prior_sql') || '0';
 
-      // Log Survey Telemetry to Google Sheet
       const surveyPayload = {
         student_id: studentId,
         step: "DIAGNOSTIC_COMPLETED",
@@ -365,7 +372,6 @@
         body: JSON.stringify(surveyPayload)
       }).catch(err => console.error("Telemetry error:", err));
 
-      // Transition Screen Based on Arm
       document.getElementById('survey-screen').style.display = 'none';
 
       if (assignedArm === 'ctrl') {
@@ -377,7 +383,7 @@
     }
 
     // ==========================================
-    // 3. SANDBOX ENGINE & CURRICULUM
+    // 4. SANDBOX ENGINE & CURRICULUM
     // ==========================================
     let currentStep = 1;
     let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -505,7 +511,7 @@
         curriculum[currentStep].validate();
 
         out.className = 'output-success';
-        out.innerText = `Query executed successfully! (${results.length} result set returned). Criteria satisfied!`;
+        out.innerText = `Query executed successfully! Criteria satisfied!`;
 
         if (results.length > 0) {
           const res = results[results.length - 1];
@@ -589,7 +595,7 @@
       out.className = 'output-success';
       out.innerHTML = `<strong><i class="fa-solid fa-circle-check"></i> CONGRATULATIONS!</strong><br>` +
                       `You have completed the Hands-On SQL Launch Module. Your progress has been logged.<br>` +
-                      `You are now fully prepared to begin Section 1 & 2 in the course materials.`;
+                      `You are now prepared to begin Section 1 & 2 in the course materials.`;
     }
   </script>
 </body>
