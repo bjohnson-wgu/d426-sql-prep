@@ -134,7 +134,7 @@
       <!-- Full Vertical Plain-Language Consent Document -->
       <div class="consent-document">
         <p><strong>Study Title:</strong> Learning Preferences and Course Sequencing in Online Database Education</p>
-        <p><strong>Researcher:</strong> Bruce C. Johnson III, Course Instructor, College of Information Technology (bruce.johnson@wgu.edu)</p>
+        <p><strong>Researcher:</strong> Bruce C. Johnson III, Course Instructor, College of Information Technology (b.johnson1@wgu.edu)</p>
         
         <div class="consent-callout">
           <strong>Notice Regarding WGU Sponsorship:</strong><br>
@@ -144,15 +144,15 @@
 
         <p><strong>1. What is this study about?</strong> We are studying how the order of course topics affects learning in D426 (Data Management Foundations). Specifically, we are testing whether starting with SQL coding practice before reading database theory affects the time students spend on the course and how they do on their final exam.</p>
 
-        <p><strong>2. Age Requirement:</strong> You must be at least <strong>18 years old</strong> to take part. If you are under 18, you cannot participate in this study.</p>
+        <p><strong>2. Age Requirement:</strong> You must be at least 18 years old to take part. If you are under 18, you cannot participate in this study.</p>
 
-        <p><strong>3. Your Choice (Voluntary):</strong> Taking part is 100% voluntary. You can choose not to join, or you can stop at any time. Choosing not to participate will have <strong>no effect on your course grade, academic progress, tuition, or your access to instructors, cohorts, and study resources.</strong></p>
+        <p><strong>3. Your Choice (Voluntary):</strong> Taking part is 100% voluntary. You can choose not to join, or you can stop at any time. Choosing not to participate will have no effect on your course grade, academic progress, tuition, or your access to instructors, cohorts, and study resources.</p>
 
         <p><strong>4. What will you do?</strong> If you agree, you will answer a brief 3-minute questionnaire about your study habits and prior SQL experience. Depending on your randomly assigned group, you may also get optional access to an interactive hands-on SQL practice tool.</p>
 
         <p><strong>5. Privacy & Your Information:</strong> We use your student ID solely to match your survey responses with your course progress. Before analyzing any data, your name and ID will be removed and replaced with a random code. Only group summary numbers will ever be reported or published.</p>
 
-        <p><strong>6. Questions & Contacts:</strong> If you have questions about the study, contact Bruce Johnson at bruce.johnson@wgu.edu. For questions regarding your rights as a research participant, contact the WGU Institutional Review Board at irb@wgu.edu.</p>
+        <p><strong>6. Questions & Contacts:</strong> If you have questions about the study, contact Bruce Johnson at b.johnson1@wgu.edu. If you have questions about your rights as a research participant, contact the WGU Institutional Review Board at irb@wgu.edu.</p>
       </div>
 
       <form id="diagnostic-form" onsubmit="handleSurveySubmit(event)">
@@ -185,13 +185,13 @@
           </div>
 
           <div style="margin: 1.25rem 0 0.35rem 0; font-weight: 700; color: var(--wgu-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.25rem;">
-            Study & Problem Solving Preferences (Felder-Soloman ILS)
+            Study & Problem Solving Preferences
           </div>
           <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem;">
             For each of the following questions, choose the option that best describes how you prefer to learn.
           </p>
 
-          <!-- Shuffled ILS Items Container -->
+          <!-- Shuffled Survey Items Container -->
           <div id="randomized-ils-container"></div>
         </div>
 
@@ -352,7 +352,7 @@
     }
 
     // ==========================================
-    // 3. FELDER-SOLOMAN RANDOMIZED GENERATOR
+    // 3. STUDY PREFERENCES RANDOMIZED GENERATOR
     // ==========================================
     const ilsBank = [
       { id: "ils_1", q: "When I solve math or logic problems, I usually:", 
