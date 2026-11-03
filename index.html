@@ -30,7 +30,7 @@
     .container { max-width: 980px; margin: 1.5rem auto; padding: 0 1rem; }
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
 
-    /* Consent & IRB Styles - Full Vertical Layout */
+    /* Consent Styles - Plain English & Full Vertical Layout */
     .consent-header { margin-bottom: 0.75rem; }
     .consent-header h2 { color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.25rem; }
     .consent-document { 
@@ -38,7 +38,7 @@
       border: 1px solid #cbd5e1; 
       border-radius: 6px; 
       padding: 1.25rem; 
-      font-size: 0.875rem; 
+      font-size: 0.88rem; 
       color: #334155; 
       line-height: 1.6; 
       margin-bottom: 1.25rem; 
@@ -122,51 +122,51 @@
 
   <div class="container">
 
-    <!-- SCREEN 1: FULL VERTICAL INFORMED CONSENT & COMPACT INTAKE -->
+    <!-- SCREEN 1: PLAIN-LANGUAGE INFORMED CONSENT & INTAKE -->
     <div id="survey-screen" class="card">
       <div class="consent-header">
         <h2>Informed Consent & Research Participation Agreement</h2>
         <p style="font-size: 0.85rem; color: #64748b;">
-          Please review the following study information carefully before deciding whether to participate.
+          Please read this short form before deciding whether to take part in this research study.
         </p>
       </div>
 
-      <!-- Full Vertical Unscrolled Consent Document -->
+      <!-- Full Vertical Plain-Language Consent Document -->
       <div class="consent-document">
-        <p><strong>Study Title:</strong> Evaluating Curricular Sequencing and Learning Preferences in Online Database Education</p>
-        <p><strong>Principal Investigator:</strong> Bruce C. Johnson III, Ph.D., Course Instructor, College of Information Technology (bruce.johnson@wgu.edu)</p>
+        <p><strong>Study Title:</strong> Learning Preferences and Course Sequencing in Online Database Education</p>
+        <p><strong>Researcher:</strong> Bruce C. Johnson III, Course Instructor, College of Information Technology (bruce.johnson@wgu.edu)</p>
         
         <div class="consent-callout">
-          <strong>Institutional Non-Sponsorship Disclosure:</strong><br>
-          This survey and research project is an independent academic investigation conducted by Bruce Johnson. 
-          <em>This study is NOT sponsored, funded, or mandated by Western Governors University (WGU).</em>
+          <strong>Notice Regarding WGU Sponsorship:</strong><br>
+          This research study is being conducted independently by instructor Bruce Johnson. 
+          <em>This study is NOT sponsored, funded, or required by Western Governors University (WGU).</em>
         </div>
 
-        <p><strong>1. Purpose of the Study:</strong> You are invited to take part in an educational research study examining whether starting with hands-on query mechanics before reading abstract theoretical concepts (such as normal forms and cardinality) influences study velocity and objective assessment outcomes in D426 (Data Management Foundations).</p>
+        <p><strong>1. What is this study about?</strong> We are studying how the order of course topics affects learning in D426 (Data Management Foundations). Specifically, we are testing whether starting with SQL coding practice before reading database theory affects the time students spend on the course and how they do on their final exam.</p>
 
-        <p><strong>2. Age & Eligibility Requirement:</strong> You must be at least <strong>18 years of age</strong> to participate in this study. If you are under 18 years of age, you are not eligible to take part.</p>
+        <p><strong>2. Age Requirement:</strong> You must be at least <strong>18 years old</strong> to take part. If you are under 18, you cannot participate in this study.</p>
 
-        <p><strong>3. Completely Voluntary Participation & No Grade Impact:</strong> Your participation is 100% voluntary. You may choose not to participate, or discontinue at any time. Opting out will have <strong>zero impact on your course grade, academic standing, tuition, progress pacing, or access to course materials and faculty coaching.</strong></p>
+        <p><strong>3. Your Choice (Voluntary):</strong> Taking part is 100% voluntary. You can choose not to join, or you can stop at any time. Choosing not to participate will have <strong>no effect on your course grade, academic progress, tuition, or your access to instructors, cohorts, and study resources.</strong></p>
 
-        <p><strong>4. Study Procedures:</strong> If you consent to participate, you will complete a brief 3-minute diagnostic regarding your prior SQL experience and study preferences (Felder-Soloman ILS)[cite: 1, 2]. Depending on study arm assignment, you may also receive optional access to an interactive browser-based SQL sandbox.</p>
+        <p><strong>4. What will you do?</strong> If you agree, you will answer a brief 3-minute questionnaire about your study habits and prior SQL experience. Depending on your randomly assigned group, you may also get optional access to an interactive hands-on SQL practice tool.</p>
 
-        <p><strong>5. Privacy & Data Handling:</strong> Telemetry interactions and survey responses are securely linked with your student ID for academic matching. All data will be de-identified and randomized prior to statistical analysis. Only aggregate findings will ever be reported.</p>
+        <p><strong>5. Privacy & Your Information:</strong> We use your student ID solely to match your survey responses with your course progress. Before analyzing any data, your name and ID will be removed and replaced with a random code. Only group summary numbers will ever be reported or published.</p>
 
-        <p><strong>6. Contact Information:</strong> If you have questions about the research, contact Bruce Johnson at bruce.johnson@wgu.edu. For questions regarding your rights as a research subject, you may contact the WGU Institutional Review Board at irb@wgu.edu.</p>
+        <p><strong>6. Questions & Contacts:</strong> If you have questions about the study, contact Bruce Johnson at bruce.johnson@wgu.edu. For questions regarding your rights as a research participant, contact the WGU Institutional Review Board at irb@wgu.edu.</p>
       </div>
 
       <form id="diagnostic-form" onsubmit="handleSurveySubmit(event)">
-        <!-- Question 1: Robust Consent & 18+ Certification -->
+        <!-- Question 1: Clear Consent Decision & 18+ Certification -->
         <div class="question-block" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:0.9rem; margin-bottom:1.25rem;">
-          <div class="question-title">Question 1: Eligibility Certification & Consent Decision</div>
+          <div class="question-title">Question 1: Age Certification & Participation Decision</div>
           <div class="option-list">
             <label class="option-label">
               <input type="radio" name="consent" value="yes" required>
-              <span><strong>YES, I agree to participate.</strong> I certify that I am at least 18 years of age, I have read and understood this consent document, and I voluntarily choose to take part in this research study.</span>
+              <span><strong>YES, I agree to participate.</strong> I certify that I am at least 18 years old, I have read and understand this consent form, and I voluntarily choose to take part in this research study.</span>
             </label>
             <label class="option-label">
               <input type="radio" name="consent" value="no" required>
-              <span><strong>NO, I do NOT wish to participate (or I am under 18 years of age).</strong> Take me directly to standard course materials without participating.</span>
+              <span><strong>NO, I do NOT want to participate (or I am under 18 years old).</strong> Take me directly to standard course materials without participating.</span>
             </label>
           </div>
         </div>
@@ -174,10 +174,10 @@
         <div id="survey-questions">
           <!-- Question 2: Prior Knowledge Covariate -->
           <div class="question-block">
-            <div class="question-title">Question 2: Prior to starting D426, how would you rate your experience with SQL and relational databases?</div>
+            <div class="question-title">Question 2: Before starting D426, how would you rate your experience with SQL and databases?</div>
             <div class="option-list">
               <label class="option-label"><input type="radio" name="prior_sql" value="1" required> <span>1 - None (Never seen or written SQL code)</span></label>
-              <label class="option-label"><input type="radio" name="prior_sql" value="2" required> <span>2 - Novice (Familiar with the concept, but little to no query experience)</span></label>
+              <label class="option-label"><input type="radio" name="prior_sql" value="2" required> <span>2 - Novice (Know what it is, but little to no coding experience)</span></label>
               <label class="option-label"><input type="radio" name="prior_sql" value="3" required> <span>3 - Intermediate (Have written basic SELECT, INSERT, or UPDATE queries)</span></label>
               <label class="option-label"><input type="radio" name="prior_sql" value="4" required> <span>4 - Advanced (Regularly write multi-table JOINs, aggregations, or subqueries)</span></label>
               <label class="option-label"><input type="radio" name="prior_sql" value="5" required> <span>5 - Professional (Work or have worked managing databases professionally)</span></label>
@@ -188,20 +188,20 @@
             Study & Problem Solving Preferences (Felder-Soloman ILS)
           </div>
           <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem;">
-            For each of the following items, select the option that best reflects your general learning preferences.
+            For each of the following questions, choose the option that best describes how you prefer to learn.
           </p>
 
-          <!-- Randomized ILS Container -->
+          <!-- Shuffled ILS Items Container -->
           <div id="randomized-ils-container"></div>
         </div>
 
         <button type="submit" id="submit-btn" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
-          <i class="fa-solid fa-paper-plane"></i> Submit Diagnostic & Continue
+          Submit & Continue
         </button>
       </form>
 
       <div class="citation-footer">
-        Index of Learning Styles © Richard M. Felder and Barbara A. Soloman, North Carolina State University[cite: 1, 2]. Administered under non-commercial educational research provisions[cite: 2].
+        Index of Learning Styles copyright Richard M. Felder and Barbara A. Soloman, North Carolina State University. Administered under non-commercial educational research provisions.
       </div>
     </div>
 
@@ -230,7 +230,7 @@
           <i class="fa-solid fa-compass"></i> Why Start with the SQL Sandbox?
         </h3>
         <p style="font-size: 0.88rem; color: #334155; margin-bottom: 0.6rem;">
-          Relational concepts (cardinality, keys, and normal forms) are easier to understand once you see tables created and manipulated in code. This module builds core query mechanics before you tackle abstract theory in the text.
+          Database concepts are often easier to understand once you see tables created and manipulated in code. This practice tool builds core query skills before you read the theoretical chapters in your textbook.
         </p>
         <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.82rem; color: #64748b;">
           <span><i class="fa-solid fa-clock"></i> <strong>Estimated Time:</strong> ~15–20 minutes</span>
@@ -251,7 +251,7 @@
         <div class="card">
           <h2 id="step-title" style="margin-bottom: 0.5rem; font-size: 1.1rem;">Module 1: Schema Architecture (CREATE TABLE)</h2>
           <p id="step-instructions" style="font-size: 0.88rem; color: #475569; margin-bottom: 1rem;">
-            Learn how to define a schema in MySQL using <code>CREATE TABLE</code> with strict column data types.
+            Learn how to define a table in MySQL using <code>CREATE TABLE</code> with specific column data types.
           </p>
           
           <div class="video-container">
@@ -417,11 +417,11 @@
         if (e.target.value === 'no') {
           qBlock.style.display = 'none';
           qBlock.querySelectorAll('input').forEach(i => i.required = false);
-          submitBtn.innerHTML = '<i class="fa-solid fa-arrow-right"></i> Proceed to Standard Course Materials';
+          submitBtn.innerHTML = 'Proceed to Standard Course Materials';
         } else {
           qBlock.style.display = 'block';
           qBlock.querySelectorAll('input').forEach(i => i.required = true);
-          submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Diagnostic & Continue';
+          submitBtn.innerHTML = 'Submit & Continue';
         }
       });
     });
@@ -442,7 +442,7 @@
         
         const controlScreen = document.getElementById('control-screen');
         document.getElementById('landing-title').innerText = "Participation Opt-Out Acknowledged";
-        document.getElementById('landing-msg').innerText = "Thank you. You have chosen not to participate in this study. Opting out will have no effect on your course grade or standing. You can access your standard course materials below:";
+        document.getElementById('landing-msg').innerText = "Thank you. You have chosen not to take part in this research study. This choice has zero effect on your course grade or standing. You can access your standard course materials below:";
         controlScreen.style.display = 'block';
         return;
       }
