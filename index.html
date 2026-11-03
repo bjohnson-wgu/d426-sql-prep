@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>D426: Data Management Foundations Launch</title>
+  <title>D426: Data Management Foundations Research Diagnostic & Tools</title>
   <!-- UI Icons & In-Browser SQL Engine -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
@@ -23,8 +23,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 60px; }
     
-    .review-banner { background: #fffbeb; border-bottom: 2px solid #f59e0b; padding: 0.6rem 1rem; text-align: center; font-size: 0.82rem; color: #92400e; font-weight: 600; }
-
     header { background: var(--wgu-blue); color: white; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     header h1 { font-size: 1.15rem; font-weight: 700; }
     #student-badge { background: rgba(255,255,255,0.15); padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem; }
@@ -32,17 +30,39 @@
     .container { max-width: 980px; margin: 1.5rem auto; padding: 0 1rem; }
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
 
-    .survey-intro { margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
-    .survey-intro h2 { color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.5rem; }
-    .info-callout { background: #f0f7ff; border-left: 4px solid var(--wgu-blue); padding: 0.9rem; font-size: 0.88rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
-    
+    /* Consent & IRB Styles */
+    .consent-header { margin-bottom: 1rem; }
+    .consent-header h2 { color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.35rem; }
+    .consent-scrollbox { 
+      background: #ffffff; 
+      border: 1px solid #cbd5e1; 
+      border-radius: 6px; 
+      padding: 1.1rem; 
+      font-size: 0.86rem; 
+      color: #334155; 
+      line-height: 1.6; 
+      max-height: 280px; 
+      overflow-y: auto; 
+      margin-bottom: 1.25rem; 
+    }
+    .consent-scrollbox p { margin-bottom: 0.75rem; }
+    .consent-scrollbox p:last-child { margin-bottom: 0; }
+    .consent-callout {
+      background: #eff6ff; 
+      border-left: 4px solid var(--wgu-blue); 
+      padding: 0.65rem 0.85rem; 
+      margin: 0.75rem 0; 
+      border-radius: 0 4px 4px 0;
+    }
+
     .question-block { margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9; }
     .question-title { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.5rem; color: #0f172a; }
-    .option-list { display: flex; flex-direction: column; gap: 0.4rem; }
-    .option-label { display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 4px; min-height: 44px; }
+    .option-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .option-label { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.88rem; cursor: pointer; padding: 0.5rem 0.6rem; border-radius: 4px; min-height: 44px; }
     .option-label:hover { background: #f8fafc; }
-    .option-label input { width: 18px; height: 18px; }
+    .option-label input { margin-top: 0.2rem; width: 18px; height: 18px; flex-shrink: 0; }
 
+    /* Buttons */
     .btn { padding: 0.65rem 1.25rem; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.92rem; text-decoration: none; justify-content: center; }
     .btn-primary { background: var(--wgu-blue); color: white; }
     .btn-primary:hover { background: #00224f; }
@@ -50,6 +70,7 @@
     .btn-secondary { background: #e2e8f0; color: #334155; }
     .btn-hint { background: #f59e0b; color: white; font-size: 0.8rem; padding: 0.4rem 0.8rem; }
 
+    /* Sandbox Stepper */
     .stepper { display: flex; gap: 0.4rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
     .step-tab { flex: 1; min-width: 140px; padding: 0.6rem 0.4rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; text-align: center; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
     .step-tab.active { background: var(--wgu-blue); color: white; border-color: var(--wgu-blue); }
@@ -82,53 +103,69 @@
 </head>
 <body>
 
-  <div class="review-banner">
-    <i class="fa-solid fa-flask"></i> RESEARCH PROTOCOL REVIEW DEMONSTRATION — DRAFT STAGING ENVIRONMENT
-  </div>
-
   <header>
     <div>
       <h1>D426: Data Management Foundations</h1>
-      <div style="font-size: 0.78rem; opacity: 0.85;">Inductive Relational Scaffolding Module (WGU IT Faculty Research)</div>
+      <div style="font-size: 0.78rem; opacity: 0.85;">Curricular Sequencing Research Project</div>
     </div>
     <div id="student-badge">Student ID: <span id="display-sid">Loading...</span></div>
   </header>
 
   <div class="container">
 
-    <!-- SCREEN 1: INTAKE DIAGNOSTIC & AGE/CONSENT GATE -->
+    <!-- SCREEN 1: ROBUST CONSENT FORM & INTAKE INSTRUMENT -->
     <div id="survey-screen" class="card">
-      <div class="survey-intro">
-        <h2>Course Navigation & Learning Strategy Diagnostic</h2>
-        <div class="info-callout">
-          <strong>Instructional Research & Diagnostic Disclosure:</strong><br>
-          Welcome to D426! As part of an ongoing instructional initiative to optimize course navigation, study pacing, and technical preparation for adult learners, you are invited to complete this brief 3-minute diagnostic.<br><br>
-          • <strong>Voluntary Participation:</strong> Participation is completely voluntary. Choosing not to participate or stopping at any time will have zero impact on your course grade, academic standing, or access to course materials and instructors.<br>
-          • <strong>Confidentiality:</strong> Responses are analyzed in de-identified aggregate formats for instructional evaluation.
+      <div class="consent-header">
+        <h2>Informed Consent & Research Participation Agreement</h2>
+        <p style="font-size: 0.85rem; color: #64748b;">
+          Please review the following study information carefully before deciding whether to participate.
+        </p>
+      </div>
+
+      <!-- Scrollable Full Consent Dossier (IRB Mandate) -->
+      <div class="consent-scrollbox">
+        <p><strong>Study Title:</strong> Evaluating Curricular Sequencing and Learning Preferences in Online Database Education</p>
+        <p><strong>Principal Investigator:</strong> Bruce C. Johnson III, Ph.D., Course Instructor, College of Information Technology (bruce.johnson@wgu.edu)</p>
+        
+        <div class="consent-callout">
+          <strong>Institutional Non-Sponsorship Disclosure:</strong><br>
+          This survey and research project is an independent academic investigation conducted by Bruce Johnson. 
+          <em>This study is NOT sponsored, funded, or mandated by Western Governors University (WGU).</em>
         </div>
+
+        <p><strong>1. Purpose of the Study:</strong> You are invited to take part in an educational research study examining whether starting with hands-on query mechanics before reading abstract theoretical concepts (such as normal forms and cardinality) influences study velocity and objective assessment outcomes in D426 (Data Management Foundations).</p>
+
+        <p><strong>2. Age & Eligibility Requirement:</strong> You must be at least <strong>18 years of age</strong> to participate in this study. If you are under 18 years of age, you are not eligible to take part.</p>
+
+        <p><strong>3. Completely Voluntary Participation & No Grade Impact:</strong> Your participation is 100% voluntary. You may choose not to participate, or discontinue at any time. Opting out will have <strong>zero impact on your course grade, academic standing, tuition, progress pacing, or access to course materials and faculty coaching.</strong></p>
+
+        <p><strong>4. Study Procedures:</strong> If you consent to participate, you will complete a brief 3-minute diagnostic regarding your prior SQL experience and study preferences (Felder-Soloman ILS). Depending on study arm assignment, you may also receive optional access to an interactive browser-based SQL sandbox.</p>
+
+        <p><strong>5. Privacy & Data Handling:</strong> Telemetry interactions and survey responses are securely linked with your student ID for academic matching. All data will be de-identified and randomized prior to statistical analysis. Only aggregate findings will ever be reported.</p>
+
+        <p><strong>6. Contact Information:</strong> If you have questions about the research, contact Bruce Johnson at bruce.johnson@wgu.edu. For questions regarding your rights as a research subject, you may contact the WGU Institutional Review Board at irb@wgu.edu.</p>
       </div>
 
       <form id="diagnostic-form" onsubmit="handleSurveySubmit(event)">
-        <div class="question-block">
-          <div class="question-title">1. Study Eligibility & Voluntary Participation Attestation:</div>
-          <p style="font-size: 0.84rem; color: #475569; margin-bottom: 0.4rem;">
-            To participate in this instructional evaluation, you must be at least 18 years of age.
-          </p>
+        <!-- Question 1: Robust Consent & 18+ Certification -->
+        <div class="question-block" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:1rem;">
+          <div class="question-title">Question 1: Eligibility Certification & Consent Decision</div>
           <div class="option-list">
             <label class="option-label">
-              <input type="radio" name="consent" value="yes" required> 
-              I confirm that I am 18 years of age or older, and I agree to participate in this diagnostic.
+              <input type="radio" name="consent" value="yes" required>
+              <span><strong>YES, I agree to participate.</strong> I certify that I am at least 18 years of age, I have read and understood this consent document, and I voluntarily choose to take part in this research study.</span>
             </label>
             <label class="option-label">
-              <input type="radio" name="consent" value="no" required> 
-              I am under 18 years of age, OR I choose not to participate (take me directly to standard course materials).
+              <input type="radio" name="consent" value="no" required>
+              <span><strong>NO, I do NOT wish to participate (or I am under 18 years of age).</strong> Take me directly to standard course materials without participating.</span>
             </label>
           </div>
         </div>
 
         <div id="survey-questions">
+          <!-- Question 2: Prior Knowledge Covariate -->
           <div class="question-block">
-            <div class="question-title">2. Prior to starting D426, how would you rate your experience with SQL and relational databases?</div>
+            <div class="question-title">Question 2: Prior to starting D426, how would you rate your experience with SQL and relational databases?</div>
             <div class="option-list">
               <label class="option-label"><input type="radio" name="prior_sql" value="1" required> 1 - None (Never seen or written SQL code)</label>
               <label class="option-label"><input type="radio" name="prior_sql" value="2" required> 2 - Novice (Familiar with the concept, but little to no query experience)</label>
@@ -145,25 +182,26 @@
             For each of the following items, select the option that best reflects your general learning preferences.
           </p>
 
+          <!-- Randomized ILS Container -->
           <div id="randomized-ils-container"></div>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
+        <button type="submit" id="submit-btn" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
           <i class="fa-solid fa-paper-plane"></i> Submit Diagnostic & Continue
         </button>
       </form>
 
       <div class="citation-footer">
-        Index of Learning Styles (c) Richard M. Felder and Barbara A. Soloman, North Carolina State University. Administered under non-commercial educational research provisions.
+        Index of Learning Styles © Richard M. Felder and Barbara A. Soloman, North Carolina State University. Administered under non-commercial educational research provisions.
       </div>
     </div>
 
-    <!-- SCREEN 2A: CONTROL ARM LANDING -->
+    <!-- SCREEN 2A: CONTROL / OPT-OUT SCREEN -->
     <div id="control-screen" class="card" style="display: none; text-align: center; padding: 2.5rem 1.5rem;">
-      <i class="fa-solid fa-circle-check" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
-      <h2 style="color: var(--wgu-blue); margin-bottom: 0.75rem;">Diagnostic Complete</h2>
-      <p style="max-width: 600px; margin: 0 auto 1.5rem auto; color: #475569; font-size: 0.95rem;">
-        Thank you for submitting your course preferences! Your responses have been securely logged. You are ready to begin Section 1 of the official course material.
+      <i id="landing-icon" class="fa-solid fa-circle-check" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
+      <h2 id="landing-title" style="color: var(--wgu-blue); margin-bottom: 0.75rem;">Standard Course Materials</h2>
+      <p id="landing-msg" style="max-width: 600px; margin: 0 auto 1.5rem auto; color: #475569; font-size: 0.95rem;">
+        You are now ready to begin Section 1 of the official course curriculum.
       </p>
       <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
         <a href="https://my.wgu.edu" class="btn btn-primary" target="_blank" rel="noopener">
@@ -175,7 +213,7 @@
       </div>
     </div>
 
-    <!-- SCREEN 2B: INTERVENTION ARM (5-MODULE SANDBOX) -->
+    <!-- SCREEN 2B: INTERVENTION ARM (5-MODULE WASM SANDBOX) -->
     <div id="sandbox-screen" style="display: none;">
       
       <div class="card" style="background: #f8fafc; border-left: 4px solid var(--wgu-blue);">
@@ -191,7 +229,7 @@
         </div>
       </div>
 
-      <!-- 5-Module Progression Tabs -->
+      <!-- Module Navigation Stepper -->
       <div class="stepper">
         <div class="step-tab active" id="tab-1" onclick="switchStep(1)">Module 1: DDL Schema</div>
         <div class="step-tab" id="tab-2" onclick="switchStep(2)">Module 2: DML Population</div>
@@ -251,7 +289,9 @@
   </div>
 
   <script>
+    // ==========================================
     // 1. CONFIGURATION & URL PARSING
+    // ==========================================
     const TELEMETRY_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxsw1AJtmsn9rwmqc5AIh15owBo909L0NchTVAJw7tX4offSpxDloWKS2wJ1Mf31LdOKQ/exec";
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -266,7 +306,9 @@
 
     const STORAGE_KEY = `d426_state_${studentId}`;
 
+    // ==========================================
     // 2. LOCALSTORAGE STATE PERSISTENCE
+    // ==========================================
     function getStoredState() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -280,6 +322,7 @@
       try {
         const current = getStoredState() || {
           surveyCompleted: false,
+          optedOut: false,
           currentStep: 1,
           completedSteps: [],
           attemptsCount: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
@@ -299,7 +342,9 @@
       saveState({ codeDrafts: drafts });
     }
 
+    // ==========================================
     // 3. FELDER-SOLOMAN RANDOMIZED GENERATOR
+    // ==========================================
     const ilsBank = [
       { id: "ils_1", q: "When I solve math or logic problems, I usually:", 
         opts: [{ text: "Work one step at a time.", val: 1 }, { text: "Just see solutions, then have to figure out the steps to get to them.", val: -1 }] },
@@ -342,11 +387,11 @@
         qDiv.className = 'question-block';
         const shuffledOpts = shuffle([...item.opts]);
         
-        let html = `<div class="question-title">${index + 3}. ${item.q}</div><div class="option-list">`;
+        let html = `<div class="question-title">Question ${index + 3}: ${item.q}</div><div class="option-list">`;
         shuffledOpts.forEach(opt => {
           html += `
             <label class="option-label">
-              <input type="radio" name="${item.id}" value="${opt.val}" required> ${opt.text}
+              <input type="radio" name="${item.id}" value="${opt.val}" required> <span>${opt.text}</span>
             </label>`;
         });
         html += `</div>`;
@@ -355,31 +400,41 @@
       });
     }
 
+    // Toggle Survey visibility based on consent selection
     document.querySelectorAll('input[name="consent"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
         const qBlock = document.getElementById('survey-questions');
+        const submitBtn = document.getElementById('submit-btn');
         if (e.target.value === 'no') {
-          qBlock.style.opacity = '0.3';
-          qBlock.querySelectorAll('input').forEach(i => i.disabled = true);
+          qBlock.style.display = 'none';
+          qBlock.querySelectorAll('input').forEach(i => i.required = false);
+          submitBtn.innerHTML = '<i class="fa-solid fa-arrow-right"></i> Proceed to Standard Course Materials';
         } else {
-          qBlock.style.opacity = '1.0';
-          qBlock.querySelectorAll('input').forEach(i => i.disabled = false);
+          qBlock.style.display = 'block';
+          qBlock.querySelectorAll('input').forEach(i => i.required = true);
+          submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Diagnostic & Continue';
         }
       });
     });
 
+    // ==========================================
     // 4. SURVEY SUBMISSION & TELEMETRY
+    // ==========================================
     function handleSurveySubmit(e) {
       e.preventDefault();
       const form = document.getElementById('diagnostic-form');
       const formData = new FormData(form);
       const consent = formData.get('consent');
 
+      // Immediate Coercion-Free Opt Out Handling
       if (consent === 'no') {
-        alert("You have been redirected to standard course materials. Thank you!");
+        saveState({ surveyCompleted: true, optedOut: true });
         document.getElementById('survey-screen').style.display = 'none';
-        document.getElementById('control-screen').style.display = 'block';
-        saveState({ surveyCompleted: true });
+        
+        const controlScreen = document.getElementById('control-screen');
+        document.getElementById('landing-title').innerText = "Participation Opt-Out Acknowledged";
+        document.getElementById('landing-msg').innerText = "Thank you. You have chosen not to participate in this study. Opting out will have no effect on your course grade or standing. You can access your standard course materials below:";
+        controlScreen.style.display = 'block';
         return;
       }
 
@@ -405,7 +460,7 @@
         body: JSON.stringify(surveyPayload)
       }).catch(err => console.error("Telemetry error:", err));
 
-      saveState({ surveyCompleted: true });
+      saveState({ surveyCompleted: true, optedOut: false });
       document.getElementById('survey-screen').style.display = 'none';
 
       if (assignedArm === 'ctrl') {
@@ -416,7 +471,9 @@
       }
     }
 
+    // ==========================================
     // 5. SANDBOX ENGINE & CURRICULUM
+    // ==========================================
     let currentStep = 1;
     let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     let sessionStartTime = Date.now();
@@ -603,7 +660,7 @@
       } else if (upper.includes("UPDATE") && !upper.includes("WHERE")) {
         remText.innerText = "Safety Alert: You wrote an UPDATE without a WHERE clause! Always specify which row to update.";
       } else if (errMsg.includes("no such table")) {
-        remText.innerText = "The database cannot find that table. Make sure you completed Step 1 and didn't misspell the table name.";
+        remText.innerText = "The database cannot find that table. Make sure you completed Module 1 and didn't misspell the table name.";
       } else {
         remText.innerText = `Error detail: ${errMsg}. Check semicolons, spelling of keywords, and quotes around text strings.`;
       }
@@ -660,13 +717,15 @@
                       `You are now prepared to begin Section 1 & 2 in the course materials.`;
     }
 
-    // 6. INITIALIZATION
+    // ==========================================
+    // 6. INITIALIZATION & REHYDRATION
+    // ==========================================
     renderDiagnosticSurvey();
 
     const savedState = getStoredState();
     if (savedState && savedState.surveyCompleted) {
       document.getElementById('survey-screen').style.display = 'none';
-      if (assignedArm === 'ctrl') {
+      if (savedState.optedOut || assignedArm === 'ctrl') {
         document.getElementById('control-screen').style.display = 'block';
       } else {
         document.getElementById('sandbox-screen').style.display = 'block';
