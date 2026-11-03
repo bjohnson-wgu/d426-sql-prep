@@ -30,37 +30,46 @@
     .container { max-width: 980px; margin: 1.5rem auto; padding: 0 1rem; }
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
 
-    /* Consent & IRB Styles */
-    .consent-header { margin-bottom: 1rem; }
-    .consent-header h2 { color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.35rem; }
-    .consent-scrollbox { 
+    /* Consent & IRB Styles - Full Vertical Layout */
+    .consent-header { margin-bottom: 0.75rem; }
+    .consent-header h2 { color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.25rem; }
+    .consent-document { 
       background: #ffffff; 
       border: 1px solid #cbd5e1; 
       border-radius: 6px; 
-      padding: 1.1rem; 
-      font-size: 0.86rem; 
+      padding: 1.25rem; 
+      font-size: 0.875rem; 
       color: #334155; 
       line-height: 1.6; 
-      max-height: 280px; 
-      overflow-y: auto; 
       margin-bottom: 1.25rem; 
     }
-    .consent-scrollbox p { margin-bottom: 0.75rem; }
-    .consent-scrollbox p:last-child { margin-bottom: 0; }
+    .consent-document p { margin-bottom: 0.65rem; }
+    .consent-document p:last-child { margin-bottom: 0; }
     .consent-callout {
       background: #eff6ff; 
       border-left: 4px solid var(--wgu-blue); 
       padding: 0.65rem 0.85rem; 
-      margin: 0.75rem 0; 
+      margin: 0.65rem 0; 
       border-radius: 0 4px 4px 0;
     }
 
-    .question-block { margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9; }
-    .question-title { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.5rem; color: #0f172a; }
-    .option-list { display: flex; flex-direction: column; gap: 0.5rem; }
-    .option-label { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.88rem; cursor: pointer; padding: 0.5rem 0.6rem; border-radius: 4px; min-height: 44px; }
+    /* Question & Compact Option Styles */
+    .question-block { margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9; }
+    .question-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.35rem; color: #0f172a; line-height: 1.35; }
+    .option-list { display: flex; flex-direction: column; gap: 0.2rem; }
+    .option-label { 
+      display: flex; 
+      align-items: flex-start; 
+      gap: 0.55rem; 
+      font-size: 0.855rem; 
+      cursor: pointer; 
+      padding: 0.25rem 0.45rem; 
+      border-radius: 4px; 
+      min-height: 28px; 
+      line-height: 1.35;
+    }
     .option-label:hover { background: #f8fafc; }
-    .option-label input { margin-top: 0.2rem; width: 18px; height: 18px; flex-shrink: 0; }
+    .option-label input { margin-top: 0.15rem; width: 16px; height: 16px; flex-shrink: 0; }
 
     /* Buttons */
     .btn { padding: 0.65rem 1.25rem; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.92rem; text-decoration: none; justify-content: center; }
@@ -113,7 +122,7 @@
 
   <div class="container">
 
-    <!-- SCREEN 1: ROBUST CONSENT FORM & INTAKE INSTRUMENT -->
+    <!-- SCREEN 1: FULL VERTICAL INFORMED CONSENT & COMPACT INTAKE -->
     <div id="survey-screen" class="card">
       <div class="consent-header">
         <h2>Informed Consent & Research Participation Agreement</h2>
@@ -122,8 +131,8 @@
         </p>
       </div>
 
-      <!-- Scrollable Full Consent Dossier (IRB Mandate) -->
-      <div class="consent-scrollbox">
+      <!-- Full Vertical Unscrolled Consent Document -->
+      <div class="consent-document">
         <p><strong>Study Title:</strong> Evaluating Curricular Sequencing and Learning Preferences in Online Database Education</p>
         <p><strong>Principal Investigator:</strong> Bruce C. Johnson III, Ph.D., Course Instructor, College of Information Technology (bruce.johnson@wgu.edu)</p>
         
@@ -139,7 +148,7 @@
 
         <p><strong>3. Completely Voluntary Participation & No Grade Impact:</strong> Your participation is 100% voluntary. You may choose not to participate, or discontinue at any time. Opting out will have <strong>zero impact on your course grade, academic standing, tuition, progress pacing, or access to course materials and faculty coaching.</strong></p>
 
-        <p><strong>4. Study Procedures:</strong> If you consent to participate, you will complete a brief 3-minute diagnostic regarding your prior SQL experience and study preferences (Felder-Soloman ILS). Depending on study arm assignment, you may also receive optional access to an interactive browser-based SQL sandbox.</p>
+        <p><strong>4. Study Procedures:</strong> If you consent to participate, you will complete a brief 3-minute diagnostic regarding your prior SQL experience and study preferences (Felder-Soloman ILS)[cite: 1, 2]. Depending on study arm assignment, you may also receive optional access to an interactive browser-based SQL sandbox.</p>
 
         <p><strong>5. Privacy & Data Handling:</strong> Telemetry interactions and survey responses are securely linked with your student ID for academic matching. All data will be de-identified and randomized prior to statistical analysis. Only aggregate findings will ever be reported.</p>
 
@@ -148,7 +157,7 @@
 
       <form id="diagnostic-form" onsubmit="handleSurveySubmit(event)">
         <!-- Question 1: Robust Consent & 18+ Certification -->
-        <div class="question-block" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:1rem;">
+        <div class="question-block" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:0.9rem; margin-bottom:1.25rem;">
           <div class="question-title">Question 1: Eligibility Certification & Consent Decision</div>
           <div class="option-list">
             <label class="option-label">
@@ -167,18 +176,18 @@
           <div class="question-block">
             <div class="question-title">Question 2: Prior to starting D426, how would you rate your experience with SQL and relational databases?</div>
             <div class="option-list">
-              <label class="option-label"><input type="radio" name="prior_sql" value="1" required> 1 - None (Never seen or written SQL code)</label>
-              <label class="option-label"><input type="radio" name="prior_sql" value="2" required> 2 - Novice (Familiar with the concept, but little to no query experience)</label>
-              <label class="option-label"><input type="radio" name="prior_sql" value="3" required> 3 - Intermediate (Have written basic SELECT, INSERT, or UPDATE queries)</label>
-              <label class="option-label"><input type="radio" name="prior_sql" value="4" required> 4 - Advanced (Regularly write multi-table JOINs, aggregations, or subqueries)</label>
-              <label class="option-label"><input type="radio" name="prior_sql" value="5" required> 5 - Professional (Work or have worked managing databases professionally)</label>
+              <label class="option-label"><input type="radio" name="prior_sql" value="1" required> <span>1 - None (Never seen or written SQL code)</span></label>
+              <label class="option-label"><input type="radio" name="prior_sql" value="2" required> <span>2 - Novice (Familiar with the concept, but little to no query experience)</span></label>
+              <label class="option-label"><input type="radio" name="prior_sql" value="3" required> <span>3 - Intermediate (Have written basic SELECT, INSERT, or UPDATE queries)</span></label>
+              <label class="option-label"><input type="radio" name="prior_sql" value="4" required> <span>4 - Advanced (Regularly write multi-table JOINs, aggregations, or subqueries)</span></label>
+              <label class="option-label"><input type="radio" name="prior_sql" value="5" required> <span>5 - Professional (Work or have worked managing databases professionally)</span></label>
             </div>
           </div>
 
-          <div style="margin: 1.5rem 0 0.5rem 0; font-weight: 700; color: var(--wgu-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.3rem;">
+          <div style="margin: 1.25rem 0 0.35rem 0; font-weight: 700; color: var(--wgu-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.25rem;">
             Study & Problem Solving Preferences (Felder-Soloman ILS)
           </div>
-          <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 1rem;">
+          <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem;">
             For each of the following items, select the option that best reflects your general learning preferences.
           </p>
 
@@ -192,7 +201,7 @@
       </form>
 
       <div class="citation-footer">
-        Index of Learning Styles © Richard M. Felder and Barbara A. Soloman, North Carolina State University. Administered under non-commercial educational research provisions.
+        Index of Learning Styles © Richard M. Felder and Barbara A. Soloman, North Carolina State University[cite: 1, 2]. Administered under non-commercial educational research provisions[cite: 2].
       </div>
     </div>
 
@@ -426,7 +435,7 @@
       const formData = new FormData(form);
       const consent = formData.get('consent');
 
-      // Immediate Coercion-Free Opt Out Handling
+      // Direct Opt Out Handling
       if (consent === 'no') {
         saveState({ surveyCompleted: true, optedOut: true });
         document.getElementById('survey-screen').style.display = 'none';
