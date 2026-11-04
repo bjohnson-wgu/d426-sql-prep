@@ -30,7 +30,7 @@
     .container { max-width: 980px; margin: 1.5rem auto; padding: 0 1rem; }
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
 
-    /* Consent Styles - Plain English & Full Vertical Layout */
+    /* Consent Styles */
     .consent-header { margin-bottom: 0.75rem; }
     .consent-header h2 { color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.25rem; }
     .consent-document { 
@@ -53,8 +53,9 @@
       border-radius: 0 4px 4px 0;
     }
 
-    /* Question & Compact Option Styles */
-    .question-block { margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9; }
+    /* Questions & Options */
+    .question-block { margin-bottom: 1rem; padding: 0.75rem; border: 1px solid transparent; border-radius: 6px; transition: border-color 0.2s, background-color 0.2s; }
+    .question-block.unanswered { border-color: var(--danger); background-color: #fef2f2; }
     .question-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.35rem; color: #0f172a; line-height: 1.35; }
     .option-list { display: flex; flex-direction: column; gap: 0.2rem; }
     .option-label { 
@@ -63,13 +64,26 @@
       gap: 0.55rem; 
       font-size: 0.855rem; 
       cursor: pointer; 
-      padding: 0.25rem 0.45rem; 
+      padding: 0.35rem 0.45rem; 
       border-radius: 4px; 
       min-height: 28px; 
       line-height: 1.35;
     }
-    .option-label:hover { background: #f8fafc; }
+    .option-label:hover { background: #f1f5f9; }
     .option-label input { margin-top: 0.15rem; width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* Validation Banner */
+    .validation-alert {
+      display: none;
+      background: #fee2e2;
+      border: 1px solid #f87171;
+      color: #991b1b;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
 
     /* Buttons */
     .btn { padding: 0.65rem 1.25rem; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.92rem; text-decoration: none; justify-content: center; }
@@ -120,10 +134,10 @@
     <div id="student-badge">Student ID: <span id="display-sid">Loading...</span></div>
   </header>
 
-  <div class="container">
+  <div class="container" id="app-container">
 
-    <!-- SCREEN 1: PLAIN-LANGUAGE INFORMED CONSENT & INTAKE -->
-    <div id="survey-screen" class="card">
+    <!-- SCREEN 1A: STANDALONE INFORMED CONSENT & ELIGIBILITY GATE -->
+    <div id="screen-consent" class="card">
       <div class="consent-header">
         <h2>Informed Consent & Research Participation Agreement</h2>
         <p style="font-size: 0.85rem; color: #64748b;">
@@ -131,10 +145,9 @@
         </p>
       </div>
 
-      <!-- Full Vertical Plain-Language Consent Document -->
       <div class="consent-document">
         <p><strong>Study Title:</strong> Learning Preferences and Course Sequencing in Online Database Education</p>
-        <p><strong>Researcher:</strong> Bruce Johnson, Instructor, Faculty Lead, School of Technology (b.johnson1@wgu.edu)</p>
+        <p><strong>Researcher:</strong> Bruce C. Johnson III, Course Instructor, College of Information Technology (b.johnson1@wgu.edu)</p>
         
         <div class="consent-callout">
           <strong>Notice Regarding WGU Sponsorship:</strong><br>
@@ -152,50 +165,70 @@
 
         <p><strong>5. Privacy & Your Information:</strong> We use your student ID solely to match your survey responses with your course progress. Before analyzing any data, your name and ID will be removed and replaced with a random code. Only group summary numbers will ever be reported or published.</p>
 
-        <p><strong>6. Questions & Contacts:</strong> If you have questions about the study, contact Bruce Johnson at b.johnson1@wgu.edu. If you have questions about your rights as a research participant, contact the WGU Institutional Review Board at irb@wgu.edu.</p>
+        <p><strong>6. Questions & Contacts:</strong> If you have questions about the study, contact Bruce Johnson at b.johnson1@wgu.edu. For questions regarding your rights as a research participant, contact the WGU Institutional Review Board at irb@wgu.edu.</p>
       </div>
 
-      <form id="diagnostic-form" onsubmit="handleSurveySubmit(event)">
-        <!-- Question 1: Clear Consent Decision & 18+ Certification -->
-        <div class="question-block" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:0.9rem; margin-bottom:1.25rem;">
-          <div class="question-title">Question 1: Age Certification & Participation Decision</div>
+      <!-- Question 1: Clear Consent Decision & 18+ Certification -->
+      <div class="question-block" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:0.9rem; margin-bottom:1.25rem;">
+        <div class="question-title">Question 1: Age Certification & Participation Decision</div>
+        <div class="option-list">
+          <label class="option-label">
+            <input type="radio" name="consent_choice" value="yes">
+            <span><strong>YES, I agree to participate.</strong> I certify that I am at least 18 years old, I have read and understand this consent form, and I voluntarily choose to take part in this research study.</span>
+          </label>
+          <label class="option-label">
+            <input type="radio" name="consent_choice" value="no">
+            <span><strong>NO, I do NOT want to participate (or I am under 18 years old).</strong> Take me directly to standard course materials without participating.</span>
+          </label>
+        </div>
+      </div>
+
+      <div id="consent-validation-alert" class="validation-alert">
+        Please make a selection for Question 1 to proceed.
+      </div>
+
+      <button type="button" class="btn btn-primary" style="width: 100%;" onclick="handleConsentContinue()">
+        Continue <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <!-- SCREEN 1B: DIAGNOSTIC QUESTIONNAIRE (Appears only if Consent = YES) -->
+    <div id="screen-diagnostic" class="card" style="display: none;">
+      <div class="consent-header">
+        <h2>Course Strategy & Learning Diagnostic</h2>
+        <p style="font-size: 0.85rem; color: #64748b;">
+          Please complete all items below. Your answers help us understand your learning preferences and prior experience.
+        </p>
+      </div>
+
+      <div id="diagnostic-validation-alert" class="validation-alert">
+        Please answer all questions before submitting. Unanswered items are highlighted below.
+      </div>
+
+      <form id="diagnostic-form" onsubmit="handleDiagnosticSubmit(event)">
+        <!-- Question 2: Prior Knowledge Covariate -->
+        <div class="question-block" id="block-prior-sql">
+          <div class="question-title">Question 2: Before starting D426, how would you rate your experience with SQL and databases?</div>
           <div class="option-list">
-            <label class="option-label">
-              <input type="radio" name="consent" value="yes" required>
-              <span><strong>YES, I agree to participate.</strong> I certify that I am at least 18 years old, I have read and understand this consent form, and I voluntarily choose to take part in this research study.</span>
-            </label>
-            <label class="option-label">
-              <input type="radio" name="consent" value="no" required>
-              <span><strong>NO, I do NOT want to participate (or I am under 18 years old).</strong> Take me directly to standard course materials without participating.</span>
-            </label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="1"> <span>1 - None (Never seen or written SQL code)</span></label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="2"> <span>2 - Novice (Know what it is, but little to no coding experience)</span></label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="3"> <span>3 - Intermediate (Have written basic SELECT, INSERT, or UPDATE queries)</span></label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="4"> <span>4 - Advanced (Regularly write multi-table JOINs, aggregations, or subqueries)</span></label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="5"> <span>5 - Professional (Work or have worked managing databases professionally)</span></label>
           </div>
         </div>
 
-        <div id="survey-questions">
-          <!-- Question 2: Prior Knowledge Covariate -->
-          <div class="question-block">
-            <div class="question-title">Question 2: Before starting D426, how would you rate your experience with SQL and databases?</div>
-            <div class="option-list">
-              <label class="option-label"><input type="radio" name="prior_sql" value="1" required> <span>1 - None (Never seen or written SQL code)</span></label>
-              <label class="option-label"><input type="radio" name="prior_sql" value="2" required> <span>2 - Novice (Know what it is, but little to no coding experience)</span></label>
-              <label class="option-label"><input type="radio" name="prior_sql" value="3" required> <span>3 - Intermediate (Have written basic SELECT, INSERT, or UPDATE queries)</span></label>
-              <label class="option-label"><input type="radio" name="prior_sql" value="4" required> <span>4 - Advanced (Regularly write multi-table JOINs, aggregations, or subqueries)</span></label>
-              <label class="option-label"><input type="radio" name="prior_sql" value="5" required> <span>5 - Professional (Work or have worked managing databases professionally)</span></label>
-            </div>
-          </div>
-
-          <div style="margin: 1.25rem 0 0.35rem 0; font-weight: 700; color: var(--wgu-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.25rem;">
-            Study & Problem Solving Preferences
-          </div>
-          <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem;">
-            For each of the following questions, choose the option that best describes how you prefer to learn.
-          </p>
-
-          <!-- Shuffled Survey Items Container -->
-          <div id="randomized-ils-container"></div>
+        <div style="margin: 1.25rem 0 0.35rem 0; font-weight: 700; color: var(--wgu-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.25rem;">
+          Study & Problem Solving Preferences
         </div>
+        <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem;">
+          For each of the following questions, choose the option that best describes how you prefer to learn.
+        </p>
 
-        <button type="submit" id="submit-btn" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
+        <!-- Shuffled Survey Items Container -->
+        <div id="randomized-ils-container"></div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
           Submit & Continue
         </button>
       </form>
@@ -206,7 +239,7 @@
     </div>
 
     <!-- SCREEN 2A: CONTROL / OPT-OUT SCREEN -->
-    <div id="control-screen" class="card" style="display: none; text-align: center; padding: 2.5rem 1.5rem;">
+    <div id="screen-control" class="card" style="display: none; text-align: center; padding: 2.5rem 1.5rem;">
       <i id="landing-icon" class="fa-solid fa-circle-check" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
       <h2 id="landing-title" style="color: var(--wgu-blue); margin-bottom: 0.75rem;">Standard Course Materials</h2>
       <p id="landing-msg" style="max-width: 600px; margin: 0 auto 1.5rem auto; color: #475569; font-size: 0.95rem;">
@@ -223,7 +256,7 @@
     </div>
 
     <!-- SCREEN 2B: INTERVENTION ARM (5-MODULE WASM SANDBOX) -->
-    <div id="sandbox-screen" style="display: none;">
+    <div id="screen-sandbox" style="display: none;">
       
       <div class="card" style="background: #f8fafc; border-left: 4px solid var(--wgu-blue);">
         <h3 style="color: var(--wgu-blue); font-size: 1.1rem; margin-bottom: 0.4rem;">
@@ -304,8 +337,23 @@
     const TELEMETRY_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxsw1AJtmsn9rwmqc5AIh15owBo909L0NchTVAJw7tX4offSpxDloWKS2wJ1Mf31LdOKQ/exec";
 
     const urlParams = new URLSearchParams(window.location.search);
-    const studentId = urlParams.get('sid') || "STUDENT_UNASSIGNED";
+    const rawSid = urlParams.get('sid');
+
+    // Verification: Accept 7-9 digits OR authorized testing strings (IRB/TEST)
+    const isValidSid = rawSid && (/^\d{7,9}$/.test(rawSid) || /^(IRB_|TEST_)/i.test(rawSid));
+    const studentId = isValidSid ? rawSid : "STUDENT_UNASSIGNED";
     document.getElementById('display-sid').innerText = studentId;
+
+    if (!isValidSid && rawSid !== null) {
+      document.getElementById('app-container').innerHTML = `
+        <div class="card" style="text-align: center; padding: 3rem 1.5rem; color: #991b1b;">
+          <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+          <h2>Personalized Research Link Required</h2>
+          <p style="margin-top: 0.5rem; color: #475569;">
+            Direct access to this research module is not available. Please launch this tool using your official course research email invitation.
+          </p>
+        </div>`;
+    }
 
     let assignedArm = urlParams.get('arm');
     if (!assignedArm || (assignedArm !== 'interv' && assignedArm !== 'ctrl')) {
@@ -313,10 +361,17 @@
       assignedArm = (!isNaN(lastChar) && parseInt(lastChar) % 2 === 0) ? 'ctrl' : 'interv';
     }
 
+    // Ephemeral Client Session Hash (Privacy-preserving link-forwarding detection)
+    let sessionToken = sessionStorage.getItem('d426_sess_token');
+    if (!sessionToken) {
+      sessionToken = 'sess_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now().toString(36);
+      sessionStorage.setItem('d426_sess_token', sessionToken);
+    }
+
     const STORAGE_KEY = `d426_state_${studentId}`;
 
     // ==========================================
-    // 2. LOCALSTORAGE STATE PERSISTENCE
+    // 2. STATE PERSISTENCE
     // ==========================================
     function getStoredState() {
       try {
@@ -330,6 +385,7 @@
     function saveState(patch) {
       try {
         const current = getStoredState() || {
+          consentGiven: false,
           surveyCompleted: false,
           optedOut: false,
           currentStep: 1,
@@ -352,7 +408,7 @@
     }
 
     // ==========================================
-    // 3. STUDY PREFERENCES RANDOMIZED GENERATOR
+    // 3. FELDER-SOLOMAN RANDOMIZED GENERATOR
     // ==========================================
     const ilsBank = [
       { id: "ils_1", q: "When I solve math or logic problems, I usually:", 
@@ -389,18 +445,20 @@
 
     function renderDiagnosticSurvey() {
       const container = document.getElementById('randomized-ils-container');
+      container.innerHTML = '';
       const shuffledItems = shuffle([...ilsBank]);
 
       shuffledItems.forEach((item, index) => {
         const qDiv = document.createElement('div');
         qDiv.className = 'question-block';
+        qDiv.id = `block-${item.id}`;
         const shuffledOpts = shuffle([...item.opts]);
         
         let html = `<div class="question-title">Question ${index + 3}: ${item.q}</div><div class="option-list">`;
         shuffledOpts.forEach(opt => {
           html += `
             <label class="option-label">
-              <input type="radio" name="${item.id}" value="${opt.val}" required> <span>${opt.text}</span>
+              <input type="radio" name="${item.id}" value="${opt.val}" onchange="clearBlockError('block-${item.id}')"> <span>${opt.text}</span>
             </label>`;
         });
         html += `</div>`;
@@ -409,56 +467,99 @@
       });
     }
 
-    // Toggle Survey visibility based on consent selection
-    document.querySelectorAll('input[name="consent"]').forEach(radio => {
-      radio.addEventListener('change', (e) => {
-        const qBlock = document.getElementById('survey-questions');
-        const submitBtn = document.getElementById('submit-btn');
-        if (e.target.value === 'no') {
-          qBlock.style.display = 'none';
-          qBlock.querySelectorAll('input').forEach(i => i.required = false);
-          submitBtn.innerHTML = 'Proceed to Standard Course Materials';
-        } else {
-          qBlock.style.display = 'block';
-          qBlock.querySelectorAll('input').forEach(i => i.required = true);
-          submitBtn.innerHTML = 'Submit & Continue';
-        }
-      });
+    function clearBlockError(blockId) {
+      const el = document.getElementById(blockId);
+      if (el) el.classList.remove('unanswered');
+    }
+
+    document.querySelectorAll('input[name="prior_sql"]').forEach(r => {
+      r.addEventListener('change', () => clearBlockError('block-prior-sql'));
     });
 
     // ==========================================
-    // 4. SURVEY SUBMISSION & TELEMETRY
+    // 4. SCREEN 1A: CONSENT HANDLING
     // ==========================================
-    function handleSurveySubmit(e) {
-      e.preventDefault();
-      const form = document.getElementById('diagnostic-form');
-      const formData = new FormData(form);
-      const consent = formData.get('consent');
+    function handleConsentContinue() {
+      const consentChoice = document.querySelector('input[name="consent_choice"]:checked');
+      const alertBox = document.getElementById('consent-validation-alert');
 
-      // Direct Opt Out Handling
-      if (consent === 'no') {
-        saveState({ surveyCompleted: true, optedOut: true });
-        document.getElementById('survey-screen').style.display = 'none';
+      if (!consentChoice) {
+        alertBox.style.display = 'block';
+        return;
+      }
+      alertBox.style.display = 'none';
+
+      if (consentChoice.value === 'no') {
+        saveState({ consentGiven: false, optedOut: true, surveyCompleted: true });
+        document.getElementById('screen-consent').style.display = 'none';
         
-        const controlScreen = document.getElementById('control-screen');
+        const controlScreen = document.getElementById('screen-control');
         document.getElementById('landing-title').innerText = "Participation Opt-Out Acknowledged";
         document.getElementById('landing-msg').innerText = "Thank you. You have chosen not to take part in this research study. This choice has zero effect on your course grade or standing. You can access your standard course materials below:";
         controlScreen.style.display = 'block';
         return;
       }
 
-      let ilsScore = 0;
-      for (let i = 1; i <= 11; i++) {
-        ilsScore += parseInt(formData.get(`ils_${i}`) || 0);
-      }
-      const priorExp = formData.get('prior_sql') || '0';
+      // If YES: Save consent state and transition cleanly to Screen 1B
+      saveState({ consentGiven: true });
+      document.getElementById('screen-consent').style.display = 'none';
+      document.getElementById('screen-diagnostic').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
+    // ==========================================
+    // 5. SCREEN 1B: STRICT VALIDATION & TELEMETRY
+    // ==========================================
+    function handleDiagnosticSubmit(e) {
+      e.preventDefault();
+
+      let hasError = false;
+      let firstUnansweredEl = null;
+
+      // Verify Question 2
+      const priorSql = document.querySelector('input[name="prior_sql"]:checked');
+      const priorBlock = document.getElementById('block-prior-sql');
+      if (!priorSql) {
+        priorBlock.classList.add('unanswered');
+        hasError = true;
+        firstUnansweredEl = priorBlock;
+      } else {
+        priorBlock.classList.remove('unanswered');
+      }
+
+      // Verify all 11 ILS items
+      let ilsTotal = 0;
+      for (let i = 1; i <= 11; i++) {
+        const itemRadio = document.querySelector(`input[name="ils_${i}"]:checked`);
+        const itemBlock = document.getElementById(`block-ils_${i}`);
+        if (!itemRadio) {
+          if (itemBlock) itemBlock.classList.add('unanswered');
+          hasError = true;
+          if (!firstUnansweredEl && itemBlock) firstUnansweredEl = itemBlock;
+        } else {
+          if (itemBlock) itemBlock.classList.remove('unanswered');
+          ilsTotal += parseInt(itemRadio.value);
+        }
+      }
+
+      const alertBox = document.getElementById('diagnostic-validation-alert');
+      if (hasError) {
+        alertBox.style.display = 'block';
+        if (firstUnansweredEl) {
+          firstUnansweredEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+      alertBox.style.display = 'none';
+
+      // Telemetry payload
       const surveyPayload = {
         student_id: studentId,
+        session_token: sessionToken,
         step: "DIAGNOSTIC_COMPLETED",
-        attempts: `ILS_SCORE:${ilsScore}`,
-        time_spent_seconds: parseInt(priorExp),
-        status: `ARM:${assignedArm.toUpperCase()}|PRIOR_SQL:${priorExp}|ILS:${ilsScore}`,
+        attempts: `ILS_SCORE:${ilsTotal}`,
+        time_spent_seconds: parseInt(priorSql.value),
+        status: `ARM:${assignedArm.toUpperCase()}|PRIOR_SQL:${priorSql.value}|ILS:${ilsTotal}`,
         user_agent: navigator.userAgent
       };
 
@@ -470,18 +571,19 @@
       }).catch(err => console.error("Telemetry error:", err));
 
       saveState({ surveyCompleted: true, optedOut: false });
-      document.getElementById('survey-screen').style.display = 'none';
+      document.getElementById('screen-diagnostic').style.display = 'none';
 
       if (assignedArm === 'ctrl') {
-        document.getElementById('control-screen').style.display = 'block';
+        document.getElementById('screen-control').style.display = 'block';
       } else {
-        document.getElementById('sandbox-screen').style.display = 'block';
+        document.getElementById('screen-sandbox').style.display = 'block';
         initWasmEngine();
       }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // ==========================================
-    // 5. SANDBOX ENGINE & CURRICULUM
+    // 6. SANDBOX ENGINE & CURRICULUM
     // ==========================================
     let currentStep = 1;
     let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -702,6 +804,7 @@
       const totalTimeSpent = Math.round((Date.now() - sessionStartTime) / 1000);
       const payload = {
         student_id: studentId,
+        session_token: sessionToken,
         step: "STEP_5_COMPLETED",
         attempts: JSON.stringify(attemptsCount),
         time_spent_seconds: totalTimeSpent,
@@ -727,19 +830,24 @@
     }
 
     // ==========================================
-    // 6. INITIALIZATION & REHYDRATION
+    // 7. INITIALIZATION & REHYDRATION
     // ==========================================
     renderDiagnosticSurvey();
 
     const savedState = getStoredState();
     if (savedState && savedState.surveyCompleted) {
-      document.getElementById('survey-screen').style.display = 'none';
+      document.getElementById('screen-consent').style.display = 'none';
+      document.getElementById('screen-diagnostic').style.display = 'none';
       if (savedState.optedOut || assignedArm === 'ctrl') {
-        document.getElementById('control-screen').style.display = 'block';
+        document.getElementById('screen-control').style.display = 'block';
       } else {
-        document.getElementById('sandbox-screen').style.display = 'block';
+        document.getElementById('screen-sandbox').style.display = 'block';
         initWasmEngine();
       }
+    } else if (savedState && savedState.consentGiven) {
+      // Rehydrate to Screen 1B if consent was already agreed but survey not finished
+      document.getElementById('screen-consent').style.display = 'none';
+      document.getElementById('screen-diagnostic').style.display = 'block';
     }
   </script>
 </body>
