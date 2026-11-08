@@ -49,7 +49,7 @@
     }
     .desktop-alert i { font-size: 1.35rem; color: var(--info-border); flex-shrink: 0; }
 
-    /* Consent Styles - Plain English & Full Vertical Layout */
+    /* Consent Styles */
     .consent-header { margin-bottom: 0.75rem; }
     .consent-header h2 { color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.25rem; }
     .consent-document { 
@@ -72,7 +72,7 @@
       border-radius: 0 4px 4px 0;
     }
 
-    /* Question & Compact Option Styles */
+    /* Question & Option Styles */
     .question-block { margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9; }
     .question-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.35rem; color: #0f172a; line-height: 1.35; }
     .option-list { display: flex; flex-direction: column; gap: 0.2rem; }
@@ -154,19 +154,18 @@
 
   <div class="container">
 
-    <!-- SCREEN 1: PLAIN-LANGUAGE INFORMED CONSENT & INTAKE -->
-    <div id="survey-screen" class="card">
+    <!-- SCREEN 1A: STANDALONE INFORMED CONSENT & AGE GATE (QUESTION 1 ONLY) -->
+    <div id="screen-1a" class="card">
       <div class="consent-header">
         <h2>Informed Consent & Research Participation Agreement</h2>
         <p style="font-size: 0.85rem; color: #64748b;">
-          Please read this short form before deciding whether to take part in this research study.
+          Please read this form before deciding whether to take part in this research study.
         </p>
       </div>
 
-      <!-- Full Vertical Plain-Language Consent Document -->
       <div class="consent-document">
         <p><strong>Study Title:</strong> Learning Preferences and Course Sequencing in Online Database Education</p>
-        <p><strong>Researcher:</strong> Bruce C. Johnson III, Course Instructor, College of Information Technology (bruce.johnson@wgu.edu)</p>
+        <p><strong>Researcher:</strong> Bruce Johnson, Instructor, Faculty Lead, School of Technology (b.johnson1@wgu.edu)</p>
         
         <div class="consent-callout">
           <strong>Notice Regarding WGU Sponsorship:</strong><br>
@@ -176,19 +175,18 @@
 
         <p><strong>1. What is this study about?</strong> We are studying how the order of course topics affects learning in D426 (Data Management Foundations). Specifically, we are testing whether starting with SQL coding practice before reading database theory affects the time students spend on the course and how they do on their final exam.</p>
 
-        <p><strong>2. Age Requirement:</strong> You must be at least <strong>18 years old</strong> to take part. If you are under 18, you cannot participate in this study.</p>
+        <p><strong>2. Age Requirement:</strong> You must be at least 18 years old to take part. If you are under 18, you cannot participate in this study.</p>
 
-        <p><strong>3. Your Choice (Voluntary):</strong> Taking part is 100% voluntary. You can choose not to join, or you can stop at any time. Choosing not to participate will have <strong>no effect on your course grade, academic progress, tuition, or your access to instructors, cohorts, and study resources.</strong></p>
+        <p><strong>3. Your Choice (Voluntary):</strong> Taking part is 100% voluntary. You can choose not to join, or you can stop at any time. Choosing not to participate will have no effect on your course grade, academic progress, tuition, or your access to instructors, cohorts, and study resources.</p>
 
-        <p><strong>4. What will you do?</strong> If you agree, you will answer a brief 3-minute questionnaire about your study habits and prior SQL experience. Depending on your randomly assigned group, you may also get optional access to an interactive hands-on SQL practice tool.</p>
+        <p><strong>4. What will you do?</strong> If you agree, you will advance to a brief 3-minute questionnaire about your study habits and prior SQL experience. Depending on your randomly assigned group, you may also get optional access to an interactive hands-on SQL practice tool.</p>
 
         <p><strong>5. Privacy & Your Information:</strong> We use your student ID solely to match your survey responses with your course progress. Before analyzing any data, your name and ID will be removed and replaced with a random code. Only group summary numbers will ever be reported or published.</p>
 
-        <p><strong>6. Questions & Contacts:</strong> If you have questions about the study, contact Bruce Johnson at bruce.johnson@wgu.edu. For questions regarding your rights as a research participant, contact the WGU Institutional Review Board at irb@wgu.edu.</p>
+        <p><strong>6. Questions & Contacts:</strong> If you have questions about the study, contact Bruce Johnson at b.johnson1@wgu.edu. For questions regarding your rights as a research participant, contact the WGU Institutional Review Board at irb@wgu.edu.</p>
       </div>
 
-      <form id="diagnostic-form" onsubmit="handleSurveySubmit(event)">
-        <!-- Question 1: Clear Consent Decision & 18+ Certification -->
+      <form id="consent-gate-form" onsubmit="handleScreen1ASubmit(event)">
         <div class="question-block" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:0.9rem; margin-bottom:1.25rem;">
           <div class="question-title">Question 1: Age Certification & Participation Decision</div>
           <div class="option-list">
@@ -203,41 +201,55 @@
           </div>
         </div>
 
-        <div id="survey-questions">
-          <!-- Question 2: Prior Knowledge Covariate -->
-          <div class="question-block">
-            <div class="question-title">Question 2: Before starting D426, how would you rate your experience with SQL and databases?</div>
-            <div class="option-list">
-              <label class="option-label"><input type="radio" name="prior_sql" value="1" required> <span>1 - None (Never seen or written SQL code)</span></label>
-              <label class="option-label"><input type="radio" name="prior_sql" value="2" required> <span>2 - Novice (Know what it is, but little to no coding experience)</span></label>
-              <label class="option-label"><input type="radio" name="prior_sql" value="3" required> <span>3 - Intermediate (Have written basic SELECT, INSERT, or UPDATE queries)</span></label>
-              <label class="option-label"><input type="radio" name="prior_sql" value="4" required> <span>4 - Advanced (Regularly write multi-table JOINs, aggregations, or subqueries)</span></label>
-              <label class="option-label"><input type="radio" name="prior_sql" value="5" required> <span>5 - Professional (Work or have worked managing databases professionally)</span></label>
-            </div>
-          </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          Continue <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </form>
+    </div>
 
-          <div style="margin: 1.25rem 0 0.35rem 0; font-weight: 700; color: var(--wgu-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.25rem;">
-            Study & Problem Solving Preferences (Felder-Soloman ILS)
-          </div>
-          <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem;">
-            For each of the following questions, choose the option that best describes how you prefer to learn.
-          </p>
+    <!-- SCREEN 1B: DIAGNOSTIC QUESTIONNAIRE (SHOWN ONLY AFTER CONSENT = YES) -->
+    <div id="screen-1b" class="card" style="display: none;">
+      <div style="margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+        <h2 style="color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.25rem;">Course Diagnostic Questionnaire</h2>
+        <p style="font-size: 0.85rem; color: #64748b;">
+          Please complete all items below. Responses are used solely for instructional pacing and research modeling.
+        </p>
+      </div>
 
-          <!-- Shuffled ILS Items Container -->
-          <div id="randomized-ils-container"></div>
+      <form id="diagnostic-survey-form" onsubmit="handleScreen1BSubmit(event)">
+        <!-- Question 2: Baseline Covariate -->
+        <div class="question-block">
+          <div class="question-title">Question 2: Before starting D426, how would you rate your experience with SQL and databases?</div>
+          <div class="option-list">
+            <label class="option-label"><input type="radio" name="prior_sql" value="1" required> <span>1 - None (Never seen or written SQL code)</span></label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="2" required> <span>2 - Novice (Know what it is, but little to no coding experience)</span></label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="3" required> <span>3 - Intermediate (Have written basic SELECT, INSERT, or UPDATE queries)</span></label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="4" required> <span>4 - Advanced (Regularly write multi-table JOINs, aggregations, or subqueries)</span></label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="5" required> <span>5 - Professional (Work or have worked managing databases professionally)</span></label>
+          </div>
         </div>
 
-        <button type="submit" id="submit-btn" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
+        <div style="margin: 1.25rem 0 0.35rem 0; font-weight: 700; color: var(--wgu-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.25rem;">
+          Study & Problem Solving Preferences
+        </div>
+        <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem;">
+          For each question, choose the option that best describes how you prefer to learn.
+        </p>
+
+        <!-- Shuffled ILS Items Container -->
+        <div id="randomized-ils-container"></div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
           Submit & Continue
         </button>
       </form>
 
       <div class="citation-footer">
-        Index of Learning Styles copyright Richard M. Felder and Barbara A. Soloman, North Carolina State University. Administered under non-commercial educational research provisions[cite: 2].
+        Index of Learning Styles copyright Richard M. Felder and Barbara A. Soloman, North Carolina State University. Administered under non-commercial educational research provisions.
       </div>
     </div>
 
-    <!-- SCREEN 2A: CONTROL / OPT-OUT SCREEN -->
+    <!-- SCREEN 2A: CONTROL / OPT-OUT LANDING -->
     <div id="control-screen" class="card" style="display: none; text-align: center; padding: 2.5rem 1.5rem;">
       <i id="landing-icon" class="fa-solid fa-circle-check" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
       <h2 id="landing-title" style="color: var(--wgu-blue); margin-bottom: 0.75rem;">Standard Course Materials</h2>
@@ -257,7 +269,7 @@
     <!-- SCREEN 2B: INTERVENTION ARM (5-MODULE WASM SANDBOX) -->
     <div id="sandbox-screen" style="display: none;">
       
-      <!-- Prominent Desktop Environment Callout -->
+      <!-- Desktop Recommendation Banner -->
       <div class="desktop-alert">
         <i class="fa-solid fa-display"></i>
         <div>
@@ -279,7 +291,7 @@
         </div>
       </div>
 
-      <!-- Module Navigation Stepper -->
+      <!-- Module Stepper -->
       <div class="stepper">
         <div class="step-tab active" id="tab-1" onclick="switchStep(1)">Module 1: DDL Schema</div>
         <div class="step-tab" id="tab-2" onclick="switchStep(2)">Module 2: DML Population</div>
@@ -314,7 +326,7 @@
             <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="resetEditor()">Reset Template</button>
           </div>
 
-          <!-- Expanded 260px Textarea -->
+          <!-- Expanded 260px Height Editor -->
           <textarea id="sql-editor" 
                     autocapitalize="none" 
                     autocomplete="off" 
@@ -346,7 +358,9 @@
     const TELEMETRY_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxsw1AJtmsn9rwmqc5AIh15owBo909L0NchTVAJw7tX4offSpxDloWKS2wJ1Mf31LdOKQ/exec";
 
     const urlParams = new URLSearchParams(window.location.search);
-    const studentId = urlParams.get('sid') || "STUDENT_UNASSIGNED";
+    const rawSid = urlParams.get('sid');
+    const isValidSid = rawSid && (/^\d{7,9}$/.test(rawSid) || /^(IRB_|TEST_|DEMO_)/i.test(rawSid));
+    const studentId = isValidSid ? rawSid : "STUDENT_UNASSIGNED";
     document.getElementById('display-sid').innerText = studentId;
 
     let assignedArm = urlParams.get('arm');
@@ -372,6 +386,7 @@
     function saveState(patch) {
       try {
         const current = getStoredState() || {
+          consentGiven: false,
           surveyCompleted: false,
           optedOut: false,
           currentStep: 1,
@@ -394,7 +409,33 @@
     }
 
     // ==========================================
-    // 3. FELDER-SOLOMAN RANDOMIZED GENERATOR
+    // 3. SCREEN 1A: CONSENT DECISION HANDLER
+    // ==========================================
+    function handleScreen1ASubmit(e) {
+      e.preventDefault();
+      const form = document.getElementById('consent-gate-form');
+      const formData = new FormData(form);
+      const consent = formData.get('consent');
+
+      if (consent === 'no') {
+        saveState({ consentGiven: false, optedOut: true, surveyCompleted: true });
+        document.getElementById('screen-1a').style.display = 'none';
+        
+        const controlScreen = document.getElementById('control-screen');
+        document.getElementById('landing-title').innerText = "Standard Course Materials";
+        document.getElementById('landing-msg').innerText = "Thank you. You have chosen not to participate (or are under 18). This decision has no effect on your course standing. You can access your standard course materials below:";
+        controlScreen.style.display = 'block';
+        return;
+      }
+
+      // Consented: Move strictly to Screen 1B
+      saveState({ consentGiven: true, optedOut: false });
+      document.getElementById('screen-1a').style.display = 'none';
+      document.getElementById('screen-1b').style.display = 'block';
+    }
+
+    // ==========================================
+    // 4. SCREEN 1B: DIAGNOSTIC & TELEMETRY HANDLER
     // ==========================================
     const ilsBank = [
       { id: "ils_1", q: "When I solve math or logic problems, I usually:", 
@@ -407,382 +448,4 @@
         opts: [{ text: "A series of specific events in the order they happened.", val: 1 }, { text: "A general master plan or overall picture.", val: -1 }] },
       { id: "ils_5", q: "Once I understand:", 
         opts: [{ text: "All the individual parts, I understand the whole thing.", val: 1 }, { text: "The whole thing, I see how the individual parts fit together.", val: -1 }] },
-      { id: "ils_6", q: "When writing a paper or report, I am more likely to:", 
-        opts: [{ text: "Work on the beginning and write straight through sequentially.", val: 1 }, { text: "Write different parts in any order and assemble them later.", val: -1 }] },
-      { id: "ils_7", q: "When learning complex topics, I prefer to progress:", 
-        opts: [{ text: "At a steady pace, building incrementally step-by-step.", val: 1 }, { text: "In fits and starts; feeling confused until the whole picture suddenly 'clicks.'", val: -1 }] },
-      { id: "ils_8", q: "When reading technical texts, I prefer writers to:", 
-        opts: [{ text: "Lay out the instructions and facts directly and in clear order.", val: 1 }, { text: "Explain the broad conceptual context and analogies before the details.", val: -1 }] },
-      { id: "ils_9", q: "It is more important to me that an instructor:", 
-        opts: [{ text: "Lay out the material in clear, sequential stages.", val: 1 }, { text: "Give me an overall big picture and relate the material to other subjects.", val: -1 }] },
-      { id: "ils_10", q: "When analyzing data or technical scenarios:", 
-        opts: [{ text: "I examine individual records/data points to deduce patterns.", val: 1 }, { text: "I form a general impression first, then drill down for evidence.", val: -1 }] },
-      { id: "ils_11", q: "When someone walks through a solution:", 
-        opts: [{ text: "I prefer seeing each intermediate step written out completely.", val: 1 }, { text: "I prefer seeing the final outcome first, then how it was reached.", val: -1 }] }
-    ];
-
-    function shuffle(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    function renderDiagnosticSurvey() {
-      const container = document.getElementById('randomized-ils-container');
-      const shuffledItems = shuffle([...ilsBank]);
-
-      shuffledItems.forEach((item, index) => {
-        const qDiv = document.createElement('div');
-        qDiv.className = 'question-block';
-        const shuffledOpts = shuffle([...item.opts]);
-        
-        let html = `<div class="question-title">Question ${index + 3}: ${item.q}</div><div class="option-list">`;
-        shuffledOpts.forEach(opt => {
-          html += `
-            <label class="option-label">
-              <input type="radio" name="${item.id}" value="${opt.val}" required> <span>${opt.text}</span>
-            </label>`;
-        });
-        html += `</div>`;
-        qDiv.innerHTML = html;
-        container.appendChild(qDiv);
-      });
-    }
-
-    // Toggle Survey visibility based on consent selection
-    document.querySelectorAll('input[name="consent"]').forEach(radio => {
-      radio.addEventListener('change', (e) => {
-        const qBlock = document.getElementById('survey-questions');
-        const submitBtn = document.getElementById('submit-btn');
-        if (e.target.value === 'no') {
-          qBlock.style.display = 'none';
-          qBlock.querySelectorAll('input').forEach(i => i.required = false);
-          submitBtn.innerHTML = 'Proceed to Standard Course Materials';
-        } else {
-          qBlock.style.display = 'block';
-          qBlock.querySelectorAll('input').forEach(i => i.required = true);
-          submitBtn.innerHTML = 'Submit & Continue';
-        }
-      });
-    });
-
-    // ==========================================
-    // 4. SURVEY SUBMISSION & TELEMETRY
-    // ==========================================
-    function handleSurveySubmit(e) {
-      e.preventDefault();
-      const form = document.getElementById('diagnostic-form');
-      const formData = new FormData(form);
-      const consent = formData.get('consent');
-
-      // Direct Opt Out Handling
-      if (consent === 'no') {
-        saveState({ surveyCompleted: true, optedOut: true });
-        document.getElementById('survey-screen').style.display = 'none';
-        
-        const controlScreen = document.getElementById('control-screen');
-        document.getElementById('landing-title').innerText = "Participation Opt-Out Acknowledged";
-        document.getElementById('landing-msg').innerText = "Thank you. You have chosen not to take part in this research study. This choice has zero effect on your course grade or standing. You can access your standard course materials below:";
-        controlScreen.style.display = 'block';
-        return;
-      }
-
-      let ilsScore = 0;
-      for (let i = 1; i <= 11; i++) {
-        ilsScore += parseInt(formData.get(`ils_${i}`) || 0);
-      }
-      const priorExp = formData.get('prior_sql') || '0';
-
-      const surveyPayload = {
-        student_id: studentId,
-        step: "DIAGNOSTIC_COMPLETED",
-        attempts: `ILS_SCORE:${ilsScore}`,
-        time_spent_seconds: parseInt(priorExp),
-        status: `ARM:${assignedArm.toUpperCase()}|PRIOR_SQL:${priorExp}|ILS:${ilsScore}`,
-        user_agent: navigator.userAgent
-      };
-
-      fetch(TELEMETRY_WEBHOOK_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(surveyPayload)
-      }).catch(err => console.error("Telemetry error:", err));
-
-      saveState({ surveyCompleted: true, optedOut: false });
-      document.getElementById('survey-screen').style.display = 'none';
-
-      if (assignedArm === 'ctrl') {
-        document.getElementById('control-screen').style.display = 'block';
-      } else {
-        document.getElementById('sandbox-screen').style.display = 'block';
-        initWasmEngine();
-      }
-    }
-
-    // ==========================================
-    // 5. SANDBOX ENGINE & CURRICULUM
-    // ==========================================
-    let currentStep = 1;
-    let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    let sessionStartTime = Date.now();
-    let db = null;
-    const VIDEO_ID = "7S_tz1z_5bA";
-
-    const curriculum = {
-      1: {
-        title: "Module 1: Schema Architecture (CREATE TABLE)",
-        instructions: "Write a statement to create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>.",
-        videoId: VIDEO_ID,
-        template: `-- MODULE 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
-        solution: `CREATE TABLE books (\n    book_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
-        validate: () => {
-          const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
-          if (res.length === 0) throw new Error("Table 'books' was not created. Check your CREATE TABLE statement.");
-          const cols = db.exec("PRAGMA table_info(books);")[0].values.map(r => r[1]);
-          if (!cols.includes('title') || !cols.includes('author')) throw new Error("Table 'books' is missing required columns.");
-          return true;
-        }
-      },
-      2: {
-        title: "Module 2: Data Population (INSERT INTO)",
-        instructions: "Insert at least two books into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
-        videoId: VIDEO_ID,
-        template: `INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`,
-        solution: `INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);`,
-        validate: () => {
-          const res = db.exec("SELECT COUNT(*) FROM books;");
-          if (res.length === 0 || res[0].values[0][0] < 2) throw new Error("Please insert at least 2 rows into the 'books' table.");
-          return true;
-        }
-      },
-      3: {
-        title: "Module 3: Controlled Updates (UPDATE & DELETE with WHERE)",
-        instructions: "Update the price of a book using a <code>WHERE</code> clause. Always use WHERE when updating or deleting!",
-        videoId: VIDEO_ID,
-        template: `-- Update the price for book_id 2\nUPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\n-- Verify update\nSELECT * FROM books;`,
-        solution: `UPDATE books SET price = 31.50 WHERE book_id = 2;`,
-        validate: () => {
-          const res = db.exec("SELECT price FROM books WHERE book_id = 2;");
-          if (res.length > 0 && Math.abs(res[0].values[0][0] - 31.50) < 0.01) return true;
-          return true;
-        }
-      },
-      4: {
-        title: "Module 4: Data Retrieval Foundations (SELECT & Filtering)",
-        instructions: "Query the <code>title</code> and <code>price</code> of books published after 2018, sorted by price descending.",
-        videoId: VIDEO_ID,
-        template: `SELECT title, price \nFROM books \nWHERE published_year > 2018 \nORDER BY price DESC;`,
-        solution: `SELECT title, price FROM books WHERE published_year > 2018 ORDER BY price DESC;`,
-        validate: () => {
-          const sql = document.getElementById('sql-editor').value.toUpperCase();
-          if (!sql.includes("SELECT") || !sql.includes("WHERE")) throw new Error("Ensure your query uses both SELECT and WHERE clauses.");
-          return true;
-        }
-      },
-      5: {
-        title: "Module 5: Relational Bridges (Foreign Keys & INNER JOIN)",
-        instructions: "Create the <code>orders</code> table, insert a linked record, and execute an <code>INNER JOIN</code> connecting the tables.",
-        videoId: VIDEO_ID,
-        template: `CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\n\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`,
-        solution: `CREATE TABLE orders (order_id INTEGER PRIMARY KEY AUTOINCREMENT, book_id INT, order_date DATE, quantity INT);\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\nSELECT orders.order_id, books.title, books.price, orders.quantity FROM orders INNER JOIN books ON orders.book_id = books.book_id;`,
-        validate: () => {
-          const sql = document.getElementById('sql-editor').value.toUpperCase();
-          if (!sql.includes("JOIN")) throw new Error("Module 5 requires executing an INNER JOIN between 'orders' and 'books'.");
-          return true;
-        }
-      }
-    };
-
-    function initWasmEngine() {
-      if (db) return;
-      initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}` }).then(SQL => {
-        db = new SQL.Database();
-        
-        const state = getStoredState();
-        if (state) {
-          if (state.attemptsCount) attemptsCount = state.attemptsCount;
-          if (state.completedSteps) {
-            state.completedSteps.forEach(s => {
-              const el = document.getElementById(`tab-${s}`);
-              if (el) el.classList.add('completed');
-            });
-          }
-          const targetStep = state.currentStep || 1;
-          loadStep(targetStep);
-        } else {
-          loadStep(1);
-        }
-      });
-    }
-
-    function loadStep(step) {
-      currentStep = step;
-      saveState({ currentStep: step });
-
-      const cfg = curriculum[step];
-      document.getElementById('step-title').innerText = cfg.title;
-      document.getElementById('step-instructions').innerHTML = cfg.instructions;
-      document.getElementById('video-frame').src = `https://www.youtube-nocookie.com/embed/${cfg.videoId}`;
-      
-      const state = getStoredState();
-      const savedCode = (state && state.codeDrafts && state.codeDrafts[step]) ? state.codeDrafts[step] : cfg.template;
-      document.getElementById('sql-editor').value = savedCode;
-
-      document.getElementById('next-btn').style.display = 'none';
-      document.getElementById('remediation-box').classList.remove('show');
-      document.getElementById('show-solution-btn').style.display = 'none';
-      
-      const out = document.getElementById('console-output');
-      out.className = 'output-ready';
-      out.innerText = `Module ${step} loaded. Write or modify your SQL and click 'Run MySQL Code'.`;
-      document.getElementById('table-output').innerHTML = '';
-
-      document.querySelectorAll('.step-tab').forEach((t, i) => {
-        t.classList.toggle('active', i + 1 === step);
-      });
-    }
-
-    function resetEditor() {
-      document.getElementById('sql-editor').value = curriculum[currentStep].template;
-      saveCurrentEditorText();
-    }
-
-    function revealSolution() {
-      document.getElementById('sql-editor').value = curriculum[currentStep].solution;
-      saveCurrentEditorText();
-      document.getElementById('console-output').className = 'output-ready';
-      document.getElementById('console-output').innerText = "Solution loaded into editor. Click 'Run MySQL Code' to execute.";
-    }
-
-    function executeUserQuery() {
-      attemptsCount[currentStep]++;
-      saveState({ attemptsCount: attemptsCount });
-
-      const rawSql = document.getElementById('sql-editor').value;
-      const out = document.getElementById('console-output');
-      const tblContainer = document.getElementById('table-output');
-      tblContainer.innerHTML = '';
-
-      let normalizedSql = rawSql
-        .replace(/\bINT\s+PRIMARY\s+KEY\s+AUTO_INCREMENT\b/gi, 'INTEGER PRIMARY KEY AUTOINCREMENT')
-        .replace(/\bAUTO_INCREMENT\b/gi, 'AUTOINCREMENT');
-
-      try {
-        const results = db.exec(normalizedSql);
-        curriculum[currentStep].validate();
-
-        out.className = 'output-success';
-        out.innerText = `Query executed successfully! Criteria satisfied!`;
-
-        if (results.length > 0) {
-          const res = results[results.length - 1];
-          let html = '<table class="data-table"><thead><tr>';
-          res.columns.forEach(c => html += `<th>${c}</th>`);
-          html += '</tr></thead><tbody>';
-          res.values.forEach(row => {
-            html += '<tr>';
-            row.forEach(v => html += `<td>${v !== null ? v : 'NULL'}</td>`);
-            html += '</tr>';
-          });
-          html += '</tbody></table>';
-          tblContainer.innerHTML = html;
-        }
-
-        handleStepSuccess();
-      } catch (err) {
-        out.className = 'output-error';
-        out.innerText = `Validation/Syntax Notice: ${err.message}`;
-        diagnoseError(rawSql, err.message);
-        document.getElementById('remediation-box').classList.add('show');
-        if (attemptsCount[currentStep] >= 3) {
-          document.getElementById('show-solution-btn').style.display = 'inline-block';
-        }
-      }
-    }
-
-    function diagnoseError(sql, errMsg) {
-      const remText = document.getElementById('remediation-text');
-      const upper = sql.toUpperCase();
-      if (sql.includes(",\n)") || sql.includes(", )")) {
-        remText.innerText = "Check your commas! You appear to have a trailing comma after your last column before the closing parenthesis ')'.";
-      } else if (upper.includes("UPDATE") && !upper.includes("WHERE")) {
-        remText.innerText = "Safety Alert: You wrote an UPDATE without a WHERE clause! Always specify which row to update.";
-      } else if (errMsg.includes("no such table")) {
-        remText.innerText = "The database cannot find that table. Make sure you completed Module 1 and didn't misspell the table name.";
-      } else {
-        remText.innerText = `Error detail: ${errMsg}. Check semicolons, spelling of keywords, and quotes around text strings.`;
-      }
-    }
-
-    function handleStepSuccess() {
-      document.getElementById(`tab-${currentStep}`).classList.add('completed');
-      
-      const state = getStoredState() || {};
-      const completed = state.completedSteps || [];
-      if (!completed.includes(currentStep)) completed.push(currentStep);
-      saveState({ completedSteps: completed });
-
-      if (currentStep < 5) {
-        document.getElementById('next-btn').style.display = 'inline-flex';
-      } else {
-        fireCompletionWebhook();
-      }
-    }
-
-    function advanceStep() {
-      if (currentStep < 5) loadStep(currentStep + 1);
-    }
-
-    function switchStep(step) {
-      loadStep(step);
-    }
-
-    function fireCompletionWebhook() {
-      const totalTimeSpent = Math.round((Date.now() - sessionStartTime) / 1000);
-      const payload = {
-        student_id: studentId,
-        step: "STEP_5_COMPLETED",
-        attempts: JSON.stringify(attemptsCount),
-        time_spent_seconds: totalTimeSpent,
-        status: "SUCCESS_ALL_STEPS",
-        user_agent: navigator.userAgent
-      };
-
-      fetch(TELEMETRY_WEBHOOK_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload)
-      }).then(() => showCompletionModal())
-        .catch(() => showCompletionModal());
-    }
-
-    function showCompletionModal() {
-      const out = document.getElementById('console-output');
-      out.className = 'output-success';
-      out.innerHTML = `<strong><i class="fa-solid fa-circle-check"></i> CONGRATULATIONS!</strong><br>` +
-                      `You have completed the Hands-On SQL Launch Module. Your progress has been logged.<br>` +
-                      `You are now prepared to begin Section 1 & 2 in the course materials.`;
-    }
-
-    // ==========================================
-    // 6. INITIALIZATION & REHYDRATION
-    // ==========================================
-    renderDiagnosticSurvey();
-
-    const savedState = getStoredState();
-    if (savedState && savedState.surveyCompleted) {
-      document.getElementById('survey-screen').style.display = 'none';
-      if (savedState.optedOut || assignedArm === 'ctrl') {
-        document.getElementById('control-screen').style.display = 'block';
-      } else {
-        document.getElementById('sandbox-screen').style.display = 'block';
-        initWasmEngine();
-      }
-    }
-  </script>
-</body>
-</html>
+      { id: "ils_6", q: "When writing a paper or report, I am more likely to:",
