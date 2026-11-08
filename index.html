@@ -257,9 +257,51 @@
     .resource-card a:hover {
       text-decoration: underline;
     }
+
+    /* Achievement Badge & Gamification */
+    .achievement-banner {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: linear-gradient(135deg, #eff6ff 0%, #fef3c7 100%);
+      border: 2px solid var(--wgu-gold);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      animation: popBadge 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .badge-icon-box {
+      background: var(--wgu-gold);
+      color: #78350f;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      flex-shrink: 0;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    @keyframes popBadge {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 99999;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Confetti Canvas for Gamification -->
+  <canvas id="confetti-canvas"></canvas>
 
   <header role="banner">
     <div>
@@ -375,12 +417,12 @@
       <i id="landing-icon" class="fa-solid fa-circle-check" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
       <h2 id="landing-title" style="color: var(--wgu-blue); margin-bottom: 0.5rem;">Standard Course Materials & Resource Hub</h2>
       <p id="landing-msg" style="max-width: 650px; margin: 0 auto 1.25rem auto; color: #475569; font-size: 0.95rem;">
-        You are now ready to begin Section 1 of the official D426 curriculum. Make sure to bookmark the primary course resources below to support your studies:
+        You are now ready to begin Section 1 of the official D426 curriculum. Use the direct links below to enter your course homepage and access key resources:
       </p>
 
       <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
-        <a href="https://my.wgu.edu" class="btn btn-primary" target="_blank" rel="noopener">
-          <i class="fa-solid fa-graduation-cap"></i> Return to WGU Student Portal
+        <a href="https://my.wgu.edu/courses/course/30040017" class="btn btn-primary" target="_blank" rel="noopener">
+          <i class="fa-solid fa-house-chimney"></i> Return to D426 Course Homepage
         </a>
         <a href="https://lrps.wgu.edu/provision/115160353" class="btn btn-secondary" target="_blank" rel="noopener">
           <i class="fa-solid fa-book-open"></i> Launch Course Material
@@ -418,7 +460,7 @@
         </div>
       </div>
       <div style="font-size: 0.78rem; color: #64748b; margin-top: 1rem;">
-        <i class="fa-solid fa-bookmark"></i> <strong>Pro-Tip:</strong> Bookmark these three portals in your browser today so they are always within reach throughout D426.
+        <i class="fa-solid fa-bookmark"></i> <strong>Pro-Tip:</strong> Bookmark these resource portals in your browser today so they are always within reach throughout D426.
       </div>
     </section>
 
@@ -1352,18 +1394,103 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
         .catch(() => showCompletionModal());
     }
 
+    // ==========================================
+    // 6. GAMIFICATION: CONFETTI EXPLOSION ENGINE
+    // ==========================================
+    function launchConfettiCelebration() {
+      const canvas = document.getElementById('confetti-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const particleCount = 110;
+      const colors = ['#002f6c', '#ffc220', '#10b981', '#38bdf8', '#f59e0b', '#6366f1'];
+
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: canvas.width / 2 + (Math.random() * 200 - 100),
+          y: canvas.height * 0.45 + (Math.random() * 100 - 50),
+          radius: Math.random() * 5 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 16,
+          vy: Math.random() * -14 - 4,
+          tilt: Math.random() * 10 - 5,
+          tiltAngle: 0,
+          tiltAngleSpeed: Math.random() * 0.08 + 0.04,
+          alpha: 1
+        });
+      }
+
+      const startTime = Date.now();
+      const duration = 4000; // 4 seconds
+
+      function renderParticles() {
+        const elapsed = Date.now() - startTime;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.45; // Gravity
+          p.tiltAngle += p.tiltAngleSpeed;
+          p.tilt = Math.sin(p.tiltAngle) * 8;
+          p.alpha = Math.max(0, 1 - elapsed / duration);
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.arc(p.x + p.tilt, p.y, p.radius, 0, Math.PI * 2, false);
+          ctx.fill();
+          ctx.restore();
+        });
+
+        if (elapsed < duration) {
+          requestAnimationFrame(renderParticles);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      requestAnimationFrame(renderParticles);
+    }
+
     function showCompletionModal() {
+      // Trigger confetti animation immediately
+      launchConfettiCelebration();
+
       const out = document.getElementById('console-output');
       out.className = 'output-success';
       out.innerHTML = `
-        <div style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem; color: #065f46;">
-          <i class="fa-solid fa-circle-check"></i> CONGRATULATIONS! You have completed the Hands-On SQL Launch Sandbox!
+        <!-- Gamification: Verified Achievement Badge -->
+        <div class="achievement-banner">
+          <div class="badge-icon-box">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <div>
+            <div style="font-size: 1.15rem; font-weight: 700; color: var(--wgu-blue);">
+              Hands-On SQL Launch Badge Earned!
+            </div>
+            <div style="font-size: 0.85rem; color: #78350f;">
+              Foundations Mastery Verified: DDL Schema, DML Population, Updates, DQL Queries & Relational Joins
+            </div>
+          </div>
         </div>
-        <div style="font-size: 0.88rem; color: #047857; margin-bottom: 1rem; line-height: 1.5;">
-          Your completion token and progress have been successfully logged. You have built, populated, modified, queried, and joined relational tables from scratch!
+
+        <div style="font-size: 0.95rem; color: #065f46; margin-bottom: 1.25rem; line-height: 1.5;">
+          <strong>Outstanding work!</strong> Your completion token and progress have been officially logged. You have built, populated, modified, queried, and joined relational database tables from scratch!
         </div>
         
-        <div style="background: #ffffff; border: 1px solid #a7f3d0; border-radius: 6px; padding: 1.1rem; text-align: left; margin-top: 0.75rem;">
+        <!-- Primary Action: Return to D426 Course Shell -->
+        <div style="margin-bottom: 1.5rem;">
+          <a href="https://my.wgu.edu/courses/course/30040017" class="btn btn-primary" style="font-size: 0.98rem; padding: 0.75rem 1.6rem; box-shadow: 0 2px 4px rgba(0,0,0,0.12);" target="_blank" rel="noopener">
+            <i class="fa-solid fa-house-chimney"></i> Return to D426 Course Homepage
+          </a>
+        </div>
+
+        <!-- Next Steps & Resource Directory Hub -->
+        <div style="background: #ffffff; border: 1px solid #a7f3d0; border-radius: 6px; padding: 1.1rem; text-align: left;">
           <div style="font-weight: 700; color: var(--wgu-blue); font-size: 0.95rem; margin-bottom: 0.35rem;">
             <i class="fa-solid fa-graduation-cap"></i> Next Steps for Your D426 Journey
           </div>
@@ -1375,7 +1502,7 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
             <div class="resource-card" style="border-color: #e2e8f0;">
               <div>
                 <h4><i class="fa-solid fa-compass"></i> D426 Course Hub</h4>
-                <p>Central repository for study plans, faculty contact, and announcements.</p>
+                <p>Central repository for study pacing plans, faculty contact info, and course announcements.</p>
               </div>
               <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CSH-WST-D426-DataMa-30040017/?web=1" target="_blank" rel="noopener">
                 Launch Course Hub <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -1385,7 +1512,7 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
             <div class="resource-card" style="border-color: #e2e8f0;">
               <div>
                 <h4><i class="fa-solid fa-book-bookmark"></i> Course Guide & Resources</h4>
-                <p>Topic walkthroughs, practice question banks, and pacing guides.</p>
+                <p>In-depth topic walkthroughs, concept study guides, and extra practice questions.</p>
               </div>
               <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Supplemental-Resource-Index.aspx" target="_blank" rel="noopener">
                 View Resources <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -1395,7 +1522,7 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
             <div class="resource-card" style="border-color: #e2e8f0;">
               <div>
                 <h4><i class="fa-solid fa-calendar-days"></i> Upcoming Live Events</h4>
-                <p>Register for live cohort workshops, office hours, and review sessions.</p>
+                <p>Register for live faculty cohorts, drop-in study hours, and assessment review sessions.</p>
               </div>
               <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Upcoming-Live-Events.aspx" target="_blank" rel="noopener">
                 Live Cohort Schedule <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -1404,14 +1531,14 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
           </div>
 
           <div style="font-size: 0.78rem; color: #047857; margin-top: 0.85rem;">
-            <i class="fa-solid fa-bookmark"></i> <strong>Recommendation:</strong> Bookmark these three pages in your browser now so they remain accessible as you study.
+            <i class="fa-solid fa-bookmark"></i> <strong>Pro-Tip:</strong> Bookmark all three resource portals in your browser now so they remain accessible throughout your studies.
           </div>
         </div>
       `;
     }
 
     // ==========================================
-    // 6. INITIALIZATION & REHYDRATION
+    // 7. INITIALIZATION & REHYDRATION
     // ==========================================
     initConsentListeners();
     renderDiagnosticSurvey();
