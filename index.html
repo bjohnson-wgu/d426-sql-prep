@@ -963,7 +963,7 @@ Number one: The Ambiguous Column error. Because both tables have a column named 
 Number two: Make sure you created the 'orders' table and inserted the sample order before running the join.
 
 Double-check your table prefixes in the ON clause, run your query, and celebrate completing the sandbox!`,
-        template: `CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\n\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`,
+        template: `CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) \nVALUES (2, '2026-10-25', 1);\n\nSELECT \n    orders.order_id, \n    books.title, \n    books.price, \n    orders.quantity\nFROM orders\nINNER JOIN books \n    ON orders.book_id = books.book_id;`,
         solution: `CREATE TABLE orders (order_id INT PRIMARY KEY AUTO_INCREMENT, book_id INT, order_date DATE, quantity INT);\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\nSELECT orders.order_id, books.title, books.price, orders.quantity FROM orders INNER JOIN books ON orders.book_id = books.book_id;`,
         seed: () => {
           db.exec("DROP TABLE IF EXISTS orders;");
@@ -977,7 +977,21 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
         },
         validate: (rawSql) => {
           const sql = rawSql.toUpperCase();
-          if (!sql.includes("JOIN") || !sql.includes("ON")) throw new Error("Module 5 requires executing an INNER JOIN with an ON condition between 'orders' and 'books'.");
+          if (!sql.includes("JOIN") || !sql.includes("ON")) {
+            throw new Error("Module 5 requires executing an INNER JOIN with an ON condition between 'orders' and 'books'.");
+          }
+
+          // Strict Equi-Join Check
+          if (rawSql.includes("<=") || rawSql.includes(">=") || rawSql.includes("<>") || rawSql.includes("!=")) {
+            throw new Error("Relational Join Notice: Primary and foreign keys must connect using equality (=). Using an operator like <= causes unrelated rows to match. Inspect the table below!");
+          }
+
+          // Verify that exactly 1 matched row is produced
+          const checkRes = db.exec("SELECT orders.order_id, books.title, books.price FROM orders INNER JOIN books ON orders.book_id = books.book_id;");
+          if (checkRes.length === 0 || checkRes[0].values.length !== 1) {
+            throw new Error("Relational bridge failed to match the order with its book. Ensure your ON clause reads: orders.book_id = books.book_id;");
+          }
+
           return true;
         }
       }
@@ -1175,7 +1189,9 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
     function diagnoseError(sql, errMsg) {
       const remText = document.getElementById('remediation-text');
       const upper = sql.toUpperCase();
-      if (errMsg.includes("Comparison Operator Notice") || errMsg.includes("returned 3 rows") || errMsg.includes("expected 2 books")) {
+      if (errMsg.includes("Relational Join Notice")) {
+        remText.innerText = "Check your ON clause! Relational joins between primary and foreign keys must connect with equality (=). Avoid <= or <> operators.";
+      } else if (errMsg.includes("Comparison Operator Notice") || errMsg.includes("returned 3 rows") || errMsg.includes("expected 2 books")) {
         remText.innerText = "Check your comparison operator! We want books published strictly AFTER 2018 (> 2018), not including 2018 (>=).";
       } else if (errMsg.includes("Invalid or misspelled MySQL data type")) {
         remText.innerText = "Check your data types! Look closely at the data types for each column (such as VARCHAR, INT, DECIMAL). Ensure there are no typos.";
