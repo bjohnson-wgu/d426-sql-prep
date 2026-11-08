@@ -258,6 +258,34 @@
       text-decoration: underline;
     }
 
+    /* Pathway Option Cards */
+    .pathway-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.1rem;
+      margin: 1.25rem 0;
+      text-align: left;
+    }
+    @media (max-width: 760px) {
+      .pathway-container { grid-template-columns: 1fr; }
+    }
+    .pathway-card {
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 1.15rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .pathway-card.recommended {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+    .pathway-card.standard {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
     /* Achievement Badge & Gamification */
     .achievement-banner {
       display: flex;
@@ -424,8 +452,8 @@
         <a href="https://my.wgu.edu/courses/course/30040017" class="btn btn-primary" target="_blank" rel="noopener">
           <i class="fa-solid fa-house-chimney"></i> Return to D426 Course Homepage
         </a>
-        <a href="https://lrps.wgu.edu/provision/115160353" class="btn btn-secondary" target="_blank" rel="noopener">
-          <i class="fa-solid fa-book-open"></i> Launch Course Material
+        <a href="https://lrps.wgu.edu/provision/487034335" class="btn btn-secondary" target="_blank" rel="noopener">
+          <i class="fa-solid fa-book-open"></i> Launch Course Materials (Chapter 1)
         </a>
       </div>
 
@@ -559,7 +587,7 @@
               <i class="fa-solid fa-circle-info" aria-hidden="true"></i> Sandbox Scope & Exploratory Capabilities
             </summary>
             <div style="margin-top: 0.45rem; line-height: 1.45; border-top: 1px solid #e2e8f0; padding-top: 0.4rem;">
-              This practice environment is a client-side WebAssembly emulator configured specifically for the core DDL, DML, and DQL operations taught in D426 (table definitions, constraints, updates, filters, and standard inner joins). It does not emulate an entire production MySQL server or support advanced server routines (e.g., triggers, stored procedures, or administrative commands). For unrestricted multi-table database design or advanced dialect experimentation, we recommend using a full online engine like <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener" style="color: var(--wgu-blue); font-weight: 600;">DB Fiddle</a>.
+              This practice environment is a client-side WebAssembly emulator configured specifically for the core DDL, DML, and DQL operations taught in D426 (table definitions, constraints, updates, filters, and standard inner joins)[cite: 3]. It does not emulate an entire production MySQL server or support advanced server routines (e.g., triggers, stored procedures, or administrative commands). For unrestricted multi-table database design or advanced dialect experimentation, we recommend using a full online engine like <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener" style="color: var(--wgu-blue); font-weight: 600;">DB Fiddle</a>.
             </div>
           </details>
 
@@ -1495,7 +1523,7 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
             <i class="fa-solid fa-circle-info"></i> What Would You Like to Do Next?
           </div>
           <p style="margin-bottom: 0.45rem;">
-            <strong>Ready to continue?</strong> Click the button below to head straight into your D426 course materials and begin Section 1.
+            <strong>Ready to study?</strong> Choose your preferred study pathway below to continue into the course curriculum.
           </p>
           <p style="margin-bottom: 0.45rem;">
             <strong>Done for today?</strong> You can safely close this browser window. Your progress and verified badge are saved!
@@ -1504,10 +1532,47 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
             <i class="fa-solid fa-envelope"></i> <em>Check your inbox:</em> We have sent a confirmation email to your WGU address with links to your course resources, plus a personalized link allowing you to return to this sandbox anytime to practice before your exam.
           </p>
         </div>
+
+        <!-- Two Curricular Pathways -->
+        <div class="pathway-container">
+          <div class="pathway-card recommended">
+            <div>
+              <div style="font-size: 0.76rem; font-weight: 700; text-transform: uppercase; color: #166534; margin-bottom: 0.25rem;">
+                <i class="fa-solid fa-bolt"></i> Pathway A • Recommended Inductive Route
+              </div>
+              <h4 style="color: var(--wgu-blue); font-size: 0.98rem; margin-bottom: 0.4rem;">
+                Keep Coding Momentum: Chapter 2 (SQL Syntax)
+              </h4>
+              <p style="font-size: 0.83rem; color: #334155; line-height: 1.45; margin-bottom: 1rem;">
+                Build directly on what you just practiced! Jump straight into <strong>Section 2.1: Structured Query Language</strong> in your web textbook to master SQL syntax, constraints, and complete your Chapter 2 & 3 zyLabs before moving to database theory.
+              </p>
+            </div>
+            <a href="https://learn.zybooks.com/zybook/WGUD426Databasesv3/chapter/2/section/1" class="btn btn-success" style="font-size: 0.88rem; width: 100%;" target="_blank" rel="noopener">
+              <i class="fa-solid fa-code"></i> Launch Chapter 2: SQL Syntax
+            </a>
+          </div>
+
+          <div class="pathway-card standard">
+            <div>
+              <div style="font-size: 0.76rem; font-weight: 700; text-transform: uppercase; color: #475569; margin-bottom: 0.25rem;">
+                <i class="fa-solid fa-book-open"></i> Pathway B • Traditional Route
+              </div>
+              <h4 style="color: var(--wgu-blue); font-size: 0.98rem; margin-bottom: 0.4rem;">
+                Standard Course Order: Chapter 1 (Theory)
+              </h4>
+              <p style="font-size: 0.83rem; color: #475569; line-height: 1.45; margin-bottom: 1rem;">
+                Prefer to study in numerical order? Open your course materials from the beginning to read about database architecture, DBMS roles, and entity relationships.
+              </p>
+            </div>
+            <a href="https://lrps.wgu.edu/provision/487034335" class="btn btn-secondary" style="font-size: 0.88rem; width: 100%;" target="_blank" rel="noopener">
+              <i class="fa-solid fa-arrow-right-to-bracket"></i> Launch Course Materials (Chapter 1)
+            </a>
+          </div>
+        </div>
         
         <!-- Primary Action: Return to D426 Course Shell -->
-        <div style="margin-bottom: 1.5rem;">
-          <a href="https://my.wgu.edu/courses/course/30040017" class="btn btn-primary" style="font-size: 0.98rem; padding: 0.75rem 1.6rem; box-shadow: 0 2px 4px rgba(0,0,0,0.12);" target="_blank" rel="noopener">
+        <div style="margin-bottom: 1.5rem; text-align: center;">
+          <a href="https://my.wgu.edu/courses/course/30040017" class="btn btn-primary" style="font-size: 0.95rem; padding: 0.75rem 1.6rem; box-shadow: 0 2px 4px rgba(0,0,0,0.12);" target="_blank" rel="noopener">
             <i class="fa-solid fa-house-chimney"></i> Return to D426 Course Homepage
           </a>
         </div>
