@@ -226,7 +226,7 @@
 
         <p><strong>3. Your Choice (Voluntary):</strong> Taking part is 100% voluntary. You can choose not to join, or you can stop at any time. Choosing not to participate will have no effect on your course grade, academic progress, tuition, or your access to instructors, cohorts, and study resources.</p>
 
-        <p><strong>4. What will you do?</strong> If you agree, you will advance to a brief 3-minute questionnaire about your study habits and prior SQL experience. Depending on your randomly assigned group, you may also get optional access to an interactive hands-on SQL practice tool.</p>
+        <p><strong>4. What will you do?</strong> If you agree, you will advance to a brief 3-minute questionnaire about your study habits and prior SQL experience. Depending on your randomly assigned group, you may also get optional access to an interactive hands-on SQL practice tool[cite: 7].</p>
 
         <p><strong>5. Privacy & Your Information:</strong> We use your student ID solely to match your survey responses with your course progress. Before analyzing any data, your name and ID will be removed and replaced with a random code. Only group summary numbers will ever be reported or published.</p>
 
@@ -333,11 +333,11 @@
           <i class="fa-solid fa-compass" aria-hidden="true"></i> Why Start with the SQL Sandbox?
         </h3>
         <p style="font-size: 0.88rem; color: #334155; margin-bottom: 0.6rem;">
-          Database concepts are often easier to understand once you see tables created and manipulated in code. This practice tool builds core query skills before you read the theoretical chapters in your textbook.
+          Database concepts are often easier to understand once you see tables created and manipulated in code. This practice tool builds core query skills before you read the theoretical chapters in your textbook[cite: 7].
         </p>
         <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.82rem; color: #64748b;">
           <span><i class="fa-solid fa-clock" aria-hidden="true"></i> <strong>Estimated Time:</strong> ~15–20 minutes</span>
-          <span><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> <strong>Progress Autosaved:</strong> Your work is saved locally in this browser.</span>
+          <span><i class="fa-solid fa-rotate-left"></i> <strong>Clean Session:</strong> The workspace provides fresh template code on each visit.</span>
         </div>
       </div>
 
@@ -403,8 +403,7 @@
                     autocapitalize="none" 
                     autocomplete="off" 
                     autocorrect="off" 
-                    spellcheck="false"
-                    oninput="saveCurrentEditorText()"></textarea>
+                    spellcheck="false"></textarea>
 
           <div class="actions">
             <button class="btn btn-primary" id="run-btn" onclick="executeUserQuery()">
@@ -461,21 +460,13 @@
           optedOut: false,
           currentStep: 1,
           completedSteps: [],
-          attemptsCount: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
-          codeDrafts: {}
+          attemptsCount: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
         };
         const updated = Object.assign({}, current, patch);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {
         console.warn("localStorage save failed", e);
       }
-    }
-
-    function saveCurrentEditorText() {
-      const state = getStoredState() || {};
-      const drafts = state.codeDrafts || {};
-      drafts[currentStep] = document.getElementById('sql-editor').value;
-      saveState({ codeDrafts: drafts });
     }
 
     // ==========================================
@@ -665,12 +656,51 @@
     }
 
     // ==========================================
-    // 4. MASTER CURRICULUM WITH ACCESSIBILITY TRANSCRIPTS
+    // 4. MASTER CURRICULUM & STRICT VALIDATION RULES
     // ==========================================
     let currentStep = 1;
     let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     let sessionStartTime = Date.now();
     let db = null;
+
+    // Strict MySQL Data Type Validator for DDL
+    const VALID_MYSQL_TYPES = [
+      'INT', 'INTEGER', 'TINYINT', 'SMALLINT', 'MEDIUMINT', 'BIGINT',
+      'VARCHAR', 'CHAR', 'TEXT', 'TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT',
+      'DECIMAL', 'NUMERIC', 'FLOAT', 'DOUBLE',
+      'DATE', 'DATETIME', 'TIMESTAMP', 'TIME', 'YEAR',
+      'BOOLEAN', 'BOOL', 'BLOB'
+    ];
+
+    function validateMySQLColumnTypes(sql) {
+      const createMatch = sql.match(/CREATE\s+TABLE\s+\w+\s*\(([\s\S]*?)\)\s*;/i);
+      if (!createMatch) return; // Syntax checks will catch malformed create statements
+
+      const inner = createMatch[1];
+      const lines = inner.split(',').map(l => l.trim()).filter(l => l.length > 0);
+
+      lines.forEach(line => {
+        // Skip table constraints (e.g., PRIMARY KEY (col), FOREIGN KEY ...)
+        if (/^(PRIMARY\s+KEY|FOREIGN\s+KEY|KEY|INDEX|CONSTRAINT|UNIQUE)/i.test(line)) return;
+
+        // Column syntax: [col_name] [DATA_TYPE] (optional precision/scale) [constraints...]
+        const tokens = line.split(/\s+/);
+        if (tokens.length >= 2) {
+          const colName = tokens[0].replace(/[`"]/g, '');
+          let rawType = tokens[1].toUpperCase();
+
+          // Strip parameter bounds: VARCHAR(100) -> VARCHAR, DECIMAL(5,2) -> DECIMAL
+          const parenIdx = rawType.indexOf('(');
+          if (parenIdx !== -1) {
+            rawType = rawType.substring(0, parenIdx);
+          }
+
+          if (!VALID_MYSQL_TYPES.includes(rawType)) {
+            throw new Error(`Invalid or misspelled MySQL data type '${tokens[1]}' for column '${colName}'.`);
+          }
+        }
+      });
+    }
 
     const curriculum = {
       1: {
@@ -705,6 +735,9 @@ Clean up any stray commas on your right, hit 'Run MySQL Code' again, and let's k
           db.exec("DROP TABLE IF EXISTS books;");
         },
         validate: (rawSql) => {
+          // 1. Strict MySQL data type verification
+          validateMySQLColumnTypes(rawSql);
+
           const upper = rawSql.toUpperCase();
           if (!upper.includes("DESCRIBE") && !upper.includes("DESC")) {
             throw new Error("Please include 'DESCRIBE books;' at the end of your script to display the schema.");
@@ -718,7 +751,9 @@ Clean up any stray commas on your right, hit 'Run MySQL Code' again, and let's k
           const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
           if (res.length === 0) throw new Error("Table 'books' was not created. Check your CREATE TABLE statement.");
           const cols = db.exec("PRAGMA table_info(books);")[0].values.map(r => r[1]);
-          if (!cols.includes('title') || !cols.includes('author')) throw new Error("Table 'books' is missing required columns.");
+          if (!cols.includes('title') || !cols.includes('author') || !cols.includes('price') || !cols.includes('published_year')) {
+            throw new Error("Table 'books' is missing required columns. Ensure all columns match the specification.");
+          }
           return true;
         }
       },
@@ -753,7 +788,11 @@ Match up your counts, verify your single quotes, and execute your query again!`,
           db.exec("DROP TABLE IF EXISTS books;");
           db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
         },
-        validate: () => {
+        validate: (rawSql) => {
+          const upper = rawSql.toUpperCase();
+          if (!upper.includes("INSERT INTO") || !upper.includes("VALUES")) {
+            throw new Error("Ensure your query uses valid 'INSERT INTO books (...) VALUES (...)' syntax.");
+          }
           const res = db.exec("SELECT COUNT(*) FROM books;");
           if (res.length === 0 || res[0].values[0][0] < 2) throw new Error("Please insert at least 2 rows into the 'books' table.");
           return true;
@@ -791,7 +830,11 @@ Also confirm your semicolon is in place. Add that WHERE clause on line 4, and ru
           db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
           db.exec("INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);");
         },
-        validate: () => {
+        validate: (rawSql) => {
+          const upper = rawSql.toUpperCase();
+          if (!upper.includes("UPDATE") || !upper.includes("SET") || !upper.includes("WHERE")) {
+            throw new Error("Your statement must include UPDATE, SET, and a WHERE clause.");
+          }
           const res = db.exec("SELECT price FROM books WHERE book_id = 2;");
           if (res.length > 0 && Math.abs(res[0].values[0][0] - 31.50) < 0.01) return true;
           throw new Error("Book ID 2 price was not updated to 31.50. Make sure your UPDATE statement executed.");
@@ -830,8 +873,8 @@ Adjust your query text, hit Run, and check your table!`,
           db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
           db.exec("INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020), ('Database Systems', 'Thomas Connolly', 55.00, 2014);");
         },
-        validate: () => {
-          const sql = document.getElementById('sql-editor').value.toUpperCase();
+        validate: (rawSql) => {
+          const sql = rawSql.toUpperCase();
           if (!sql.includes("SELECT") || !sql.includes("WHERE")) throw new Error("Ensure your query uses both SELECT and WHERE clauses.");
           if (!sql.includes("ORDER BY") || !sql.includes("DESC")) throw new Error("Ensure your query sorts by price in descending order (ORDER BY price DESC).");
           return true;
@@ -872,9 +915,9 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
           db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
           db.exec("INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);");
         },
-        validate: () => {
-          const sql = document.getElementById('sql-editor').value.toUpperCase();
-          if (!sql.includes("JOIN")) throw new Error("Module 5 requires executing an INNER JOIN between 'orders' and 'books'.");
+        validate: (rawSql) => {
+          const sql = rawSql.toUpperCase();
+          if (!sql.includes("JOIN") || !sql.includes("ON")) throw new Error("Module 5 requires executing an INNER JOIN with an ON condition between 'orders' and 'books'.");
           return true;
         }
       }
@@ -930,9 +973,8 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
       // Always hide the "Proceed to Next Module" button on initial load
       document.getElementById('next-btn').style.display = 'none';
 
-      const state = getStoredState();
-      const savedCode = (state && state.codeDrafts && state.codeDrafts[step]) ? state.codeDrafts[step] : cfg.template;
-      document.getElementById('sql-editor').value = savedCode;
+      // Always initialize editor to clean template code (No lingering cached typos)
+      document.getElementById('sql-editor').value = cfg.template;
       
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
@@ -946,7 +988,6 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
 
     function resetEditor() {
       document.getElementById('sql-editor').value = curriculum[currentStep].template;
-      saveCurrentEditorText();
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
       out.innerText = "Template reset. Click 'Run MySQL Code' to execute.";
@@ -957,7 +998,6 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
 
     function revealSolution() {
       document.getElementById('sql-editor').value = curriculum[currentStep].solution;
-      saveCurrentEditorText();
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
       out.innerText = "Solution loaded into editor. Click 'Run MySQL Code' to execute.";
@@ -995,19 +1035,19 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
           curriculum[currentStep].seed();
         }
 
-        // Step 2: Execute normalized user statements
+        // Step 2: Validate semantic correctness & strict MySQL types BEFORE execution
+        curriculum[currentStep].validate(rawSql);
+
+        // Step 3: Execute normalized user statements in the WASM engine
         const results = db.exec(normalizedSql);
 
-        // Step 3: Emulate MySQL Error 1146 if DESCRIBE was executed on a non-existent table
+        // Step 4: Emulate MySQL Error 1146 if DESCRIBE was executed on a non-existent table
         if (targetDescribeTable) {
           const checkTable = db.exec(`SELECT name FROM sqlite_master WHERE type='table' AND name='${targetDescribeTable}';`);
           if (checkTable.length === 0 || checkTable[0].values.length === 0) {
             throw new Error(`Table '${targetDescribeTable}' doesn't exist.`);
           }
         }
-
-        // Step 4: Validate criteria
-        curriculum[currentStep].validate(rawSql);
 
         // Successful Run
         out.className = 'output-success';
@@ -1071,7 +1111,9 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
     function diagnoseError(sql, errMsg) {
       const remText = document.getElementById('remediation-text');
       const upper = sql.toUpperCase();
-      if (errMsg.includes("doesn't exist")) {
+      if (errMsg.includes("Invalid or misspelled MySQL data type")) {
+        remText.innerText = "Check your data types! Look closely at the data types for each column (such as VARCHAR, INT, DECIMAL). Ensure there are no typos.";
+      } else if (errMsg.includes("doesn't exist")) {
         remText.innerText = "Check your table name! In SQL, you can only inspect or query tables that have been successfully created.";
       } else if (sql.includes(",\n)") || sql.includes(", )")) {
         remText.innerText = "Check your commas! You appear to have a trailing comma after your last column before the closing parenthesis ')'.";
