@@ -125,8 +125,39 @@
       header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
     }
 
-    .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; background: #000; margin-bottom: 1rem; }
+    .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; background: #000; margin-bottom: 0.75rem; }
     .video-container iframe { position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0; }
+
+    /* Accessible Transcript Details Box */
+    details.transcript-drawer {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 0.55rem 0.85rem;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+    }
+    details.transcript-drawer summary {
+      font-weight: 600;
+      color: var(--wgu-blue);
+      cursor: pointer;
+      user-select: none;
+      outline: none;
+    }
+    details.transcript-drawer summary:focus-visible {
+      outline: 2px solid var(--wgu-blue);
+      border-radius: 2px;
+    }
+    .transcript-content {
+      margin-top: 0.6rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #e2e8f0;
+      color: #334155;
+      line-height: 1.6;
+      white-space: pre-line;
+      max-height: 220px;
+      overflow-y: auto;
+    }
 
     /* 390px Workspace Editor */
     textarea#sql-editor { 
@@ -160,7 +191,7 @@
 </head>
 <body>
 
-  <header>
+  <header role="banner">
     <div>
       <h1>D426: Data Management Foundations</h1>
       <div style="font-size: 0.78rem; opacity: 0.85;">Curricular Sequencing Research Project</div>
@@ -168,12 +199,12 @@
     <div id="student-badge">Student ID: <span id="display-sid">Loading...</span></div>
   </header>
 
-  <div class="container">
+  <main class="container" role="main">
 
     <!-- SCREEN 1A: INFORMED CONSENT & AGE GATE -->
-    <div id="screen-1a" class="card" style="max-width: 900px; margin: 0 auto 1.5rem auto;">
+    <section id="screen-1a" class="card" style="max-width: 900px; margin: 0 auto 1.5rem auto;" aria-labelledby="consent-title">
       <div class="consent-header">
-        <h2>Informed Consent & Research Participation Agreement</h2>
+        <h2 id="consent-title">Informed Consent & Research Participation Agreement</h2>
         <p style="font-size: 0.85rem; color: #64748b;">
           Please read this form before deciding whether to take part in this research study.
         </p>
@@ -195,7 +226,7 @@
 
         <p><strong>3. Your Choice (Voluntary):</strong> Taking part is 100% voluntary. You can choose not to join, or you can stop at any time. Choosing not to participate will have no effect on your course grade, academic progress, tuition, or your access to instructors, cohorts, and study resources.</p>
 
-        <p><strong>4. What will you do?</strong> If you agree, you will advance to a brief 3-minute questionnaire about your study habits and prior SQL experience[cite: 1, 4]. Depending on your randomly assigned group, you may also get optional access to an interactive hands-on SQL practice tool[cite: 4].</p>
+        <p><strong>4. What will you do?</strong> If you agree, you will advance to a brief 3-minute questionnaire about your study habits and prior SQL experience. Depending on your randomly assigned group, you may also get optional access to an interactive hands-on SQL practice tool.</p>
 
         <p><strong>5. Privacy & Your Information:</strong> We use your student ID solely to match your survey responses with your course progress. Before analyzing any data, your name and ID will be removed and replaced with a random code. Only group summary numbers will ever be reported or published.</p>
 
@@ -216,25 +247,25 @@
         </div>
       </div>
 
-      <div id="consent-validation-alert" class="validation-alert">
+      <div id="consent-validation-alert" class="validation-alert" role="alert">
         Please make a selection for Question 1 to proceed.
       </div>
 
       <button type="button" id="consent-confirm-btn" class="btn btn-primary" style="width: 100%;">
         Confirm Choice & Continue <i class="fa-solid fa-arrow-right"></i>
       </button>
-    </div>
+    </section>
 
     <!-- SCREEN 1B: DIAGNOSTIC QUESTIONNAIRE -->
-    <div id="screen-1b" class="card" style="display: none; max-width: 900px; margin: 0 auto 1.5rem auto;">
+    <section id="screen-1b" class="card" style="display: none; max-width: 900px; margin: 0 auto 1.5rem auto;" aria-labelledby="diag-title">
       <div style="margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
-        <h2 style="color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.25rem;">Course Diagnostic Questionnaire</h2>
+        <h2 id="diag-title" style="color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.25rem;">Course Diagnostic Questionnaire</h2>
         <p style="font-size: 0.85rem; color: #64748b;">
           Please complete all items below. Responses are used solely for instructional pacing and research modeling.
         </p>
       </div>
 
-      <div id="diagnostic-validation-alert" class="validation-alert">
+      <div id="diagnostic-validation-alert" class="validation-alert" role="alert">
         Please answer all questions before submitting. Unanswered items are highlighted below.
       </div>
 
@@ -267,10 +298,10 @@
       <div class="citation-footer">
         Index of Learning Styles copyright Richard M. Felder and Barbara A. Soloman, North Carolina State University. Administered under non-commercial educational research provisions.
       </div>
-    </div>
+    </section>
 
     <!-- SCREEN 2A: CONTROL / OPT-OUT LANDING -->
-    <div id="control-screen" class="card" style="display: none; text-align: center; padding: 2.5rem 1.5rem; max-width: 900px; margin: 0 auto 1.5rem auto;">
+    <section id="control-screen" class="card" style="display: none; text-align: center; padding: 2.5rem 1.5rem; max-width: 900px; margin: 0 auto 1.5rem auto;" aria-labelledby="landing-title">
       <i id="landing-icon" class="fa-solid fa-circle-check" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
       <h2 id="landing-title" style="color: var(--wgu-blue); margin-bottom: 0.75rem;">Standard Course Materials</h2>
       <p id="landing-msg" style="max-width: 600px; margin: 0 auto 1.5rem auto; color: #475569; font-size: 0.95rem;">
@@ -284,13 +315,13 @@
           <i class="fa-solid fa-book-open"></i> Launch Course Material
         </a>
       </div>
-    </div>
+    </section>
 
-    <!-- SCREEN 2B: INTERVENTION ARM (SANDBOX) -->
-    <div id="sandbox-screen" style="display: none;">
+    <!-- SCREEN 2B: INTERVENTION ARM (EXPANDED WORKSPACE) -->
+    <section id="sandbox-screen" style="display: none;" aria-label="Interactive SQL Coding Sandbox">
       
-      <div class="desktop-alert">
-        <i class="fa-solid fa-display"></i>
+      <div class="desktop-alert" role="note">
+        <i class="fa-solid fa-display" aria-hidden="true"></i>
         <div>
           <strong>Recommended Learning Environment:</strong>
           Please complete this interactive coding module on a <strong>desktop or laptop browser</strong>. A full-sized screen and physical keyboard make reading multi-line queries, typing punctuation (quotes and semicolons), and debugging much smoother.
@@ -299,56 +330,68 @@
 
       <div class="card" style="background: #f8fafc; border-left: 4px solid var(--wgu-blue); padding: 1.25rem 1.5rem;">
         <h3 style="color: var(--wgu-blue); font-size: 1.1rem; margin-bottom: 0.4rem;">
-          <i class="fa-solid fa-compass"></i> Why Start with the SQL Sandbox?
+          <i class="fa-solid fa-compass" aria-hidden="true"></i> Why Start with the SQL Sandbox?
         </h3>
         <p style="font-size: 0.88rem; color: #334155; margin-bottom: 0.6rem;">
-          Database concepts are often easier to understand once you see tables created and manipulated in code[cite: 4]. This practice tool builds core query skills before you read the theoretical chapters in your textbook[cite: 4].
+          Database concepts are often easier to understand once you see tables created and manipulated in code. This practice tool builds core query skills before you read the theoretical chapters in your textbook.
         </p>
         <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.82rem; color: #64748b;">
-          <span><i class="fa-solid fa-clock"></i> <strong>Estimated Time:</strong> ~15–20 minutes</span>
-          <span><i class="fa-solid fa-floppy-disk"></i> <strong>Progress Autosaved:</strong> Your work is saved locally in this browser.</span>
+          <span><i class="fa-solid fa-clock" aria-hidden="true"></i> <strong>Estimated Time:</strong> ~15–20 minutes</span>
+          <span><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> <strong>Progress Autosaved:</strong> Your work is saved locally in this browser.</span>
         </div>
       </div>
 
       <!-- Stepper Navigation -->
-      <div class="stepper">
-        <div class="step-tab active" id="tab-1" onclick="switchStep(1)">Module 1: DDL Schema</div>
-        <div class="step-tab" id="tab-2" onclick="switchStep(2)">Module 2: DML Population</div>
-        <div class="step-tab" id="tab-3" onclick="switchStep(3)">Module 3: DML Updates</div>
-        <div class="step-tab" id="tab-4" onclick="switchStep(4)">Module 4: DQL Queries</div>
-        <div class="step-tab" id="tab-5" onclick="switchStep(5)">Module 5: Relational Joins</div>
-      </div>
+      <nav class="stepper" aria-label="Curriculum Modules">
+        <div class="step-tab active" id="tab-1" onclick="switchStep(1)" role="button" tabindex="0">Module 1: DDL Schema</div>
+        <div class="step-tab" id="tab-2" onclick="switchStep(2)" role="button" tabindex="0">Module 2: DML Population</div>
+        <div class="step-tab" id="tab-3" onclick="switchStep(3)" role="button" tabindex="0">Module 3: DML Updates</div>
+        <div class="step-tab" id="tab-4" onclick="switchStep(4)" role="button" tabindex="0">Module 4: DQL Queries</div>
+        <div class="step-tab" id="tab-5" onclick="switchStep(5)" role="button" tabindex="0">Module 5: Relational Joins</div>
+      </nav>
 
       <div class="grid">
-        <!-- Left Column: Video & Instructions -->
+        <!-- Left Column: Video & Accessible Transcripts -->
         <div class="card">
           <h2 id="step-title" style="margin-bottom: 0.5rem; font-size: 1.1rem;">Module 1: Schema Architecture (CREATE TABLE)</h2>
           <p id="step-instructions" style="font-size: 0.88rem; color: #475569; margin-bottom: 1rem;">
-            Learn how to define a table in MySQL using <code>CREATE TABLE</code> with specific column data types[cite: 4].
+            Learn how to define a table in MySQL using <code>CREATE TABLE</code> with specific column data types.
           </p>
           
           <div class="video-container">
-            <iframe id="video-frame" src="https://www.youtube-nocookie.com/embed/VRUb_-0MjKo" allowfullscreen></iframe>
+            <iframe id="video-frame" src="https://www.youtube-nocookie.com/embed/VRUb_-0MjKo" title="Primary Instructional Video" allowfullscreen></iframe>
           </div>
 
-          <!-- Dynamic Remediation Drawer with Corrected ID (obBNBGgIsYw) -->
-          <div id="remediation-box" class="hint-box">
+          <!-- Primary Video Accessible Transcript Drawer -->
+          <details id="primary-transcript-drawer" class="transcript-drawer">
+            <summary><i class="fa-solid fa-file-lines" aria-hidden="true"></i> View Video Transcript</summary>
+            <div id="primary-transcript-body" class="transcript-content">Loading transcript...</div>
+          </details>
+
+          <!-- Dynamic Remediation Drawer -->
+          <div id="remediation-box" class="hint-box" role="region" aria-label="Troubleshooting Assistance">
             <div style="font-weight: 700; color: #b45309; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
-              <i class="fa-solid fa-lightbulb"></i> Troubleshooting & Remediation
+              <i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Troubleshooting & Remediation
             </div>
             <p id="remediation-text" style="margin-bottom: 0.75rem; color: #78350f;">Check your comma placement.</p>
             
-            <div id="remediation-video-container" class="video-container" style="margin-bottom: 0.75rem;">
-              <iframe id="remediation-video-frame" src="" allowfullscreen></iframe>
+            <div id="remediation-video-container" class="video-container" style="margin-bottom: 0.6rem;">
+              <iframe id="remediation-video-frame" src="" title="Remediation Video Help" allowfullscreen></iframe>
             </div>
 
+            <!-- Remediation Accessible Transcript Drawer -->
+            <details id="remedy-transcript-drawer" class="transcript-drawer" style="margin-bottom: 0.75rem; background: #ffffff;">
+              <summary style="color: #b45309;"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> View Troubleshooting Transcript</summary>
+              <div id="remedy-transcript-body" class="transcript-content">Loading transcript...</div>
+            </details>
+
             <button id="show-solution-btn" class="btn btn-hint" style="display: none; width: 100%;" onclick="revealSolution()">
-              <i class="fa-solid fa-unlock-keyhole"></i> Reveal Working Solution
+              <i class="fa-solid fa-unlock-keyhole" aria-hidden="true"></i> Reveal Working Solution
             </button>
           </div>
         </div>
 
-        <!-- Right Column: Interactive Workspace -->
+        <!-- Right Column: Interactive Sandbox -->
         <div class="card" style="display: flex; flex-direction: column; gap: 0.85rem;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <span style="font-size: 0.88rem; font-weight: 600; color: #64748b;">MySQL Interactive Workspace</span>
@@ -356,6 +399,7 @@
           </div>
 
           <textarea id="sql-editor" 
+                    aria-label="SQL Code Editor"
                     autocapitalize="none" 
                     autocomplete="off" 
                     autocorrect="off" 
@@ -364,20 +408,21 @@
 
           <div class="actions">
             <button class="btn btn-primary" id="run-btn" onclick="executeUserQuery()">
-              <i class="fa-solid fa-play"></i> Run MySQL Code
+              <i class="fa-solid fa-play" aria-hidden="true"></i> Run MySQL Code
             </button>
             <button class="btn btn-success" id="next-btn" style="display: none;" onclick="advanceStep()">
-              Proceed to Next Module <i class="fa-solid fa-arrow-right"></i>
+              Proceed to Next Module <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </button>
           </div>
 
-          <div id="console-output" class="output-ready">Ready to execute query.</div>
-          <div id="table-output" style="overflow-x: auto;"></div>
+          <!-- ARIA Live Output Console for Screen Readers -->
+          <div id="console-output" class="output-ready" role="status" aria-live="polite">Ready to execute query.</div>
+          <div id="table-output" style="overflow-x: auto;" role="region" aria-label="Query Results Table"></div>
         </div>
       </div>
-    </div>
+    </section>
 
-  </div>
+  </main>
 
   <script>
     // ==========================================
@@ -618,7 +663,7 @@
     }
 
     // ==========================================
-    // 4. MASTER CURRICULUM WITH ACCURATE YOUTUBE IDS
+    // 4. MASTER CURRICULUM WITH ACCESSIBILITY TRANSCRIPTS
     // ==========================================
     let currentStep = 1;
     let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -629,8 +674,29 @@
       1: {
         title: "Module 1: Schema Architecture (CREATE TABLE)",
         instructions: "Write a statement to create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>.",
-        videoId: "VRUb_-0MjKo",             // Module 1 Video 1.1 (1'39")
-        remediationVideoId: "obBNBGgIsYw",  // Module 1 Video 1.2 (0'47" - Verified Capital I)
+        videoId: "VRUb_-0MjKo",             // Module 1 Video 1.1
+        remediationVideoId: "obBNBGgIsYw",  // Module 1 Video 1.2
+        primaryTranscript: `Hi everyone! Welcome to Module 1 of your D426 SQL Foundations.
+
+Before we dive into textbook theory, we are going to build real database tables from the ground up. In SQL, this is called Data Definition Language, or DDL.
+
+Think of a table as a strict grid. Before storing a single piece of information, you must define the columns and the exact type of data allowed in each.
+
+Look at the starter query on your right. We create the 'books' table:
+First: book_id INT PRIMARY KEY AUTO_INCREMENT. That generates a unique ID number for every row automatically.
+Next: title and author use VARCHAR text. The NOT NULL rule means they can never be left empty.
+Then: price DECIMAL(5,2) gives exact currency formatting, and published_year INT stores the release year.
+
+Notice the punctuation: every column is separated by a comma, but there is NO COMMA after that final column!
+
+Review the code in your editor, and click 'Run MySQL Code' to build your first table!`,
+        remedyTranscript: `Hit an error? Don't worry at all—getting a syntax error on your first CREATE TABLE is completely normal.
+
+Let's check the two biggest tripwires:
+Number one: The trailing comma. Look at your last column line, 'published_year INT'. Did you accidentally leave a comma after it? In SQL, commas only go BETWEEN items. A comma before the closing parenthesis breaks the engine every time.
+Number two: Check your closing parenthesis and make sure there's a semicolon right at the very end.
+
+Clean up any stray commas on your right, hit 'Run MySQL Code' again, and let's keep moving!`,
         template: `-- MODULE 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\n\nDESCRIBE books;`,
         solution: `CREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\n\nDESCRIBE books;`,
         validate: () => {
@@ -644,8 +710,28 @@
       2: {
         title: "Module 2: Data Population (INSERT INTO)",
         instructions: "Insert at least two books into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
-        videoId: "dRBxT2oD1hk",             // Module 2 Video 2.1 (1'25")
-        remediationVideoId: "NpdCFRU3Vc8",  // Module 2 Video 2.2 (0'51")
+        videoId: "dRBxT2oD1hk",             // Module 2 Video 2.1
+        remediationVideoId: "NpdCFRU3Vc8",  // Module 2 Video 2.2
+        primaryTranscript: `Great job defining your schema! Now that our 'books' table exists, it's time for Data Manipulation Language, or DML.
+
+To add real records to a table, we use the INSERT INTO statement.
+
+Take a look at your starter code. We state: INSERT INTO books, followed by our target columns in parentheses.
+Notice that we list title, author, price, and published_year—but we do NOT list book_id!
+
+Why? Because book_id is AUTO_INCREMENT. The database generates those numbers for us automatically.
+
+Next comes the VALUES clause. Notice the golden rule of SQL literals: Text strings and dates MUST be enclosed in single quotes. Numbers, like 42.50 or 2019, are NEVER quoted.
+
+You can insert multiple rows at once by separating each row block with a comma.
+
+Review the rows in your editor, click 'Run MySQL Code', and watch your live table populate below!`,
+        remedyTranscript: `INSERT query running into trouble? That's very common when loading data. Check these two quick fixes:
+
+First: Did you wrap your book title or author in single quotes? If you forget quotes around text, SQL thinks your title is a database column name and crashes.
+Second: Count your columns and values. If you listed four columns in your header, you must have exactly four values inside each parenthesis set.
+
+Match up your counts, verify your single quotes, and execute your query again!`,
         template: `INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`,
         solution: `INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`,
         validate: () => {
@@ -657,8 +743,28 @@
       3: {
         title: "Module 3: Controlled Updates (UPDATE & DELETE with WHERE)",
         instructions: "Update the price of a book using a <code>WHERE</code> clause. Always use WHERE when updating or deleting!",
-        videoId: "4jQvokPNooQ",             // Module 3 Video 3.1 (1'26")
-        remediationVideoId: "G07Wd94Y8wg",  // Module 3 Video 3.2 (0'47")
+        videoId: "4jQvokPNooQ",             // Module 3 Video 3.1
+        remediationVideoId: "G07Wd94Y8wg",  // Module 3 Video 3.2
+        primaryTranscript: `Now that your database has rows, what happens when data changes? In Module 3, we learn controlled updates and modifications.
+
+This brings us to the single most important safety rule in all of database administration: NEVER run an UPDATE without a WHERE clause!
+
+Look at the statement in your workspace: UPDATE books SET price = 31.50 WHERE book_id = 2;
+
+The UPDATE statement specifies the table. The SET clause specifies the column and the new value. And the WHERE clause specifies the exact record to modify.
+
+If you forget the WHERE clause, SQL won't warn you—it will overwrite EVERY single row in the entire table!
+
+Notice we also added a SELECT statement below so you can instantly confirm the price change in your results.
+
+Run the code, verify book number two's new price, and let's advance to queries!`,
+        remedyTranscript: `Did the sandbox stop your query? Our safety validator flagged a missing condition.
+
+Remember: an UPDATE command without WHERE book_id = 2 will change the price on every book you have.
+
+Make sure your query reads: UPDATE books SET price = 31.50 WHERE book_id = 2;
+
+Also confirm your semicolon is in place. Add that WHERE clause on line 4, and run your query again!`,
         template: `-- Update the price for book_id 2\nUPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\nSELECT * FROM books;`,
         solution: `UPDATE books SET price = 31.50 WHERE book_id = 2;\n\nSELECT * FROM books;`,
         validate: () => {
@@ -670,8 +776,29 @@
       4: {
         title: "Module 4: Data Retrieval Foundations (SELECT & Filtering)",
         instructions: "Query the <code>title</code> and <code>price</code> of books published after 2018, sorted by price descending.",
-        videoId: "KF_xpU-088s",             // Module 4 Video 4.1 (1'28")
-        remediationVideoId: "vjPaSfKatlA",  // Module 4 Video 4.2 (0'49")
+        videoId: "KF_xpU-088s",             // Module 4 Video 4.1
+        remediationVideoId: "vjPaSfKatlA",  // Module 4 Video 4.2
+        primaryTranscript: `Welcome to Module 4! Now we unlock the core engine of SQL: Data Query Language, or DQL.
+
+In business analytics and IT, most of your daily work is asking questions of data. We do that using the famous SELECT-FROM-WHERE structure.
+
+Take a look at your challenge on the right. We want to find books published after 2018, sorted from highest to lowest price.
+
+Notice the flow: SELECT title, price: we only request the specific columns we need.
+FROM books: identifies our data source.
+WHERE published_year > 2018: filters out older titles.
+And finally, ORDER BY price DESC: sorts our results in descending order.
+
+Always remember the keyword DESC for descending. If you omit it, SQL defaults to ascending order.
+
+Click 'Run MySQL Code', inspect your sorted output table, and let's head to our final module on joins!`,
+        remedyTranscript: `Not seeing the expected query results? Let's check the three common query traps:
+
+First: Check your filter direction. We want published_year GREATER than 2018. Make sure you used the greater-than sign (>), not less-than (<).
+Second: Make sure you spelled 'DESC' correctly at the very end of your ORDER BY clause.
+Third: Verify column names match our schema: it's 'published_year', not just 'year'.
+
+Adjust your query text, hit Run, and check your table!`,
         template: `SELECT title, price \nFROM books \nWHERE published_year > 2018 \nORDER BY price DESC;`,
         solution: `SELECT title, price FROM books WHERE published_year > 2018 ORDER BY price DESC;`,
         validate: () => {
@@ -683,8 +810,30 @@
       5: {
         title: "Module 5: Relational Bridges (Foreign Keys & INNER JOIN)",
         instructions: "Create the <code>orders</code> table, insert a linked record, and execute an <code>INNER JOIN</code> connecting the tables.",
-        videoId: "uxCW_EsjC60",             // Module 5 Video 5.1 (1'46")
-        remediationVideoId: "0iCXN5ZNW7Q",  // Module 5 Video 5.2 (0'51")
+        videoId: "uxCW_EsjC60",             // Module 5 Video 5.1
+        remediationVideoId: "0iCXN5ZNW7Q",  // Module 5 Video 5.2
+        primaryTranscript: `Congratulations on reaching Module 5! This is where relational databases show their true power.
+
+In real systems, data never lives in just one giant spreadsheet. It's split into focused tables connected by relational keys.
+
+Look at our setup on the right: We have our existing 'books' table, and now we build an 'orders' table.
+
+Notice the column book_id inside the orders table. That is our Foreign Key! It points back directly to the Primary Key in the books table.
+
+To combine these tables into one unified report, we use an INNER JOIN: 
+SELECT orders.order_id, books.title, books.price, orders.quantity
+FROM orders
+INNER JOIN books ON orders.book_id = books.book_id;
+
+The ON clause is the bridge. It matches every order to its matching book title.
+
+Execute this multi-table join! When you see that combined dataset, you will have officially built and queried your first relational database.`,
+        remedyTranscript: `Join syntax can feel intimidating at first, so let's troubleshoot the two most frequent join bugs:
+
+Number one: The Ambiguous Column error. Because both tables have a column named book_id, SQL gets confused if you don't prefix it. Always write orders.book_id = books.book_id so SQL knows which table you mean.
+Number two: Make sure you created the 'orders' table and inserted the sample order before running the join.
+
+Double-check your table prefixes in the ON clause, run your query, and celebrate completing the sandbox!`,
         template: `CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\n\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`,
         solution: `CREATE TABLE orders (order_id INT PRIMARY KEY AUTO_INCREMENT, book_id INT, order_date DATE, quantity INT);\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\nSELECT orders.order_id, books.title, books.price, orders.quantity FROM orders INNER JOIN books ON orders.book_id = books.book_id;`,
         validate: () => {
@@ -728,10 +877,18 @@
       // Load Primary Video
       document.getElementById('video-frame').src = `https://www.youtube-nocookie.com/embed/${cfg.videoId}`;
       
-      // Reset Remediation Drawer
+      // Reset & Load Primary Transcript
+      const primaryDrawer = document.getElementById('primary-transcript-drawer');
+      primaryDrawer.removeAttribute('open');
+      document.getElementById('primary-transcript-body').innerText = cfg.primaryTranscript;
+
+      // Reset Remediation Drawer & Transcript
       const remBox = document.getElementById('remediation-box');
       remBox.classList.remove('show');
       document.getElementById('remediation-video-frame').src = '';
+      const remedyDrawer = document.getElementById('remedy-transcript-drawer');
+      remedyDrawer.removeAttribute('open');
+      document.getElementById('remedy-transcript-body').innerText = cfg.remedyTranscript;
       document.getElementById('show-solution-btn').style.display = 'none';
 
       const state = getStoredState();
@@ -758,8 +915,9 @@
     function revealSolution() {
       document.getElementById('sql-editor').value = curriculum[currentStep].solution;
       saveCurrentEditorText();
-      document.getElementById('console-output').className = 'output-ready';
-      document.getElementById('console-output').innerText = "Solution loaded into editor. Click 'Run MySQL Code' to execute.";
+      const out = document.getElementById('console-output');
+      out.className = 'output-ready';
+      out.innerText = "Solution loaded into editor. Click 'Run MySQL Code' to execute.";
     }
 
     // ==========================================
@@ -776,11 +934,9 @@
 
       // Normalize MySQL Syntax to SQLite WASM
       let normalizedSql = rawSql
-        // Auto-recreate tables cleanly on repeated execution runs
         .replace(/\bCREATE\s+TABLE\s+(?!IF\s+NOT\s+EXISTS\b)(\w+)/gi, 'DROP TABLE IF EXISTS $1;\nCREATE TABLE $1')
         .replace(/\bINT\s+PRIMARY\s+KEY\s+AUTO_INCREMENT\b/gi, 'INTEGER PRIMARY KEY AUTOINCREMENT')
         .replace(/\bAUTO_INCREMENT\b/gi, 'AUTOINCREMENT')
-        // Normalize MySQL DESCRIBE/DESC to SQLite PRAGMA table_info
         .replace(/\b(?:DESCRIBE|DESC)\s+(\w+)\s*;?/gi, 'PRAGMA table_info($1);');
 
       try {
@@ -794,11 +950,9 @@
           const res = results[results.length - 1];
           let html = '<table class="data-table"><thead><tr>';
           
-          // Check if result is a PRAGMA table_info (from a DESCRIBE command)
           const isPragma = res.columns.join(',').toLowerCase() === 'cid,name,type,notnull,dflt_value,pk';
 
           if (isPragma) {
-            // Render authentic MySQL DESCRIBE format
             html += '<th>Field</th><th>Type</th><th>Null</th><th>Key</th><th>Default</th><th>Extra</th></tr></thead><tbody>';
             res.values.forEach(row => {
               const field = row[1];
@@ -810,7 +964,6 @@
               html += `<tr><td><strong>${field}</strong></td><td>${type}</td><td>${isNull}</td><td>${key}</td><td>${defVal}</td><td>${extra}</td></tr>`;
             });
           } else {
-            // Standard tabular query result set
             res.columns.forEach(c => html += `<th>${c}</th>`);
             html += '</tr></thead><tbody>';
             res.values.forEach(row => {
@@ -829,7 +982,7 @@
         out.innerText = `Validation/Syntax Notice: ${err.message}`;
         diagnoseError(rawSql, err.message);
         
-        // Show remediation drawer and load the verified remediation video
+        // Show remediation drawer and load remediation video & transcript
         const remBox = document.getElementById('remediation-box');
         remBox.classList.add('show');
         const remVideo = document.getElementById('remediation-video-frame');
@@ -862,7 +1015,6 @@
     function handleStepSuccess() {
       document.getElementById(`tab-${currentStep}`).classList.add('completed');
       
-      // Hide remediation drawer upon success
       document.getElementById('remediation-box').classList.remove('show');
       document.getElementById('remediation-video-frame').src = '';
 
