@@ -226,7 +226,7 @@
 
         <p><strong>3. Your Choice (Voluntary):</strong> Taking part is 100% voluntary. You can choose not to join, or you can stop at any time. Choosing not to participate will have no effect on your course grade, academic progress, tuition, or your access to instructors, cohorts, and study resources.</p>
 
-        <p><strong>4. What will you do?</strong> If you agree, you will advance to a brief 3-minute questionnaire about your study habits and prior SQL experience. Depending on your randomly assigned group, you may also get optional access to an interactive hands-on SQL practice tool[cite: 7].</p>
+        <p><strong>4. What will you do?</strong> If you agree, you will advance to a brief 3-minute questionnaire about your study habits and prior SQL experience. Depending on your randomly assigned group, you may also get optional access to an interactive hands-on SQL practice tool.</p>
 
         <p><strong>5. Privacy & Your Information:</strong> We use your student ID solely to match your survey responses with your course progress. Before analyzing any data, your name and ID will be removed and replaced with a random code. Only group summary numbers will ever be reported or published.</p>
 
@@ -333,7 +333,7 @@
           <i class="fa-solid fa-compass" aria-hidden="true"></i> Why Start with the SQL Sandbox?
         </h3>
         <p style="font-size: 0.88rem; color: #334155; margin-bottom: 0.6rem;">
-          Database concepts are often easier to understand once you see tables created and manipulated in code. This practice tool builds core query skills before you read the theoretical chapters in your textbook[cite: 7].
+          Database concepts are often easier to understand once you see tables created and manipulated in code. This practice tool builds core query skills before you read the theoretical chapters in your textbook.
         </p>
         <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.82rem; color: #64748b;">
           <span><i class="fa-solid fa-clock" aria-hidden="true"></i> <strong>Estimated Time:</strong> ~15–20 minutes</span>
@@ -656,14 +656,13 @@
     }
 
     // ==========================================
-    // 4. MASTER CURRICULUM & STRICT VALIDATION RULES
+    // 4. MASTER CURRICULUM WITH ACCESSIBILITY TRANSCRIPTS
     // ==========================================
     let currentStep = 1;
     let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     let sessionStartTime = Date.now();
     let db = null;
 
-    // Strict MySQL Data Type Validator for DDL
     const VALID_MYSQL_TYPES = [
       'INT', 'INTEGER', 'TINYINT', 'SMALLINT', 'MEDIUMINT', 'BIGINT',
       'VARCHAR', 'CHAR', 'TEXT', 'TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT',
@@ -671,36 +670,6 @@
       'DATE', 'DATETIME', 'TIMESTAMP', 'TIME', 'YEAR',
       'BOOLEAN', 'BOOL', 'BLOB'
     ];
-
-    function validateMySQLColumnTypes(sql) {
-      const createMatch = sql.match(/CREATE\s+TABLE\s+\w+\s*\(([\s\S]*?)\)\s*;/i);
-      if (!createMatch) return; // Syntax checks will catch malformed create statements
-
-      const inner = createMatch[1];
-      const lines = inner.split(',').map(l => l.trim()).filter(l => l.length > 0);
-
-      lines.forEach(line => {
-        // Skip table constraints (e.g., PRIMARY KEY (col), FOREIGN KEY ...)
-        if (/^(PRIMARY\s+KEY|FOREIGN\s+KEY|KEY|INDEX|CONSTRAINT|UNIQUE)/i.test(line)) return;
-
-        // Column syntax: [col_name] [DATA_TYPE] (optional precision/scale) [constraints...]
-        const tokens = line.split(/\s+/);
-        if (tokens.length >= 2) {
-          const colName = tokens[0].replace(/[`"]/g, '');
-          let rawType = tokens[1].toUpperCase();
-
-          // Strip parameter bounds: VARCHAR(100) -> VARCHAR, DECIMAL(5,2) -> DECIMAL
-          const parenIdx = rawType.indexOf('(');
-          if (parenIdx !== -1) {
-            rawType = rawType.substring(0, parenIdx);
-          }
-
-          if (!VALID_MYSQL_TYPES.includes(rawType)) {
-            throw new Error(`Invalid or misspelled MySQL data type '${tokens[1]}' for column '${colName}'.`);
-          }
-        }
-      });
-    }
 
     const curriculum = {
       1: {
@@ -735,9 +704,32 @@ Clean up any stray commas on your right, hit 'Run MySQL Code' again, and let's k
           db.exec("DROP TABLE IF EXISTS books;");
         },
         validate: (rawSql) => {
-          // 1. Strict MySQL data type verification
-          validateMySQLColumnTypes(rawSql);
+          // 1. Verify table was created
+          const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
+          if (res.length === 0 || res[0].values.length === 0) {
+            throw new Error("Table 'books' was not created. Check your CREATE TABLE statement.");
+          }
 
+          // 2. Validate declared column types directly from database metadata
+          const tableInfo = db.exec("PRAGMA table_info(books);")[0].values;
+          const colNames = tableInfo.map(r => r[1]);
+
+          tableInfo.forEach(row => {
+            const colName = row[1];
+            const declaredType = (row[2] || '').trim();
+            const baseType = declaredType.split('(')[0].trim().toUpperCase();
+
+            if (!VALID_MYSQL_TYPES.includes(baseType)) {
+              throw new Error(`Invalid or misspelled MySQL data type '${declaredType}' for column '${colName}'.`);
+            }
+          });
+
+          // 3. Verify required columns
+          if (!colNames.includes('title') || !colNames.includes('author') || !colNames.includes('price') || !colNames.includes('published_year')) {
+            throw new Error("Table 'books' is missing required columns. Ensure all columns match the specification.");
+          }
+
+          // 4. Verify DESCRIBE clause
           const upper = rawSql.toUpperCase();
           if (!upper.includes("DESCRIBE") && !upper.includes("DESC")) {
             throw new Error("Please include 'DESCRIBE books;' at the end of your script to display the schema.");
@@ -748,12 +740,7 @@ Clean up any stray commas on your right, hit 'Run MySQL Code' again, and let's k
           if (!rawSql.trim().endsWith(";")) {
             throw new Error("Your final statement must end with a semicolon ';'.");
           }
-          const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
-          if (res.length === 0) throw new Error("Table 'books' was not created. Check your CREATE TABLE statement.");
-          const cols = db.exec("PRAGMA table_info(books);")[0].values.map(r => r[1]);
-          if (!cols.includes('title') || !cols.includes('author') || !cols.includes('price') || !cols.includes('published_year')) {
-            throw new Error("Table 'books' is missing required columns. Ensure all columns match the specification.");
-          }
+
           return true;
         }
       },
@@ -1035,19 +1022,19 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
           curriculum[currentStep].seed();
         }
 
-        // Step 2: Validate semantic correctness & strict MySQL types BEFORE execution
-        curriculum[currentStep].validate(rawSql);
-
-        // Step 3: Execute normalized user statements in the WASM engine
+        // Step 2: Execute normalized user statements in the WASM engine FIRST
         const results = db.exec(normalizedSql);
 
-        // Step 4: Emulate MySQL Error 1146 if DESCRIBE was executed on a non-existent table
+        // Step 3: Emulate MySQL Error 1146 if DESCRIBE was executed on a non-existent table
         if (targetDescribeTable) {
           const checkTable = db.exec(`SELECT name FROM sqlite_master WHERE type='table' AND name='${targetDescribeTable}';`);
           if (checkTable.length === 0 || checkTable[0].values.length === 0) {
             throw new Error(`Table '${targetDescribeTable}' doesn't exist.`);
           }
         }
+
+        // Step 4: Validate criteria against the freshly created/updated tables
+        curriculum[currentStep].validate(rawSql);
 
         // Successful Run
         out.className = 'output-success';
