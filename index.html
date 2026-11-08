@@ -73,7 +73,8 @@
     }
 
     /* Question & Option Styles */
-    .question-block { margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9; }
+    .question-block { margin-bottom: 1rem; padding: 0.75rem; border: 1px solid transparent; border-radius: 6px; transition: all 0.2s; }
+    .question-block.unanswered { border-color: var(--danger); background-color: #fef2f2; }
     .question-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.35rem; color: #0f172a; line-height: 1.35; }
     .option-list { display: flex; flex-direction: column; gap: 0.2rem; }
     .option-label { 
@@ -82,13 +83,25 @@
       gap: 0.55rem; 
       font-size: 0.855rem; 
       cursor: pointer; 
-      padding: 0.25rem 0.45rem; 
+      padding: 0.35rem 0.45rem; 
       border-radius: 4px; 
       min-height: 28px; 
       line-height: 1.35;
     }
     .option-label:hover { background: #f8fafc; }
     .option-label input { margin-top: 0.15rem; width: 16px; height: 16px; flex-shrink: 0; }
+
+    .validation-alert {
+      display: none;
+      background: #fee2e2;
+      border: 1px solid #f87171;
+      color: #991b1b;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
 
     /* Buttons */
     .btn { padding: 0.65rem 1.25rem; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.92rem; text-decoration: none; justify-content: center; }
@@ -113,7 +126,6 @@
     .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; background: #000; margin-bottom: 1rem; }
     .video-container iframe { position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0; }
 
-    /* Expanded SQL Editor Workspace (260px Height) */
     textarea#sql-editor { 
       width: 100%; 
       height: 260px; 
@@ -154,7 +166,7 @@
 
   <div class="container">
 
-    <!-- SCREEN 1A: STANDALONE INFORMED CONSENT & AGE GATE (QUESTION 1 ONLY) -->
+    <!-- SCREEN 1A: STANDALONE INFORMED CONSENT & AGE GATE (NO FORM WRAPPER) -->
     <div id="screen-1a" class="card">
       <div class="consent-header">
         <h2>Informed Consent & Research Participation Agreement</h2>
@@ -186,25 +198,27 @@
         <p><strong>6. Questions & Contacts:</strong> If you have questions about the study, contact Bruce Johnson at b.johnson1@wgu.edu. For questions regarding your rights as a research participant, contact the WGU Institutional Review Board at irb@wgu.edu.</p>
       </div>
 
-      <form id="consent-gate-form" onsubmit="handleScreen1ASubmit(event)">
-        <div class="question-block" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:0.9rem; margin-bottom:1.25rem;">
-          <div class="question-title">Question 1: Age Certification & Participation Decision</div>
-          <div class="option-list">
-            <label class="option-label">
-              <input type="radio" name="consent" value="yes" required>
-              <span><strong>YES, I agree to participate.</strong> I certify that I am at least 18 years old, I have read and understand this consent form, and I voluntarily choose to take part in this research study.</span>
-            </label>
-            <label class="option-label">
-              <input type="radio" name="consent" value="no" required>
-              <span><strong>NO, I do NOT want to participate (or I am under 18 years old).</strong> Take me directly to standard course materials without participating.</span>
-            </label>
-          </div>
+      <div class="question-block" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:0.9rem; margin-bottom:1.25rem;">
+        <div class="question-title">Question 1: Age Certification & Participation Decision</div>
+        <div class="option-list">
+          <label class="option-label">
+            <input type="radio" name="consent_choice" value="yes">
+            <span><strong>YES, I agree to participate.</strong> I certify that I am at least 18 years old, I have read and understand this consent form, and I voluntarily choose to take part in this research study.</span>
+          </label>
+          <label class="option-label">
+            <input type="radio" name="consent_choice" value="no">
+            <span><strong>NO, I do NOT want to participate (or I am under 18 years old).</strong> Take me directly to standard course materials without participating.</span>
+          </label>
         </div>
+      </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%;">
-          Continue <i class="fa-solid fa-arrow-right"></i>
-        </button>
-      </form>
+      <div id="consent-validation-alert" class="validation-alert">
+        Please make a selection for Question 1 to proceed.
+      </div>
+
+      <button type="button" class="btn btn-primary" style="width: 100%;" onclick="handleConsentContinue()">
+        Continue <i class="fa-solid fa-arrow-right"></i>
+      </button>
     </div>
 
     <!-- SCREEN 1B: DIAGNOSTIC QUESTIONNAIRE (SHOWN ONLY AFTER CONSENT = YES) -->
@@ -216,16 +230,20 @@
         </p>
       </div>
 
-      <form id="diagnostic-survey-form" onsubmit="handleScreen1BSubmit(event)">
+      <div id="diagnostic-validation-alert" class="validation-alert">
+        Please answer all questions before submitting. Unanswered items are highlighted below.
+      </div>
+
+      <div>
         <!-- Question 2: Baseline Covariate -->
-        <div class="question-block">
+        <div class="question-block" id="block-prior-sql">
           <div class="question-title">Question 2: Before starting D426, how would you rate your experience with SQL and databases?</div>
           <div class="option-list">
-            <label class="option-label"><input type="radio" name="prior_sql" value="1" required> <span>1 - None (Never seen or written SQL code)</span></label>
-            <label class="option-label"><input type="radio" name="prior_sql" value="2" required> <span>2 - Novice (Know what it is, but little to no coding experience)</span></label>
-            <label class="option-label"><input type="radio" name="prior_sql" value="3" required> <span>3 - Intermediate (Have written basic SELECT, INSERT, or UPDATE queries)</span></label>
-            <label class="option-label"><input type="radio" name="prior_sql" value="4" required> <span>4 - Advanced (Regularly write multi-table JOINs, aggregations, or subqueries)</span></label>
-            <label class="option-label"><input type="radio" name="prior_sql" value="5" required> <span>5 - Professional (Work or have worked managing databases professionally)</span></label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="1" onchange="clearBlockError('block-prior-sql')"> <span>1 - None (Never seen or written SQL code)</span></label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="2" onchange="clearBlockError('block-prior-sql')"> <span>2 - Novice (Know what it is, but little to no coding experience)</span></label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="3" onchange="clearBlockError('block-prior-sql')"> <span>3 - Intermediate (Have written basic SELECT, INSERT, or UPDATE queries)</span></label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="4" onchange="clearBlockError('block-prior-sql')"> <span>4 - Advanced (Regularly write multi-table JOINs, aggregations, or subqueries)</span></label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="5" onchange="clearBlockError('block-prior-sql')"> <span>5 - Professional (Work or have worked managing databases professionally)</span></label>
           </div>
         </div>
 
@@ -239,10 +257,10 @@
         <!-- Shuffled ILS Items Container -->
         <div id="randomized-ils-container"></div>
 
-        <button type="submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
+        <button type="button" class="btn btn-primary" style="margin-top: 1rem; width: 100%;" onclick="handleDiagnosticSubmit()">
           Submit & Continue
         </button>
-      </form>
+      </div>
 
       <div class="citation-footer">
         Index of Learning Styles copyright Richard M. Felder and Barbara A. Soloman, North Carolina State University. Administered under non-commercial educational research provisions.
@@ -326,7 +344,6 @@
             <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="resetEditor()">Reset Template</button>
           </div>
 
-          <!-- Expanded 260px Height Editor -->
           <textarea id="sql-editor" 
                     autocapitalize="none" 
                     autocomplete="off" 
@@ -372,7 +389,7 @@
     const STORAGE_KEY = `d426_state_${studentId}`;
 
     // ==========================================
-    // 2. LOCALSTORAGE STATE PERSISTENCE
+    // 2. STATE PERSISTENCE
     // ==========================================
     function getStoredState() {
       try {
@@ -409,33 +426,38 @@
     }
 
     // ==========================================
-    // 3. SCREEN 1A: CONSENT DECISION HANDLER
+    // 3. SCREEN 1A: CONTINUATION (NO RELOAD)
     // ==========================================
-    function handleScreen1ASubmit(e) {
-      e.preventDefault();
-      const form = document.getElementById('consent-gate-form');
-      const formData = new FormData(form);
-      const consent = formData.get('consent');
+    function handleConsentContinue() {
+      const consentChoice = document.querySelector('input[name="consent_choice"]:checked');
+      const alertBox = document.getElementById('consent-validation-alert');
 
-      if (consent === 'no') {
+      if (!consentChoice) {
+        alertBox.style.display = 'block';
+        return;
+      }
+      alertBox.style.display = 'none';
+
+      if (consentChoice.value === 'no') {
         saveState({ consentGiven: false, optedOut: true, surveyCompleted: true });
         document.getElementById('screen-1a').style.display = 'none';
         
         const controlScreen = document.getElementById('control-screen');
-        document.getElementById('landing-title').innerText = "Standard Course Materials";
+        document.getElementById('landing-title').innerText = "Participation Opt-Out Acknowledged";
         document.getElementById('landing-msg').innerText = "Thank you. You have chosen not to participate (or are under 18). This decision has no effect on your course standing. You can access your standard course materials below:";
         controlScreen.style.display = 'block';
         return;
       }
 
-      // Consented: Move strictly to Screen 1B
+      // YES selected: cleanly transition to Screen 1B without touching URL
       saveState({ consentGiven: true, optedOut: false });
       document.getElementById('screen-1a').style.display = 'none';
       document.getElementById('screen-1b').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // ==========================================
-    // 4. SCREEN 1B: DIAGNOSTIC & TELEMETRY HANDLER
+    // 4. SCREEN 1B: DIAGNOSTIC & TELEMETRY
     // ==========================================
     const ilsBank = [
       { id: "ils_1", q: "When I solve math or logic problems, I usually:", 
@@ -448,4 +470,9 @@
         opts: [{ text: "A series of specific events in the order they happened.", val: 1 }, { text: "A general master plan or overall picture.", val: -1 }] },
       { id: "ils_5", q: "Once I understand:", 
         opts: [{ text: "All the individual parts, I understand the whole thing.", val: 1 }, { text: "The whole thing, I see how the individual parts fit together.", val: -1 }] },
-      { id: "ils_6", q: "When writing a paper or report, I am more likely to:",
+      { id: "ils_6", q: "When writing a paper or report, I am more likely to:", 
+        opts: [{ text: "Work on the beginning and write straight through sequentially.", val: 1 }, { text: "Write different parts in any order and assemble them later.", val: -1 }] },
+      { id: "ils_7", q: "When learning complex topics, I prefer to progress:", 
+        opts: [{ text: "At a steady pace, building incrementally step-by-step.", val: 1 }, { text: "In fits and starts; feeling confused until the whole picture suddenly 'clicks.'", val: -1 }] },
+      { id: "ils_8", q: "When reading technical texts, I prefer writers to:", 
+        opts: [{ text: "Lay out the instructions and facts directly and in clear order.", val: 1 }, { text: "Explain the broad conceptual context and analogies before the details.", val:
