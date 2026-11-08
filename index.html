@@ -30,7 +30,7 @@
     header h1 { font-size: 1.15rem; font-weight: 700; }
     #student-badge { background: rgba(255,255,255,0.15); padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem; }
 
-    /* Expanded Max Width from 1040px to 1280px */
+    /* Expanded Max Width (1280px) */
     .container { max-width: 1280px; margin: 1.5rem auto; padding: 0 1.25rem; }
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
 
@@ -119,7 +119,7 @@
     .step-tab.active { background: var(--wgu-blue); color: white; border-color: var(--wgu-blue); }
     .step-tab.completed { border-bottom: 3px solid var(--success); }
 
-    /* Asymmetrical 2:3 Grid Layout (40% Video / 60% Sandbox) */
+    /* Balanced Asymmetrical 2:3 Grid (Video Left / Sandbox Right) */
     .grid { display: grid; grid-template-columns: 2fr 3fr; gap: 1.5rem; align-items: start; }
     @media (max-width: 960px) { 
       .grid { grid-template-columns: 1fr; }
@@ -129,7 +129,7 @@
     .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; background: #000; margin-bottom: 1rem; }
     .video-container iframe { position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0; }
 
-    /* Expanded SQL Editor Workspace (+50% Height: 390px) */
+    /* 390px Height Editor (+50% workspace) */
     textarea#sql-editor { 
       width: 100%; 
       height: 390px; 
@@ -145,7 +145,7 @@
     }
     .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
     
-    /* Expanded Console Area (+50% Height: 330px max-height) */
+    /* 330px max-height Console Area */
     #console-output { margin-top: 1rem; padding: 0.85rem; border-radius: 6px; font-family: monospace; font-size: 0.88rem; max-height: 330px; overflow-y: auto; }
     .output-ready { background: #f1f5f9; color: #475569; }
     .output-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
@@ -155,7 +155,7 @@
     table.data-table th, table.data-table td { border: 1px solid var(--border); padding: 0.45rem 0.6rem; text-align: left; }
     table.data-table th { background: #f8fafc; font-weight: 600; }
 
-    .hint-box { margin-top: 1rem; border-left: 3px solid var(--wgu-gold); background: #fffbeb; padding: 0.85rem; border-radius: 0 4px 4px 0; font-size: 0.86rem; display: none; }
+    .hint-box { margin-top: 1rem; border-left: 4px solid var(--wgu-gold); background: #fffbeb; padding: 1rem; border-radius: 0 6px 6px 0; font-size: 0.88rem; display: none; }
     .hint-box.show { display: block; }
     .citation-footer { font-size: 0.75rem; color: #64748b; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 0.5rem; }
   </style>
@@ -267,7 +267,7 @@
       </div>
 
       <div class="citation-footer">
-        Index of Learning Styles copyright Richard M. Felder and Barbara A. Soloman, North Carolina State University. Administered under non-commercial educational research provisions.
+        Index of Learning Styles copyright Richard M. Felder and Barbara A. Soloman, North Carolina State University[cite: 1, 2]. Administered under non-commercial educational research provisions.
       </div>
     </div>
 
@@ -288,7 +288,7 @@
       </div>
     </div>
 
-    <!-- SCREEN 2B: INTERVENTION ARM (50% EXPANDED WORKSPACE) -->
+    <!-- SCREEN 2B: INTERVENTION ARM (EXPANDED WORKSPACE WITH MEDIA INTEGRATION) -->
     <div id="sandbox-screen" style="display: none;">
       
       <div class="desktop-alert">
@@ -321,7 +321,7 @@
         <div class="step-tab" id="tab-5" onclick="switchStep(5)">Module 5: Relational Joins</div>
       </div>
 
-      <!-- Balanced Asymmetrical 2:3 Grid (Video Left / Expanded Sandbox Right) -->
+      <!-- Balanced Asymmetrical 2:3 Grid -->
       <div class="grid">
         <!-- Left: Instruction & Video Column (40% width) -->
         <div class="card">
@@ -330,15 +330,24 @@
             Learn how to define a table in MySQL using <code>CREATE TABLE</code> with specific column data types.
           </p>
           
+          <!-- Primary Micro-Lesson Player -->
           <div class="video-container">
-            <iframe id="video-frame" src="https://www.youtube-nocookie.com/embed/7S_tz1z_5bA" allowfullscreen></iframe>
+            <iframe id="video-frame" src="https://www.youtube-nocookie.com/embed/VRUb_-0MjKo" allowfullscreen></iframe>
           </div>
 
+          <!-- Dynamic Remediation Drawer (Text + Dedicated Troubleshooting Video) -->
           <div id="remediation-box" class="hint-box">
-            <strong><i class="fa-solid fa-lightbulb"></i> Troubleshooting Tip:</strong>
-            <p id="remediation-text" style="margin-top: 0.25rem;">Check your comma placement.</p>
-            <button id="show-solution-btn" class="btn btn-hint" style="margin-top: 0.5rem; display: none;" onclick="revealSolution()">
-              Reveal Working Solution
+            <div style="font-weight: 700; color: #b45309; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
+              <i class="fa-solid fa-lightbulb"></i> Troubleshooting & Remediation
+            </div>
+            <p id="remediation-text" style="margin-bottom: 0.75rem; color: #78350f;">Check your comma placement.</p>
+            
+            <div id="remediation-video-container" class="video-container" style="margin-bottom: 0.75rem;">
+              <iframe id="remediation-video-frame" src="" allowfullscreen></iframe>
+            </div>
+
+            <button id="show-solution-btn" class="btn btn-hint" style="display: none; width: 100%;" onclick="revealSolution()">
+              <i class="fa-solid fa-unlock-keyhole"></i> Reveal Working Solution
             </button>
           </div>
         </div>
@@ -350,7 +359,7 @@
             <button class="btn" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;" onclick="resetEditor()">Reset Template</button>
           </div>
 
-          <!-- 390px Height Editor (+50% expansion) -->
+          <!-- 390px Height Editor -->
           <textarea id="sql-editor" 
                     autocapitalize="none" 
                     autocomplete="off" 
@@ -367,7 +376,7 @@
             </button>
           </div>
 
-          <!-- 330px max-height Console Output (+50% expansion) -->
+          <!-- 330px max-height Console Output -->
           <div id="console-output" class="output-ready">Ready to execute query.</div>
           <div id="table-output" style="overflow-x: auto;"></div>
         </div>
@@ -434,7 +443,7 @@
     }
 
     // ==========================================
-    // 3. SCREEN 1A: EVENT BINDINGS & STEP LOGIC
+    // 3. SCREEN 1A: EVENT BINDINGS & CONSENT GATE
     // ==========================================
     function initConsentListeners() {
       const radios = document.querySelectorAll('input[name="consent_choice"]');
@@ -624,21 +633,21 @@
     }
 
     // ==========================================
-    // 5. SANDBOX ENGINE & CURRICULUM
+    // 5. MASTER CURRICULUM WITH INTEGRATED MEDIA
     // ==========================================
     let currentStep = 1;
     let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     let sessionStartTime = Date.now();
     let db = null;
-    const VIDEO_ID = "7S_tz1z_5bA";
 
     const curriculum = {
       1: {
         title: "Module 1: Schema Architecture (CREATE TABLE)",
         instructions: "Write a statement to create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>.",
-        videoId: VIDEO_ID,
-        template: `-- MODULE 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
-        solution: `CREATE TABLE books (\n    book_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
+        videoId: "VRUb_-0MjKo",             // Module 1 Video 1.1 (1'39")
+        remediationVideoId: "obBNBGglsYw",  // Module 1 Video 1.2 (0'47")
+        template: `-- MODULE 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\n\nDESCRIBE books;`,
+        solution: `CREATE TABLE books (\n    book_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\nDESCRIBE books;`,
         validate: () => {
           const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
           if (res.length === 0) throw new Error("Table 'books' was not created. Check your CREATE TABLE statement.");
@@ -650,9 +659,10 @@
       2: {
         title: "Module 2: Data Population (INSERT INTO)",
         instructions: "Insert at least two books into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
-        videoId: VIDEO_ID,
+        videoId: "dRBxT2oD1hk",             // Module 2 Video 2.1 (1'25" - Corrected)
+        remediationVideoId: "NpdCFRU3Vc8",  // Module 2 Video 2.2 (0'51")
         template: `INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`,
-        solution: `INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);`,
+        solution: `INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\nSELECT * FROM books;`,
         validate: () => {
           const res = db.exec("SELECT COUNT(*) FROM books;");
           if (res.length === 0 || res[0].values[0][0] < 2) throw new Error("Please insert at least 2 rows into the 'books' table.");
@@ -662,9 +672,10 @@
       3: {
         title: "Module 3: Controlled Updates (UPDATE & DELETE with WHERE)",
         instructions: "Update the price of a book using a <code>WHERE</code> clause. Always use WHERE when updating or deleting!",
-        videoId: VIDEO_ID,
+        videoId: "4jQvokPNooQ",             // Module 3 Video 3.1 (1'26")
+        remediationVideoId: "G07Wd94Y8wg",  // Module 3 Video 3.2 (0'47")
         template: `-- Update the price for book_id 2\nUPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\n-- Verify update\nSELECT * FROM books;`,
-        solution: `UPDATE books SET price = 31.50 WHERE book_id = 2;`,
+        solution: `UPDATE books SET price = 31.50 WHERE book_id = 2;\nSELECT * FROM books;`,
         validate: () => {
           const res = db.exec("SELECT price FROM books WHERE book_id = 2;");
           if (res.length > 0 && Math.abs(res[0].values[0][0] - 31.50) < 0.01) return true;
@@ -674,7 +685,8 @@
       4: {
         title: "Module 4: Data Retrieval Foundations (SELECT & Filtering)",
         instructions: "Query the <code>title</code> and <code>price</code> of books published after 2018, sorted by price descending.",
-        videoId: VIDEO_ID,
+        videoId: "KF_xpU-088s",             // Module 4 Video 4.1 (1'28")
+        remediationVideoId: "vjPaSfKatlA",  // Module 4 Video 4.2 (0'49")
         template: `SELECT title, price \nFROM books \nWHERE published_year > 2018 \nORDER BY price DESC;`,
         solution: `SELECT title, price FROM books WHERE published_year > 2018 ORDER BY price DESC;`,
         validate: () => {
@@ -686,7 +698,8 @@
       5: {
         title: "Module 5: Relational Bridges (Foreign Keys & INNER JOIN)",
         instructions: "Create the <code>orders</code> table, insert a linked record, and execute an <code>INNER JOIN</code> connecting the tables.",
-        videoId: VIDEO_ID,
+        videoId: "uxCW_EsjC60",             // Module 5 Video 5.1 (1'46")
+        remediationVideoId: "0iCXN5ZNW7Q",  // Module 5 Video 5.2 (0'51")
         template: `CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\n\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`,
         solution: `CREATE TABLE orders (order_id INTEGER PRIMARY KEY AUTOINCREMENT, book_id INT, order_date DATE, quantity INT);\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\nSELECT orders.order_id, books.title, books.price, orders.quantity FROM orders INNER JOIN books ON orders.book_id = books.book_id;`,
         validate: () => {
@@ -726,15 +739,21 @@
       const cfg = curriculum[step];
       document.getElementById('step-title').innerText = cfg.title;
       document.getElementById('step-instructions').innerHTML = cfg.instructions;
+      
+      // Load Primary Video
       document.getElementById('video-frame').src = `https://www.youtube-nocookie.com/embed/${cfg.videoId}`;
       
+      // Reset Remediation Drawer and Unload Previous Remediation Video
+      const remBox = document.getElementById('remediation-box');
+      remBox.classList.remove('show');
+      document.getElementById('remediation-video-frame').src = '';
+      document.getElementById('show-solution-btn').style.display = 'none';
+
       const state = getStoredState();
       const savedCode = (state && state.codeDrafts && state.codeDrafts[step]) ? state.codeDrafts[step] : cfg.template;
       document.getElementById('sql-editor').value = savedCode;
 
       document.getElementById('next-btn').style.display = 'none';
-      document.getElementById('remediation-box').classList.remove('show');
-      document.getElementById('show-solution-btn').style.display = 'none';
       
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
@@ -797,7 +816,15 @@
         out.className = 'output-error';
         out.innerText = `Validation/Syntax Notice: ${err.message}`;
         diagnoseError(rawSql, err.message);
-        document.getElementById('remediation-box').classList.add('show');
+        
+        // Show Remediation Drawer and Embed Remediation Video
+        const remBox = document.getElementById('remediation-box');
+        remBox.classList.add('show');
+        const remVideo = document.getElementById('remediation-video-frame');
+        if (!remVideo.src || remVideo.src.indexOf(curriculum[currentStep].remediationVideoId) === -1) {
+          remVideo.src = `https://www.youtube-nocookie.com/embed/${curriculum[currentStep].remediationVideoId}`;
+        }
+
         if (attemptsCount[currentStep] >= 3) {
           document.getElementById('show-solution-btn').style.display = 'inline-block';
         }
@@ -821,6 +848,10 @@
     function handleStepSuccess() {
       document.getElementById(`tab-${currentStep}`).classList.add('completed');
       
+      // Hide remediation drawer upon successful execution
+      document.getElementById('remediation-box').classList.remove('show');
+      document.getElementById('remediation-video-frame').src = '';
+
       const state = getStoredState() || {};
       const completed = state.completedSteps || [];
       if (!completed.includes(currentStep)) completed.push(currentStep);
