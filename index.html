@@ -317,7 +317,7 @@
       </div>
     </section>
 
-    <!-- SCREEN 2B: INTERVENTION ARM (EXPANDED WORKSPACE) -->
+    <!-- SCREEN 2B: INTERVENTION ARM (SANDBOX) -->
     <section id="sandbox-screen" style="display: none;" aria-label="Interactive SQL Coding Sandbox">
       
       <div class="desktop-alert" role="note">
@@ -362,7 +362,6 @@
             <iframe id="video-frame" src="https://www.youtube-nocookie.com/embed/VRUb_-0MjKo" title="Primary Instructional Video" allowfullscreen></iframe>
           </div>
 
-          <!-- Primary Video Accessible Transcript Drawer -->
           <details id="primary-transcript-drawer" class="transcript-drawer">
             <summary><i class="fa-solid fa-file-lines" aria-hidden="true"></i> View Video Transcript</summary>
             <div id="primary-transcript-body" class="transcript-content">Loading transcript...</div>
@@ -379,7 +378,6 @@
               <iframe id="remediation-video-frame" src="" title="Remediation Video Help" allowfullscreen></iframe>
             </div>
 
-            <!-- Remediation Accessible Transcript Drawer -->
             <details id="remedy-transcript-drawer" class="transcript-drawer" style="margin-bottom: 0.75rem; background: #ffffff;">
               <summary style="color: #b45309;"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> View Troubleshooting Transcript</summary>
               <div id="remedy-transcript-body" class="transcript-content">Loading transcript...</div>
@@ -415,7 +413,7 @@
             </button>
           </div>
 
-          <!-- ARIA Live Output Console for Screen Readers -->
+          <!-- ARIA Live Output Console -->
           <div id="console-output" class="output-ready" role="status" aria-live="polite">Ready to execute query.</div>
           <div id="table-output" style="overflow-x: auto;" role="region" aria-label="Query Results Table"></div>
         </div>
@@ -674,8 +672,8 @@
       1: {
         title: "Module 1: Schema Architecture (CREATE TABLE)",
         instructions: "Write a statement to create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>.",
-        videoId: "VRUb_-0MjKo",             // Module 1 Video 1.1
-        remediationVideoId: "obBNBGgIsYw",  // Module 1 Video 1.2
+        videoId: "VRUb_-0MjKo",
+        remediationVideoId: "obBNBGgIsYw",
         primaryTranscript: `Hi everyone! Welcome to Module 1 of your D426 SQL Foundations.
 
 Before we dive into textbook theory, we are going to build real database tables from the ground up. In SQL, this is called Data Definition Language, or DDL.
@@ -699,6 +697,9 @@ Number two: Check your closing parenthesis and make sure there's a semicolon rig
 Clean up any stray commas on your right, hit 'Run MySQL Code' again, and let's keep moving!`,
         template: `-- MODULE 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\n\nDESCRIBE books;`,
         solution: `CREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\n\nDESCRIBE books;`,
+        seed: () => {
+          db.exec("DROP TABLE IF EXISTS books;");
+        },
         validate: () => {
           const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
           if (res.length === 0) throw new Error("Table 'books' was not created. Check your CREATE TABLE statement.");
@@ -710,8 +711,8 @@ Clean up any stray commas on your right, hit 'Run MySQL Code' again, and let's k
       2: {
         title: "Module 2: Data Population (INSERT INTO)",
         instructions: "Insert at least two books into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
-        videoId: "dRBxT2oD1hk",             // Module 2 Video 2.1
-        remediationVideoId: "NpdCFRU3Vc8",  // Module 2 Video 2.2
+        videoId: "dRBxT2oD1hk",
+        remediationVideoId: "NpdCFRU3Vc8",
         primaryTranscript: `Great job defining your schema! Now that our 'books' table exists, it's time for Data Manipulation Language, or DML.
 
 To add real records to a table, we use the INSERT INTO statement.
@@ -734,6 +735,10 @@ Second: Count your columns and values. If you listed four columns in your header
 Match up your counts, verify your single quotes, and execute your query again!`,
         template: `INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`,
         solution: `INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`,
+        seed: () => {
+          db.exec("DROP TABLE IF EXISTS books;");
+          db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
+        },
         validate: () => {
           const res = db.exec("SELECT COUNT(*) FROM books;");
           if (res.length === 0 || res[0].values[0][0] < 2) throw new Error("Please insert at least 2 rows into the 'books' table.");
@@ -743,8 +748,8 @@ Match up your counts, verify your single quotes, and execute your query again!`,
       3: {
         title: "Module 3: Controlled Updates (UPDATE & DELETE with WHERE)",
         instructions: "Update the price of a book using a <code>WHERE</code> clause. Always use WHERE when updating or deleting!",
-        videoId: "4jQvokPNooQ",             // Module 3 Video 3.1
-        remediationVideoId: "G07Wd94Y8wg",  // Module 3 Video 3.2
+        videoId: "4jQvokPNooQ",
+        remediationVideoId: "G07Wd94Y8wg",
         primaryTranscript: `Now that your database has rows, what happens when data changes? In Module 3, we learn controlled updates and modifications.
 
 This brings us to the single most important safety rule in all of database administration: NEVER run an UPDATE without a WHERE clause!
@@ -767,17 +772,22 @@ Make sure your query reads: UPDATE books SET price = 31.50 WHERE book_id = 2;
 Also confirm your semicolon is in place. Add that WHERE clause on line 4, and run your query again!`,
         template: `-- Update the price for book_id 2\nUPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\nSELECT * FROM books;`,
         solution: `UPDATE books SET price = 31.50 WHERE book_id = 2;\n\nSELECT * FROM books;`,
+        seed: () => {
+          db.exec("DROP TABLE IF EXISTS books;");
+          db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
+          db.exec("INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);");
+        },
         validate: () => {
           const res = db.exec("SELECT price FROM books WHERE book_id = 2;");
           if (res.length > 0 && Math.abs(res[0].values[0][0] - 31.50) < 0.01) return true;
-          return true;
+          throw new Error("Book ID 2 price was not updated to 31.50. Make sure your UPDATE statement executed.");
         }
       },
       4: {
         title: "Module 4: Data Retrieval Foundations (SELECT & Filtering)",
         instructions: "Query the <code>title</code> and <code>price</code> of books published after 2018, sorted by price descending.",
-        videoId: "KF_xpU-088s",             // Module 4 Video 4.1
-        remediationVideoId: "vjPaSfKatlA",  // Module 4 Video 4.2
+        videoId: "KF_xpU-088s",
+        remediationVideoId: "vjPaSfKatlA",
         primaryTranscript: `Welcome to Module 4! Now we unlock the core engine of SQL: Data Query Language, or DQL.
 
 In business analytics and IT, most of your daily work is asking questions of data. We do that using the famous SELECT-FROM-WHERE structure.
@@ -801,17 +811,23 @@ Third: Verify column names match our schema: it's 'published_year', not just 'ye
 Adjust your query text, hit Run, and check your table!`,
         template: `SELECT title, price \nFROM books \nWHERE published_year > 2018 \nORDER BY price DESC;`,
         solution: `SELECT title, price FROM books WHERE published_year > 2018 ORDER BY price DESC;`,
+        seed: () => {
+          db.exec("DROP TABLE IF EXISTS books;");
+          db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
+          db.exec("INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020), ('Database Systems', 'Thomas Connolly', 55.00, 2014);");
+        },
         validate: () => {
           const sql = document.getElementById('sql-editor').value.toUpperCase();
           if (!sql.includes("SELECT") || !sql.includes("WHERE")) throw new Error("Ensure your query uses both SELECT and WHERE clauses.");
+          if (!sql.includes("ORDER BY") || !sql.includes("DESC")) throw new Error("Ensure your query sorts by price in descending order (ORDER BY price DESC).");
           return true;
         }
       },
       5: {
         title: "Module 5: Relational Bridges (Foreign Keys & INNER JOIN)",
         instructions: "Create the <code>orders</code> table, insert a linked record, and execute an <code>INNER JOIN</code> connecting the tables.",
-        videoId: "uxCW_EsjC60",             // Module 5 Video 5.1
-        remediationVideoId: "0iCXN5ZNW7Q",  // Module 5 Video 5.2
+        videoId: "uxCW_EsjC60",
+        remediationVideoId: "0iCXN5ZNW7Q",
         primaryTranscript: `Congratulations on reaching Module 5! This is where relational databases show their true power.
 
 In real systems, data never lives in just one giant spreadsheet. It's split into focused tables connected by relational keys.
@@ -836,6 +852,12 @@ Number two: Make sure you created the 'orders' table and inserted the sample ord
 Double-check your table prefixes in the ON clause, run your query, and celebrate completing the sandbox!`,
         template: `CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\n\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`,
         solution: `CREATE TABLE orders (order_id INT PRIMARY KEY AUTO_INCREMENT, book_id INT, order_date DATE, quantity INT);\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\nSELECT orders.order_id, books.title, books.price, orders.quantity FROM orders INNER JOIN books ON orders.book_id = books.book_id;`,
+        seed: () => {
+          db.exec("DROP TABLE IF EXISTS orders;");
+          db.exec("DROP TABLE IF EXISTS books;");
+          db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
+          db.exec("INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);");
+        },
         validate: () => {
           const sql = document.getElementById('sql-editor').value.toUpperCase();
           if (!sql.includes("JOIN")) throw new Error("Module 5 requires executing an INNER JOIN between 'orders' and 'books'.");
@@ -895,7 +917,13 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
       const savedCode = (state && state.codeDrafts && state.codeDrafts[step]) ? state.codeDrafts[step] : cfg.template;
       document.getElementById('sql-editor').value = savedCode;
 
-      document.getElementById('next-btn').style.display = 'none';
+      // If already completed in past, keep Next button available
+      const completed = (state && state.completedSteps) ? state.completedSteps : [];
+      if (completed.includes(step) && step < 5) {
+        document.getElementById('next-btn').style.display = 'inline-flex';
+      } else {
+        document.getElementById('next-btn').style.display = 'none';
+      }
       
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
@@ -910,6 +938,11 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
     function resetEditor() {
       document.getElementById('sql-editor').value = curriculum[currentStep].template;
       saveCurrentEditorText();
+      const out = document.getElementById('console-output');
+      out.className = 'output-ready';
+      out.innerText = "Template reset. Click 'Run MySQL Code' to execute.";
+      document.getElementById('table-output').innerHTML = '';
+      document.getElementById('remediation-box').classList.remove('show');
     }
 
     function revealSolution() {
@@ -921,7 +954,7 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
     }
 
     // ==========================================
-    // 5. QUERY EXECUTION & MYSQL DIALECT TRANSLATOR
+    // 5. QUERY EXECUTION & ISOLATED SANDBOX ENGINE
     // ==========================================
     function executeUserQuery() {
       attemptsCount[currentStep]++;
@@ -940,9 +973,18 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
         .replace(/\b(?:DESCRIBE|DESC)\s+(\w+)\s*;?/gi, 'PRAGMA table_info($1);');
 
       try {
+        // Step 1: Pre-seed module baseline state to guarantee consistent, repeatable sandbox behavior
+        if (curriculum[currentStep].seed) {
+          curriculum[currentStep].seed();
+        }
+
+        // Step 2: Execute normalized user statements
         const results = db.exec(normalizedSql);
+
+        // Step 3: Validate criteria
         curriculum[currentStep].validate();
 
+        // Successful Run
         out.className = 'output-success';
         out.innerText = `Query executed successfully! Criteria satisfied!`;
 
@@ -978,11 +1020,12 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
 
         handleStepSuccess();
       } catch (err) {
+        // Failure / Error Branch
         out.className = 'output-error';
         out.innerText = `Validation/Syntax Notice: ${err.message}`;
         diagnoseError(rawSql, err.message);
         
-        // Show remediation drawer and load remediation video & transcript
+        // Expand remediation drawer and load remediation video
         const remBox = document.getElementById('remediation-box');
         remBox.classList.add('show');
         const remVideo = document.getElementById('remediation-video-frame');
