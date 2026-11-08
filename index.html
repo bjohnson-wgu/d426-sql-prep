@@ -19,6 +19,7 @@
       --success: #10b981;
       --danger: #ef4444;
       --editor-bg: #0f172a;
+      --gutter-bg: #0b1120;
       --info-bg: #f0f9ff;
       --info-border: #0284c7;
       --info-text: #0c4a6e;
@@ -159,19 +160,43 @@
       overflow-y: auto;
     }
 
-    /* 390px Workspace Editor */
+    /* IDE-Style Editor with Line Numbers Gutter */
+    .editor-wrapper {
+      display: flex;
+      background: var(--editor-bg);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      height: 390px;
+      overflow: hidden;
+    }
+    .line-numbers {
+      width: 44px;
+      padding: 1rem 0.5rem 1rem 0;
+      text-align: right;
+      background: var(--gutter-bg);
+      color: #64748b;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.94rem;
+      line-height: 1.5;
+      user-select: none;
+      overflow: hidden;
+      border-right: 1px solid #1e293b;
+      flex-shrink: 0;
+    }
     textarea#sql-editor { 
-      width: 100%; 
-      height: 390px; 
-      background: var(--editor-bg); 
+      flex: 1;
+      height: 100%;
+      background: transparent;
       color: #38bdf8; 
       font-family: "Courier New", Courier, monospace; 
       font-size: 0.94rem; 
       line-height: 1.5;
       padding: 1rem; 
-      border-radius: 6px; 
-      border: 1px solid #334155; 
-      resize: vertical; 
+      border: none;
+      outline: none;
+      resize: none; 
+      white-space: pre;
+      overflow-y: auto;
     }
     .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
     
@@ -391,19 +416,23 @@
           </div>
         </div>
 
-        <!-- Right Column: Interactive Sandbox -->
+        <!-- Right Column: Interactive Sandbox with IDE Line Numbers -->
         <div class="card" style="display: flex; flex-direction: column; gap: 0.85rem;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <span style="font-size: 0.88rem; font-weight: 600; color: #64748b;">MySQL Interactive Workspace</span>
             <button class="btn" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;" onclick="resetEditor()">Reset Template</button>
           </div>
 
-          <textarea id="sql-editor" 
-                    aria-label="SQL Code Editor"
-                    autocapitalize="none" 
-                    autocomplete="off" 
-                    autocorrect="off" 
-                    spellcheck="false"></textarea>
+          <!-- IDE-Style Workspace with Line Numbers -->
+          <div class="editor-wrapper">
+            <div id="line-numbers" class="line-numbers" aria-hidden="true">1</div>
+            <textarea id="sql-editor" 
+                      aria-label="SQL Code Editor"
+                      autocapitalize="none" 
+                      autocomplete="off" 
+                      autocorrect="off" 
+                      spellcheck="false"></textarea>
+          </div>
 
           <div class="actions">
             <button class="btn btn-primary" id="run-btn" onclick="executeUserQuery()">
@@ -468,6 +497,26 @@
         console.warn("localStorage save failed", e);
       }
     }
+
+    // Synchronize Line Number Gutter
+    function updateLineNumbers() {
+      const editor = document.getElementById('sql-editor');
+      const gutter = document.getElementById('line-numbers');
+      if (!editor || !gutter) return;
+      const count = editor.value.split('\n').length;
+      let html = '';
+      for (let i = 1; i <= count; i++) {
+        html += i + '<br>';
+      }
+      gutter.innerHTML = html;
+      gutter.scrollTop = editor.scrollTop;
+    }
+
+    const editorEl = document.getElementById('sql-editor');
+    editorEl.addEventListener('input', updateLineNumbers);
+    editorEl.addEventListener('scroll', () => {
+      document.getElementById('line-numbers').scrollTop = editorEl.scrollTop;
+    });
 
     // ==========================================
     // 2. SCREEN 1A: CONSENT LOGIC
@@ -704,13 +753,11 @@ Clean up any stray commas on your right, hit 'Run MySQL Code' again, and let's k
           db.exec("DROP TABLE IF EXISTS books;");
         },
         validate: (rawSql) => {
-          // 1. Verify table was created
           const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
           if (res.length === 0 || res[0].values.length === 0) {
             throw new Error("Table 'books' was not created. Check your CREATE TABLE statement.");
           }
 
-          // 2. Validate declared column types directly from database metadata
           const tableInfo = db.exec("PRAGMA table_info(books);")[0].values;
           const colNames = tableInfo.map(r => r[1]);
 
@@ -724,12 +771,10 @@ Clean up any stray commas on your right, hit 'Run MySQL Code' again, and let's k
             }
           });
 
-          // 3. Verify required columns
           if (!colNames.includes('title') || !colNames.includes('author') || !colNames.includes('price') || !colNames.includes('published_year')) {
             throw new Error("Table 'books' is missing required columns. Ensure all columns match the specification.");
           }
 
-          // 4. Verify DESCRIBE clause
           const upper = rawSql.toUpperCase();
           if (!upper.includes("DESCRIBE") && !upper.includes("DESC")) {
             throw new Error("Please include 'DESCRIBE books;' at the end of your script to display the schema.");
@@ -826,7 +871,7 @@ Also confirm your semicolon is in place. Add that WHERE clause on line 4, and ru
           if (res.length > 0 && res[0].values.length > 0) {
             const currentPrice = res[0].values[0][0];
             if (Math.abs(currentPrice - 31.50) < 0.01) return true;
-            throw new Error(`Book ID 2 price is currently ${Number(currentPrice).toFixed(2)}, but the prompt asked for 31.50. Inspect the updated table above!`);
+            throw new Error(`Book ID 2 price is currently ${Number(currentPrice).toFixed(2)}, but the prompt asked for 31.50. Inspect the updated table below!`);
           }
           throw new Error("Could not find Book ID 2. Check your UPDATE statement.");
         }
@@ -964,8 +1009,9 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
       // Always hide the "Proceed to Next Module" button on initial load
       document.getElementById('next-btn').style.display = 'none';
 
-      // Always initialize editor to clean template code (No lingering cached typos)
+      // Always initialize editor to clean template code
       document.getElementById('sql-editor').value = cfg.template;
+      updateLineNumbers();
       
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
@@ -979,6 +1025,7 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
 
     function resetEditor() {
       document.getElementById('sql-editor').value = curriculum[currentStep].template;
+      updateLineNumbers();
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
       out.innerText = "Template reset. Click 'Run MySQL Code' to execute.";
@@ -989,6 +1036,7 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
 
     function revealSolution() {
       document.getElementById('sql-editor').value = curriculum[currentStep].solution;
+      updateLineNumbers();
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
       out.innerText = "Solution loaded into editor. Click 'Run MySQL Code' to execute.";
@@ -1077,7 +1125,7 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
         handleStepSuccess();
 
       } catch (err) {
-        // Failure / Error Branch (Rendered table remains visible above if query ran)
+        // Failure / Error Branch (Rendered table remains visible below if query ran)
         out.className = 'output-error';
         out.innerText = `Validation/Syntax Notice: ${err.message}`;
         diagnoseError(rawSql, err.message);
@@ -1106,7 +1154,7 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
       if (errMsg.includes("Invalid or misspelled MySQL data type")) {
         remText.innerText = "Check your data types! Look closely at the data types for each column (such as VARCHAR, INT, DECIMAL). Ensure there are no typos.";
       } else if (errMsg.includes("price is currently")) {
-        remText.innerText = "Check your SET values! Look at the price displayed in the table output above and compare it with the required value.";
+        remText.innerText = "Check your SET values! Look at the price displayed in the table output below and compare it with the required value.";
       } else if (errMsg.includes("doesn't exist")) {
         remText.innerText = "Check your table name! In SQL, you can only inspect or query tables that have been successfully created.";
       } else if (sql.includes(",\n)") || sql.includes(", )")) {
