@@ -166,7 +166,7 @@
 
   <div class="container">
 
-    <!-- SCREEN 1A: STANDALONE INFORMED CONSENT & AGE GATE (NO FORM WRAPPER) -->
+    <!-- SCREEN 1A: STANDALONE INFORMED CONSENT & AGE GATE -->
     <div id="screen-1a" class="card">
       <div class="consent-header">
         <h2>Informed Consent & Research Participation Agreement</h2>
@@ -202,11 +202,11 @@
         <div class="question-title">Question 1: Age Certification & Participation Decision</div>
         <div class="option-list">
           <label class="option-label">
-            <input type="radio" name="consent_choice" value="yes">
+            <input type="radio" name="consent_choice" value="yes" onchange="updateConsentButton(this.value)">
             <span><strong>YES, I agree to participate.</strong> I certify that I am at least 18 years old, I have read and understand this consent form, and I voluntarily choose to take part in this research study.</span>
           </label>
           <label class="option-label">
-            <input type="radio" name="consent_choice" value="no">
+            <input type="radio" name="consent_choice" value="no" onchange="updateConsentButton(this.value)">
             <span><strong>NO, I do NOT want to participate (or I am under 18 years old).</strong> Take me directly to standard course materials without participating.</span>
           </label>
         </div>
@@ -216,12 +216,13 @@
         Please make a selection for Question 1 to proceed.
       </div>
 
-      <button type="button" class="btn btn-primary" style="width: 100%;" onclick="handleConsentContinue()">
-        Continue <i class="fa-solid fa-arrow-right"></i>
+      <!-- Action Button requiring explicit confirmation click -->
+      <button type="button" id="consent-confirm-btn" class="btn btn-primary" style="width: 100%;" onclick="handleConsentContinue()">
+        Confirm Choice & Continue <i class="fa-solid fa-arrow-right"></i>
       </button>
     </div>
 
-    <!-- SCREEN 1B: DIAGNOSTIC QUESTIONNAIRE (SHOWN ONLY AFTER CONSENT = YES) -->
+    <!-- SCREEN 1B: DIAGNOSTIC QUESTIONNAIRE -->
     <div id="screen-1b" class="card" style="display: none;">
       <div style="margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
         <h2 style="color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.25rem;">Course Diagnostic Questionnaire</h2>
@@ -235,7 +236,6 @@
       </div>
 
       <div>
-        <!-- Question 2: Baseline Covariate -->
         <div class="question-block" id="block-prior-sql">
           <div class="question-title">Question 2: Before starting D426, how would you rate your experience with SQL and databases?</div>
           <div class="option-list">
@@ -254,7 +254,6 @@
           For each question, choose the option that best describes how you prefer to learn.
         </p>
 
-        <!-- Shuffled ILS Items Container -->
         <div id="randomized-ils-container"></div>
 
         <button type="button" class="btn btn-primary" style="margin-top: 1rem; width: 100%;" onclick="handleDiagnosticSubmit()">
@@ -287,7 +286,6 @@
     <!-- SCREEN 2B: INTERVENTION ARM (5-MODULE WASM SANDBOX) -->
     <div id="sandbox-screen" style="display: none;">
       
-      <!-- Desktop Recommendation Banner -->
       <div class="desktop-alert">
         <i class="fa-solid fa-display"></i>
         <div>
@@ -309,7 +307,6 @@
         </div>
       </div>
 
-      <!-- Module Stepper -->
       <div class="stepper">
         <div class="step-tab active" id="tab-1" onclick="switchStep(1)">Module 1: DDL Schema</div>
         <div class="step-tab" id="tab-2" onclick="switchStep(2)">Module 2: DML Population</div>
@@ -426,8 +423,22 @@
     }
 
     // ==========================================
-    // 3. SCREEN 1A: CONTINUATION (NO RELOAD)
+    // 3. SCREEN 1A: CONFIRMATION LOGIC
     // ==========================================
+    function updateConsentButton(val) {
+      const btn = document.getElementById('consent-confirm-btn');
+      const alertBox = document.getElementById('consent-validation-alert');
+      alertBox.style.display = 'none';
+
+      if (val === 'yes') {
+        btn.className = 'btn btn-primary';
+        btn.innerHTML = 'Confirm Selection & Continue to Diagnostic <i class="fa-solid fa-arrow-right"></i>';
+      } else if (val === 'no') {
+        btn.className = 'btn btn-secondary';
+        btn.innerHTML = 'Confirm Selection & Go to Course Materials <i class="fa-solid fa-arrow-right"></i>';
+      }
+    }
+
     function handleConsentContinue() {
       const consentChoice = document.querySelector('input[name="consent_choice"]:checked');
       const alertBox = document.getElementById('consent-validation-alert');
@@ -438,7 +449,12 @@
       }
       alertBox.style.display = 'none';
 
-      if (consentChoice.value === 'no') {
+      if (consentChoice.value === 'yes') {
+        saveState({ consentGiven: true, optedOut: false });
+        document.getElementById('screen-1a').style.display = 'none';
+        document.getElementById('screen-1b').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
         saveState({ consentGiven: false, optedOut: true, surveyCompleted: true });
         document.getElementById('screen-1a').style.display = 'none';
         
@@ -446,14 +462,8 @@
         document.getElementById('landing-title').innerText = "Participation Opt-Out Acknowledged";
         document.getElementById('landing-msg').innerText = "Thank you. You have chosen not to participate (or are under 18). This decision has no effect on your course standing. You can access your standard course materials below:";
         controlScreen.style.display = 'block';
-        return;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-
-      // YES selected: cleanly transition to Screen 1B without touching URL
-      saveState({ consentGiven: true, optedOut: false });
-      document.getElementById('screen-1a').style.display = 'none';
-      document.getElementById('screen-1b').style.display = 'block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // ==========================================
@@ -475,4 +485,181 @@
       { id: "ils_7", q: "When learning complex topics, I prefer to progress:", 
         opts: [{ text: "At a steady pace, building incrementally step-by-step.", val: 1 }, { text: "In fits and starts; feeling confused until the whole picture suddenly 'clicks.'", val: -1 }] },
       { id: "ils_8", q: "When reading technical texts, I prefer writers to:", 
-        opts: [{ text: "Lay out the instructions and facts directly and in clear order.", val: 1 }, { text: "Explain the broad conceptual context and analogies before the details.", val:
+        opts: [{ text: "Lay out the instructions and facts directly and in clear order.", val: 1 }, { text: "Explain the broad conceptual context and analogies before the details.", val: -1 }] },
+      { id: "ils_9", q: "It is more important to me that an instructor:", 
+        opts: [{ text: "Lay out the material in clear, sequential stages.", val: 1 }, { text: "Give me an overall big picture and relate the material to other subjects.", val: -1 }] },
+      { id: "ils_10", q: "When analyzing data or technical scenarios:", 
+        opts: [{ text: "I examine individual records/data points to deduce patterns.", val: 1 }, { text: "I form a general impression first, then drill down for evidence.", val: -1 }] },
+      { id: "ils_11", q: "When someone walks through a solution:", 
+        opts: [{ text: "I prefer seeing each intermediate step written out completely.", val: 1 }, { text: "I prefer seeing the final outcome first, then how it was reached.", val: -1 }] }
+    ];
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderDiagnosticSurvey() {
+      const container = document.getElementById('randomized-ils-container');
+      container.innerHTML = '';
+      const shuffledItems = shuffle([...ilsBank]);
+
+      shuffledItems.forEach((item, index) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'question-block';
+        qDiv.id = `block-${item.id}`;
+        const shuffledOpts = shuffle([...item.opts]);
+        
+        let html = `<div class="question-title">Question ${index + 3}: ${item.q}</div><div class="option-list">`;
+        shuffledOpts.forEach(opt => {
+          html += `
+            <label class="option-label">
+              <input type="radio" name="${item.id}" value="${opt.val}" onchange="clearBlockError('block-${item.id}')"> <span>${opt.text}</span>
+            </label>`;
+        });
+        html += `</div>`;
+        qDiv.innerHTML = html;
+        container.appendChild(qDiv);
+      });
+    }
+
+    function clearBlockError(blockId) {
+      const el = document.getElementById(blockId);
+      if (el) el.classList.remove('unanswered');
+    }
+
+    function handleDiagnosticSubmit() {
+      let hasError = false;
+      let firstUnansweredEl = null;
+
+      const priorSql = document.querySelector('input[name="prior_sql"]:checked');
+      const priorBlock = document.getElementById('block-prior-sql');
+      if (!priorSql) {
+        priorBlock.classList.add('unanswered');
+        hasError = true;
+        firstUnansweredEl = priorBlock;
+      } else {
+        priorBlock.classList.remove('unanswered');
+      }
+
+      let ilsTotal = 0;
+      for (let i = 1; i <= 11; i++) {
+        const itemRadio = document.querySelector(`input[name="ils_${i}"]:checked`);
+        const itemBlock = document.getElementById(`block-ils_${i}`);
+        if (!itemRadio) {
+          if (itemBlock) itemBlock.classList.add('unanswered');
+          hasError = true;
+          if (!firstUnansweredEl && itemBlock) firstUnansweredEl = itemBlock;
+        } else {
+          if (itemBlock) itemBlock.classList.remove('unanswered');
+          ilsTotal += parseInt(itemRadio.value);
+        }
+      }
+
+      const alertBox = document.getElementById('diagnostic-validation-alert');
+      if (hasError) {
+        alertBox.style.display = 'block';
+        if (firstUnansweredEl) {
+          firstUnansweredEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+      alertBox.style.display = 'none';
+
+      const surveyPayload = {
+        student_id: studentId,
+        step: "DIAGNOSTIC_COMPLETED",
+        attempts: `ILS_SCORE:${ilsTotal}`,
+        time_spent_seconds: parseInt(priorSql.value),
+        status: `ARM:${assignedArm.toUpperCase()}|PRIOR_SQL:${priorSql.value}|ILS:${ilsTotal}`,
+        user_agent: navigator.userAgent
+      };
+
+      fetch(TELEMETRY_WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(surveyPayload)
+      }).catch(err => console.error("Telemetry error:", err));
+
+      saveState({ surveyCompleted: true, optedOut: false });
+      document.getElementById('screen-1b').style.display = 'none';
+
+      if (assignedArm === 'ctrl') {
+        document.getElementById('control-screen').style.display = 'block';
+      } else {
+        document.getElementById('sandbox-screen').style.display = 'block';
+        initWasmEngine();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ==========================================
+    // 5. SANDBOX ENGINE & CURRICULUM
+    // ==========================================
+    let currentStep = 1;
+    let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    let sessionStartTime = Date.now();
+    let db = null;
+    const VIDEO_ID = "7S_tz1z_5bA";
+
+    const curriculum = {
+      1: {
+        title: "Module 1: Schema Architecture (CREATE TABLE)",
+        instructions: "Write a statement to create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>.",
+        videoId: VIDEO_ID,
+        template: `-- MODULE 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
+        solution: `CREATE TABLE books (\n    book_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
+        validate: () => {
+          const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
+          if (res.length === 0) throw new Error("Table 'books' was not created. Check your CREATE TABLE statement.");
+          const cols = db.exec("PRAGMA table_info(books);")[0].values.map(r => r[1]);
+          if (!cols.includes('title') || !cols.includes('author')) throw new Error("Table 'books' is missing required columns.");
+          return true;
+        }
+      },
+      2: {
+        title: "Module 2: Data Population (INSERT INTO)",
+        instructions: "Insert at least two books into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
+        videoId: VIDEO_ID,
+        template: `INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`,
+        solution: `INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);`,
+        validate: () => {
+          const res = db.exec("SELECT COUNT(*) FROM books;");
+          if (res.length === 0 || res[0].values[0][0] < 2) throw new Error("Please insert at least 2 rows into the 'books' table.");
+          return true;
+        }
+      },
+      3: {
+        title: "Module 3: Controlled Updates (UPDATE & DELETE with WHERE)",
+        instructions: "Update the price of a book using a <code>WHERE</code> clause. Always use WHERE when updating or deleting!",
+        videoId: VIDEO_ID,
+        template: `-- Update the price for book_id 2\nUPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\n-- Verify update\nSELECT * FROM books;`,
+        solution: `UPDATE books SET price = 31.50 WHERE book_id = 2;`,
+        validate: () => {
+          const res = db.exec("SELECT price FROM books WHERE book_id = 2;");
+          if (res.length > 0 && Math.abs(res[0].values[0][0] - 31.50) < 0.01) return true;
+          return true;
+        }
+      },
+      4: {
+        title: "Module 4: Data Retrieval Foundations (SELECT & Filtering)",
+        instructions: "Query the <code>title</code> and <code>price</code> of books published after 2018, sorted by price descending.",
+        videoId: VIDEO_ID,
+        template: `SELECT title, price \nFROM books \nWHERE published_year > 2018 \nORDER BY price DESC;`,
+        solution: `SELECT title, price FROM books WHERE published_year > 2018 ORDER BY price DESC;`,
+        validate: () => {
+          const sql = document.getElementById('sql-editor').value.toUpperCase();
+          if (!sql.includes("SELECT") || !sql.includes("WHERE")) throw new Error("Ensure your query uses both SELECT and WHERE clauses.");
+          return true;
+        }
+      },
+      5: {
+        title: "Module 5: Relational Bridges (Foreign Keys & INNER JOIN)",
+        instructions: "Create the <code>orders</code> table, insert a linked record, and execute an <code>INNER JOIN</code> connecting the tables.",
+        videoId: VIDEO_ID,
+        template: `CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\n\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`,
+        solution: `CREATE TABLE orders (order_id INTEGER PRIMARY KEY AUTOINCREMENT, book_id INT, order_date DATE, quantity INT);\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\nSELECT orders.order_id, books.title, books.price, orders.quantity FROM orders INNER JOIN books ON orders.book_id = books.book_id;`,
