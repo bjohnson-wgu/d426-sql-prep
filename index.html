@@ -317,7 +317,7 @@
       </div>
     </section>
 
-    <!-- SCREEN 2B: INTERVENTION ARM (SANDBOX) -->
+    <!-- SCREEN 2B: INTERVENTION ARM (EXPANDED WORKSPACE) -->
     <section id="sandbox-screen" style="display: none;" aria-label="Interactive SQL Coding Sandbox">
       
       <div class="desktop-alert" role="note">
@@ -362,6 +362,7 @@
             <iframe id="video-frame" src="https://www.youtube-nocookie.com/embed/VRUb_-0MjKo" title="Primary Instructional Video" allowfullscreen></iframe>
           </div>
 
+          <!-- Primary Video Accessible Transcript Drawer -->
           <details id="primary-transcript-drawer" class="transcript-drawer">
             <summary><i class="fa-solid fa-file-lines" aria-hidden="true"></i> View Video Transcript</summary>
             <div id="primary-transcript-body" class="transcript-content">Loading transcript...</div>
@@ -378,6 +379,7 @@
               <iframe id="remediation-video-frame" src="" title="Remediation Video Help" allowfullscreen></iframe>
             </div>
 
+            <!-- Remediation Accessible Transcript Drawer -->
             <details id="remedy-transcript-drawer" class="transcript-drawer" style="margin-bottom: 0.75rem; background: #ffffff;">
               <summary style="color: #b45309;"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> View Troubleshooting Transcript</summary>
               <div id="remedy-transcript-body" class="transcript-content">Loading transcript...</div>
@@ -627,7 +629,9 @@
       const alertBox = document.getElementById('diagnostic-validation-alert');
       if (hasError) {
         alertBox.style.display = 'block';
-        if (firstUnansweredEl) firstUnansweredEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (firstUnansweredEl) {
+          firstUnansweredEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
         return;
       }
       alertBox.style.display = 'none';
@@ -661,7 +665,7 @@
     }
 
     // ==========================================
-    // 4. MASTER CURRICULUM WITH ACCESSIBILITY TRANSCRIPTS
+    // 4. MASTER CURRICULUM WITH MEDIA & TRANSCRIPTS
     // ==========================================
     let currentStep = 1;
     let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -672,8 +676,8 @@
       1: {
         title: "Module 1: Schema Architecture (CREATE TABLE)",
         instructions: "Write a statement to create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>.",
-        videoId: "VRUb_-0MjKo",
-        remediationVideoId: "obBNBGgIsYw",
+        videoId: "VRUb_-0MjKo",             // Module 1 Video 1.1
+        remediationVideoId: "obBNBGgIsYw",  // Module 1 Video 1.2
         primaryTranscript: `Hi everyone! Welcome to Module 1 of your D426 SQL Foundations.
 
 Before we dive into textbook theory, we are going to build real database tables from the ground up. In SQL, this is called Data Definition Language, or DDL.
@@ -711,8 +715,8 @@ Clean up any stray commas on your right, hit 'Run MySQL Code' again, and let's k
       2: {
         title: "Module 2: Data Population (INSERT INTO)",
         instructions: "Insert at least two books into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
-        videoId: "dRBxT2oD1hk",
-        remediationVideoId: "NpdCFRU3Vc8",
+        videoId: "dRBxT2oD1hk",             // Module 2 Video 2.1
+        remediationVideoId: "NpdCFRU3Vc8",  // Module 2 Video 2.2
         primaryTranscript: `Great job defining your schema! Now that our 'books' table exists, it's time for Data Manipulation Language, or DML.
 
 To add real records to a table, we use the INSERT INTO statement.
@@ -748,8 +752,8 @@ Match up your counts, verify your single quotes, and execute your query again!`,
       3: {
         title: "Module 3: Controlled Updates (UPDATE & DELETE with WHERE)",
         instructions: "Update the price of a book using a <code>WHERE</code> clause. Always use WHERE when updating or deleting!",
-        videoId: "4jQvokPNooQ",
-        remediationVideoId: "G07Wd94Y8wg",
+        videoId: "4jQvokPNooQ",             // Module 3 Video 3.1
+        remediationVideoId: "G07Wd94Y8wg",  // Module 3 Video 3.2
         primaryTranscript: `Now that your database has rows, what happens when data changes? In Module 3, we learn controlled updates and modifications.
 
 This brings us to the single most important safety rule in all of database administration: NEVER run an UPDATE without a WHERE clause!
@@ -786,8 +790,8 @@ Also confirm your semicolon is in place. Add that WHERE clause on line 4, and ru
       4: {
         title: "Module 4: Data Retrieval Foundations (SELECT & Filtering)",
         instructions: "Query the <code>title</code> and <code>price</code> of books published after 2018, sorted by price descending.",
-        videoId: "KF_xpU-088s",
-        remediationVideoId: "vjPaSfKatlA",
+        videoId: "KF_xpU-088s",             // Module 4 Video 4.1
+        remediationVideoId: "vjPaSfKatlA",  // Module 4 Video 4.2
         primaryTranscript: `Welcome to Module 4! Now we unlock the core engine of SQL: Data Query Language, or DQL.
 
 In business analytics and IT, most of your daily work is asking questions of data. We do that using the famous SELECT-FROM-WHERE structure.
@@ -826,8 +830,8 @@ Adjust your query text, hit Run, and check your table!`,
       5: {
         title: "Module 5: Relational Bridges (Foreign Keys & INNER JOIN)",
         instructions: "Create the <code>orders</code> table, insert a linked record, and execute an <code>INNER JOIN</code> connecting the tables.",
-        videoId: "uxCW_EsjC60",
-        remediationVideoId: "0iCXN5ZNW7Q",
+        videoId: "uxCW_EsjC60",             // Module 5 Video 5.1
+        remediationVideoId: "0iCXN5ZNW7Q",  // Module 5 Video 5.2
         primaryTranscript: `Congratulations on reaching Module 5! This is where relational databases show their true power.
 
 In real systems, data never lives in just one giant spreadsheet. It's split into focused tables connected by relational keys.
@@ -913,17 +917,12 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
       document.getElementById('remedy-transcript-body').innerText = cfg.remedyTranscript;
       document.getElementById('show-solution-btn').style.display = 'none';
 
+      // Always hide the "Proceed to Next Module" button on initial load
+      document.getElementById('next-btn').style.display = 'none';
+
       const state = getStoredState();
       const savedCode = (state && state.codeDrafts && state.codeDrafts[step]) ? state.codeDrafts[step] : cfg.template;
       document.getElementById('sql-editor').value = savedCode;
-
-      // If already completed in past, keep Next button available
-      const completed = (state && state.completedSteps) ? state.completedSteps : [];
-      if (completed.includes(step) && step < 5) {
-        document.getElementById('next-btn').style.display = 'inline-flex';
-      } else {
-        document.getElementById('next-btn').style.display = 'none';
-      }
       
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
@@ -943,6 +942,7 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
       out.innerText = "Template reset. Click 'Run MySQL Code' to execute.";
       document.getElementById('table-output').innerHTML = '';
       document.getElementById('remediation-box').classList.remove('show');
+      document.getElementById('next-btn').style.display = 'none';
     }
 
     function revealSolution() {
@@ -1024,6 +1024,9 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
         out.className = 'output-error';
         out.innerText = `Validation/Syntax Notice: ${err.message}`;
         diagnoseError(rawSql, err.message);
+        
+        // Ensure Next button is hidden on error
+        document.getElementById('next-btn').style.display = 'none';
         
         // Expand remediation drawer and load remediation video
         const remBox = document.getElementById('remediation-box');
