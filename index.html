@@ -338,7 +338,7 @@
 
         <p><strong>3. Your Choice (Voluntary):</strong> Taking part is 100% voluntary. You can choose not to join, or you can stop at any time. Choosing not to participate will have no effect on your course grade, academic progress, tuition, or your access to instructors, cohorts, and study resources.</p>
 
-        <p><strong>4. What will you do?</strong> If you agree, you will advance to a brief 3-minute questionnaire about your study habits and prior SQL experience. Depending on your randomly assigned group, you may also get optional access to an interactive hands-on SQL practice tool.</p>
+        <p><strong>4. What will you do and time commitment?</strong> If you agree, you will complete a brief <strong>3-minute questionnaire</strong> regarding your study habits and prior technical experience. Depending on your randomly assigned study group, you may also receive optional access to an interactive, self-paced SQL practice sandbox (<strong>approximately 15–20 minutes</strong>). In total, participating represents a commitment of <strong>approximately 20–25 minutes</strong> (or just 3 minutes if assigned to the standard study path). You may pause, close your browser, and return at any time.</p>
 
         <p><strong>5. Privacy & Your Information:</strong> We use your student ID solely to match your survey responses with your course progress. Before analyzing any data, your name and ID will be removed and replaced with a random code. Only group summary numbers will ever be reported or published.</p>
 
@@ -559,7 +559,7 @@
               <i class="fa-solid fa-circle-info" aria-hidden="true"></i> Sandbox Scope & Exploratory Capabilities
             </summary>
             <div style="margin-top: 0.45rem; line-height: 1.45; border-top: 1px solid #e2e8f0; padding-top: 0.4rem;">
-              This practice environment is a client-side WebAssembly emulator configured specifically for the core DDL, DML, and DQL operations taught in D426 (table definitions, constraints, updates, filters, and standard inner joins)[cite: 3]. It does not emulate an entire production MySQL server or support advanced server routines (e.g., triggers, stored procedures, or administrative commands). For unrestricted multi-table database design or advanced dialect experimentation, we recommend using a full online engine like <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener" style="color: var(--wgu-blue); font-weight: 600;">DB Fiddle</a>.
+              This practice environment is a client-side WebAssembly emulator configured specifically for the core DDL, DML, and DQL operations taught in D426 (table definitions, constraints, updates, filters, and standard inner joins). It does not emulate an entire production MySQL server or support advanced server routines (e.g., triggers, stored procedures, or administrative commands). For unrestricted multi-table database design or advanced dialect experimentation, we recommend using a full online engine like <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener" style="color: var(--wgu-blue); font-weight: 600;">DB Fiddle</a>.
             </div>
           </details>
 
@@ -1157,7 +1157,6 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
               if (el) el.classList.add('completed');
             });
           }
-          // Restore user directly to their furthest unlocked step
           const targetStep = state.currentStep || 1;
           loadStep(targetStep);
         } else {
