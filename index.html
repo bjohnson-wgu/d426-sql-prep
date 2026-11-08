@@ -705,7 +705,7 @@
     }
 
     // ==========================================
-    // 4. MASTER CURRICULUM WITH ACCESSIBILITY TRANSCRIPTS
+    // 4. MASTER CURRICULUM WITH UNIFIED 4-BOOK DATASET
     // ==========================================
     let currentStep = 1;
     let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -791,7 +791,7 @@ Clean up any stray commas on your right, hit 'Run MySQL Code' again, and let's k
       },
       2: {
         title: "Module 2: Data Population (INSERT INTO)",
-        instructions: "Insert at least two books into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
+        instructions: "Insert the catalog of books into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
         videoId: "dRBxT2oD1hk",
         remediationVideoId: "NpdCFRU3Vc8",
         primaryTranscript: `Great job defining your schema! Now that our 'books' table exists, it's time for Data Manipulation Language, or DML.
@@ -814,8 +814,8 @@ First: Did you wrap your book title or author in single quotes? If you forget qu
 Second: Count your columns and values. If you listed four columns in your header, you must have exactly four values inside each parenthesis set.
 
 Match up your counts, verify your single quotes, and execute your query again!`,
-        template: `INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`,
-        solution: `INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`,
+        template: `INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020),\n    ('Database Systems', 'Thomas Connolly', 55.00, 2014),\n    ('SQL Antipatterns', 'Bill Karwin', 37.00, 2018);\n\nSELECT * FROM books;`,
+        solution: `INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020), ('Database Systems', 'Thomas Connolly', 55.00, 2014), ('SQL Antipatterns', 'Bill Karwin', 37.00, 2018);\n\nSELECT * FROM books;`,
         seed: () => {
           db.exec("DROP TABLE IF EXISTS books;");
           db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
@@ -826,7 +826,9 @@ Match up your counts, verify your single quotes, and execute your query again!`,
             throw new Error("Ensure your query uses valid 'INSERT INTO books (...) VALUES (...)' syntax.");
           }
           const res = db.exec("SELECT COUNT(*) FROM books;");
-          if (res.length === 0 || res[0].values[0][0] < 2) throw new Error("Please insert at least 2 rows into the 'books' table.");
+          if (res.length === 0 || res[0].values[0][0] < 4) {
+            throw new Error("Please insert all 4 books into the 'books' table.");
+          }
           return true;
         }
       },
@@ -860,7 +862,11 @@ Also confirm your semicolon is in place. Add that WHERE clause on line 4, and ru
         seed: () => {
           db.exec("DROP TABLE IF EXISTS books;");
           db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
-          db.exec("INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);");
+          db.exec("INSERT INTO books (title, author, price, published_year) VALUES " +
+                  "('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), " +
+                  "('Learning SQL', 'Alan Beaulieu', 28.00, 2020), " +
+                  "('Database Systems', 'Thomas Connolly', 55.00, 2014), " +
+                  "('SQL Antipatterns', 'Bill Karwin', 37.00, 2018);");
         },
         validate: (rawSql) => {
           const upper = rawSql.toUpperCase();
@@ -879,8 +885,8 @@ Also confirm your semicolon is in place. Add that WHERE clause on line 4, and ru
       4: {
         title: "Module 4: Data Retrieval Foundations (SELECT & Filtering)",
         instructions: "Query the <code>title</code> and <code>price</code> of books published after 2018, sorted by price descending.",
-        videoId: "KF_xpU-O88s",             // Module 4 Video 4.1 (Capital O)
-        remediationVideoId: "vjPaSfKatlA",  // Module 4 Video 4.2
+        videoId: "KF_xpU-O88s",
+        remediationVideoId: "vjPaSfKatlA",
         primaryTranscript: `Welcome to Module 4! Now we unlock the core engine of SQL: Data Query Language, or DQL.
 
 In business analytics and IT, most of your daily work is asking questions of data. We do that using the famous SELECT-FROM-WHERE structure.
@@ -910,20 +916,18 @@ Adjust your query text, hit Run, and check your table!`,
           db.exec("INSERT INTO books (title, author, price, published_year) VALUES " +
                   "('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), " +
                   "('Learning SQL', 'Alan Beaulieu', 28.00, 2020), " +
-                  "('SQL Antipatterns', 'Bill Karwin', 37.00, 2018), " +  // Boundary book published IN 2018
-                  "('Database Systems', 'Thomas Connolly', 55.00, 2014);");
+                  "('Database Systems', 'Thomas Connolly', 55.00, 2014), " +
+                  "('SQL Antipatterns', 'Bill Karwin', 37.00, 2018);");
         },
         validate: (rawSql) => {
           const sql = rawSql.toUpperCase();
           if (!sql.includes("SELECT") || !sql.includes("WHERE")) throw new Error("Ensure your query uses both SELECT and WHERE clauses.");
           if (!sql.includes("ORDER BY") || !sql.includes("DESC")) throw new Error("Ensure your query sorts by price in descending order (ORDER BY price DESC).");
           
-          // Strict operator check: prohibit >=
           if (rawSql.includes(">=")) {
             throw new Error("Comparison Operator Notice: The prompt asks for books published AFTER 2018 (strictly > 2018), not greater than or equal to (>= 2018). Inspect the table below!");
           }
 
-          // Strict boundary evaluation: only 2 books (2019 and 2020) should be returned
           const checkQuery = db.exec(rawSql.replace(/;?\s*$/, ''));
           if (checkQuery.length > 0 && checkQuery[0].values.length !== 2) {
             throw new Error(`Your query returned ${checkQuery[0].values.length} rows instead of the expected 2 books published after 2018. Inspect the table below!`);
@@ -965,7 +969,11 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
           db.exec("DROP TABLE IF EXISTS orders;");
           db.exec("DROP TABLE IF EXISTS books;");
           db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
-          db.exec("INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);");
+          db.exec("INSERT INTO books (title, author, price, published_year) VALUES " +
+                  "('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), " +
+                  "('Learning SQL', 'Alan Beaulieu', 28.00, 2020), " +
+                  "('Database Systems', 'Thomas Connolly', 55.00, 2014), " +
+                  "('SQL Antipatterns', 'Bill Karwin', 37.00, 2018);");
         },
         validate: (rawSql) => {
           const sql = rawSql.toUpperCase();
@@ -1167,7 +1175,7 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
     function diagnoseError(sql, errMsg) {
       const remText = document.getElementById('remediation-text');
       const upper = sql.toUpperCase();
-      if (errMsg.includes("Comparison Operator Notice") || errMsg.includes("returned 3 rows")) {
+      if (errMsg.includes("Comparison Operator Notice") || errMsg.includes("returned 3 rows") || errMsg.includes("expected 2 books")) {
         remText.innerText = "Check your comparison operator! We want books published strictly AFTER 2018 (> 2018), not including 2018 (>=).";
       } else if (errMsg.includes("Invalid or misspelled MySQL data type")) {
         remText.innerText = "Check your data types! Look closely at the data types for each column (such as VARCHAR, INT, DECIMAL). Ensure there are no typos.";
