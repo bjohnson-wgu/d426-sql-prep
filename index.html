@@ -823,8 +823,12 @@ Also confirm your semicolon is in place. Add that WHERE clause on line 4, and ru
             throw new Error("Your statement must include UPDATE, SET, and a WHERE clause.");
           }
           const res = db.exec("SELECT price FROM books WHERE book_id = 2;");
-          if (res.length > 0 && Math.abs(res[0].values[0][0] - 31.50) < 0.01) return true;
-          throw new Error("Book ID 2 price was not updated to 31.50. Make sure your UPDATE statement executed.");
+          if (res.length > 0 && res[0].values.length > 0) {
+            const currentPrice = res[0].values[0][0];
+            if (Math.abs(currentPrice - 31.50) < 0.01) return true;
+            throw new Error(`Book ID 2 price is currently ${Number(currentPrice).toFixed(2)}, but the prompt asked for 31.50. Inspect the updated table above!`);
+          }
+          throw new Error("Could not find Book ID 2. Check your UPDATE statement.");
         }
       },
       4: {
@@ -1033,13 +1037,7 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
           }
         }
 
-        // Step 4: Validate criteria against the freshly created/updated tables
-        curriculum[currentStep].validate(rawSql);
-
-        // Successful Run
-        out.className = 'output-success';
-        out.innerText = `Query executed successfully! Criteria satisfied!`;
-
+        // Step 4: ALWAYS render table results first if the query executed cleanly
         if (results.length > 0) {
           const res = results[results.length - 1];
           let html = '<table class="data-table"><thead><tr>';
@@ -1070,9 +1068,16 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
           tblContainer.innerHTML = html;
         }
 
+        // Step 5: Validate criteria against prompt objectives AFTER rendering
+        curriculum[currentStep].validate(rawSql);
+
+        // All criteria satisfied!
+        out.className = 'output-success';
+        out.innerText = `Query executed successfully! Criteria satisfied!`;
         handleStepSuccess();
+
       } catch (err) {
-        // Failure / Error Branch
+        // Failure / Error Branch (Rendered table remains visible above if query ran)
         out.className = 'output-error';
         out.innerText = `Validation/Syntax Notice: ${err.message}`;
         diagnoseError(rawSql, err.message);
@@ -1100,6 +1105,8 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
       const upper = sql.toUpperCase();
       if (errMsg.includes("Invalid or misspelled MySQL data type")) {
         remText.innerText = "Check your data types! Look closely at the data types for each column (such as VARCHAR, INT, DECIMAL). Ensure there are no typos.";
+      } else if (errMsg.includes("price is currently")) {
+        remText.innerText = "Check your SET values! Look at the price displayed in the table output above and compare it with the required value.";
       } else if (errMsg.includes("doesn't exist")) {
         remText.innerText = "Check your table name! In SQL, you can only inspect or query tables that have been successfully created.";
       } else if (sql.includes(",\n)") || sql.includes(", )")) {
