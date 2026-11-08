@@ -212,6 +212,51 @@
     .hint-box { margin-top: 1rem; border-left: 4px solid var(--wgu-gold); background: #fffbeb; padding: 1rem; border-radius: 0 6px 6px 0; font-size: 0.88rem; display: none; }
     .hint-box.show { display: block; }
     .citation-footer { font-size: 0.75rem; color: #64748b; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 0.5rem; }
+
+    /* Resource Directory Cards */
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-top: 1.25rem;
+      text-align: left;
+    }
+    .resource-card {
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      border-radius: 6px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .resource-card h4 {
+      font-size: 0.92rem;
+      color: var(--wgu-blue);
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .resource-card p {
+      font-size: 0.82rem;
+      color: #64748b;
+      margin-bottom: 0.85rem;
+      line-height: 1.45;
+    }
+    .resource-card a {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--wgu-blue);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .resource-card a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -326,19 +371,54 @@
     </section>
 
     <!-- SCREEN 2A: CONTROL / OPT-OUT LANDING -->
-    <section id="control-screen" class="card" style="display: none; text-align: center; padding: 2.5rem 1.5rem; max-width: 900px; margin: 0 auto 1.5rem auto;" aria-labelledby="landing-title">
+    <section id="control-screen" class="card" style="display: none; text-align: center; padding: 2rem 1.5rem; max-width: 900px; margin: 0 auto 1.5rem auto;" aria-labelledby="landing-title">
       <i id="landing-icon" class="fa-solid fa-circle-check" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
-      <h2 id="landing-title" style="color: var(--wgu-blue); margin-bottom: 0.75rem;">Standard Course Materials</h2>
-      <p id="landing-msg" style="max-width: 600px; margin: 0 auto 1.5rem auto; color: #475569; font-size: 0.95rem;">
-        You are now ready to begin Section 1 of the official course curriculum.
+      <h2 id="landing-title" style="color: var(--wgu-blue); margin-bottom: 0.5rem;">Standard Course Materials & Resource Hub</h2>
+      <p id="landing-msg" style="max-width: 650px; margin: 0 auto 1.25rem auto; color: #475569; font-size: 0.95rem;">
+        You are now ready to begin Section 1 of the official D426 curriculum. Make sure to bookmark the primary course resources below to support your studies:
       </p>
-      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+
+      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
         <a href="https://my.wgu.edu" class="btn btn-primary" target="_blank" rel="noopener">
           <i class="fa-solid fa-graduation-cap"></i> Return to WGU Student Portal
         </a>
         <a href="https://lrps.wgu.edu/provision/115160353" class="btn btn-secondary" target="_blank" rel="noopener">
           <i class="fa-solid fa-book-open"></i> Launch Course Material
         </a>
+      </div>
+
+      <!-- Embedded Course Resources Directory -->
+      <div class="resource-grid">
+        <div class="resource-card">
+          <div>
+            <h4><i class="fa-solid fa-compass"></i> D426 Course Hub</h4>
+            <p>Access pacing guides, instructor contact options, study roadmaps, and course announcements.</p>
+          </div>
+          <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CSH-WST-D426-DataMa-30040017/?web=1" target="_blank" rel="noopener">
+            Open Course Hub <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+        <div class="resource-card">
+          <div>
+            <h4><i class="fa-solid fa-book-bookmark"></i> Supplemental Resource Index</h4>
+            <p>Direct access to the comprehensive Course Guide, topic video deep-dives, and extra practice problems.</p>
+          </div>
+          <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Supplemental-Resource-Index.aspx" target="_blank" rel="noopener">
+            Open Resource Index <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+        <div class="resource-card">
+          <div>
+            <h4><i class="fa-solid fa-calendar-days"></i> Upcoming Live Events</h4>
+            <p>View the live cohort schedule, faculty office hours, interactive workshops, and review sessions.</p>
+          </div>
+          <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Upcoming-Live-Events.aspx" target="_blank" rel="noopener">
+            View Live Schedule <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
+      <div style="font-size: 0.78rem; color: #64748b; margin-top: 1rem;">
+        <i class="fa-solid fa-bookmark"></i> <strong>Pro-Tip:</strong> Bookmark these three portals in your browser today so they are always within reach throughout D426.
       </div>
     </section>
 
@@ -418,10 +498,20 @@
 
         <!-- Right Column: Interactive Sandbox with IDE Line Numbers -->
         <div class="card" style="display: flex; flex-direction: column; gap: 0.85rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
             <span style="font-size: 0.88rem; font-weight: 600; color: #64748b;">MySQL Interactive Workspace</span>
             <button class="btn" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;" onclick="resetEditor()">Reset Template</button>
           </div>
+
+          <!-- Sandbox Scope & Capabilities Notice -->
+          <details style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem 0.75rem; font-size: 0.79rem; color: #475569;">
+            <summary style="font-weight: 600; color: var(--wgu-blue); cursor: pointer;">
+              <i class="fa-solid fa-circle-info" aria-hidden="true"></i> Sandbox Scope & Exploratory Capabilities
+            </summary>
+            <div style="margin-top: 0.45rem; line-height: 1.45; border-top: 1px solid #e2e8f0; padding-top: 0.4rem;">
+              This practice environment is a client-side WebAssembly emulator configured specifically for the core DDL, DML, and DQL operations taught in D426 (table definitions, constraints, updates, filters, and standard inner joins). It does not emulate an entire production MySQL server or support advanced server routines (e.g., triggers, stored procedures, or administrative commands). For unrestricted multi-table database design or advanced dialect experimentation, we recommend using a full online engine like <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener" style="color: var(--wgu-blue); font-weight: 600;">DB Fiddle</a>.
+            </div>
+          </details>
 
           <!-- IDE-Style Workspace with Line Numbers -->
           <div class="editor-wrapper">
@@ -561,7 +651,7 @@
           
           const controlScreen = document.getElementById('control-screen');
           document.getElementById('landing-title').innerText = "Participation Opt-Out Acknowledged";
-          document.getElementById('landing-msg').innerText = "Thank you. You have chosen not to participate (or are under 18). This decision has no effect on your course standing. You can access your standard course materials below:";
+          document.getElementById('landing-msg').innerText = "Thank you. You have chosen not to participate (or are under 18). This decision has no effect on your course standing. You can access your standard course materials and resources below:";
           controlScreen.style.display = 'block';
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -986,10 +1076,16 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
             throw new Error("Relational Join Notice: Primary and foreign keys must connect using equality (=). Using an operator like <= causes unrelated rows to match. Inspect the table below!");
           }
 
-          // Verify that exactly 1 matched row is produced
+          // Verify at least one order was created and matched cleanly
+          const orderCount = db.exec("SELECT COUNT(*) FROM orders;")[0].values[0][0];
           const checkRes = db.exec("SELECT orders.order_id, books.title, books.price FROM orders INNER JOIN books ON orders.book_id = books.book_id;");
-          if (checkRes.length === 0 || checkRes[0].values.length !== 1) {
-            throw new Error("Relational bridge failed to match the order with its book. Ensure your ON clause reads: orders.book_id = books.book_id;");
+          
+          if (checkRes.length === 0 || checkRes[0].values.length === 0) {
+            throw new Error("Relational bridge failed to match orders with books. Ensure your ON clause reads: orders.book_id = books.book_id;");
+          }
+
+          if (checkRes[0].values.length !== orderCount) {
+            throw new Error(`Expected ${orderCount} joined records matching your orders, but received ${checkRes[0].values.length}. Check your ON join condition!`);
           }
 
           return true;
@@ -1259,9 +1355,59 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
     function showCompletionModal() {
       const out = document.getElementById('console-output');
       out.className = 'output-success';
-      out.innerHTML = `<strong><i class="fa-solid fa-circle-check"></i> CONGRATULATIONS!</strong><br>` +
-                      `You have completed the Hands-On SQL Launch Module. Your progress has been logged.<br>` +
-                      `You are now prepared to begin Section 1 & 2 in the course materials.`;
+      out.innerHTML = `
+        <div style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem; color: #065f46;">
+          <i class="fa-solid fa-circle-check"></i> CONGRATULATIONS! You have completed the Hands-On SQL Launch Sandbox!
+        </div>
+        <div style="font-size: 0.88rem; color: #047857; margin-bottom: 1rem; line-height: 1.5;">
+          Your completion token and progress have been successfully logged. You have built, populated, modified, queried, and joined relational tables from scratch!
+        </div>
+        
+        <div style="background: #ffffff; border: 1px solid #a7f3d0; border-radius: 6px; padding: 1.1rem; text-align: left; margin-top: 0.75rem;">
+          <div style="font-weight: 700; color: var(--wgu-blue); font-size: 0.95rem; margin-bottom: 0.35rem;">
+            <i class="fa-solid fa-graduation-cap"></i> Next Steps for Your D426 Journey
+          </div>
+          <div style="font-size: 0.84rem; color: #334155; margin-bottom: 0.85rem;">
+            Now that you have hands-on relational coding intuition, you are ready to transition into your textbook readings and prepare for the Objective Assessment. Bookmark these essential course portals today:
+          </div>
+
+          <div class="resource-grid" style="margin-top: 0.5rem;">
+            <div class="resource-card" style="border-color: #e2e8f0;">
+              <div>
+                <h4><i class="fa-solid fa-compass"></i> D426 Course Hub</h4>
+                <p>Central repository for study plans, faculty contact, and announcements.</p>
+              </div>
+              <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CSH-WST-D426-DataMa-30040017/?web=1" target="_blank" rel="noopener">
+                Launch Course Hub <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </a>
+            </div>
+
+            <div class="resource-card" style="border-color: #e2e8f0;">
+              <div>
+                <h4><i class="fa-solid fa-book-bookmark"></i> Course Guide & Resources</h4>
+                <p>Topic walkthroughs, practice question banks, and pacing guides.</p>
+              </div>
+              <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Supplemental-Resource-Index.aspx" target="_blank" rel="noopener">
+                View Resources <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </a>
+            </div>
+
+            <div class="resource-card" style="border-color: #e2e8f0;">
+              <div>
+                <h4><i class="fa-solid fa-calendar-days"></i> Upcoming Live Events</h4>
+                <p>Register for live cohort workshops, office hours, and review sessions.</p>
+              </div>
+              <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Upcoming-Live-Events.aspx" target="_blank" rel="noopener">
+                Live Cohort Schedule <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </a>
+            </div>
+          </div>
+
+          <div style="font-size: 0.78rem; color: #047857; margin-top: 0.85rem;">
+            <i class="fa-solid fa-bookmark"></i> <strong>Recommendation:</strong> Bookmark these three pages in your browser now so they remain accessible as you study.
+          </div>
+        </div>
+      `;
     }
 
     // ==========================================
