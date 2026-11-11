@@ -344,7 +344,7 @@
               <i class="fa-solid fa-circle-info"></i> Sandbox Scope & Exploratory Capabilities
             </summary>
             <p style="margin-top: 0.4rem; color: #475569; line-height: 1.5;">
-              This practice environment is an in-browser WebAssembly sandbox calibrated specifically for foundational DDL, DML, and DQL operations covered in D426. It does not emulate production server features such as stored procedures, triggers, or custom user variables. For unrestricted database experimentation, we recommend using <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener" style="color: var(--wgu-blue); font-weight: 600;">DB Fiddle</a>.
+              This practice environment is an in-browser WebAssembly sandbox calibrated specifically for foundational DDL, DML, and DQL operations covered in D426 (table creation, basic constraints, batch inserts, controlled updates, filtering, and standard inner joins). It does not emulate production server features such as stored procedures, triggers, or custom user variables. For unrestricted database experimentation, we recommend using <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener" style="color: var(--wgu-blue); font-weight: 600;">DB Fiddle</a>.
             </p>
           </details>
         </div>
@@ -583,7 +583,6 @@
         return;
       }
 
-      // Consented
       saveState({ consentGiven: true, optedOut: false });
       document.getElementById('consent-screen').style.display = 'none';
       document.getElementById('survey-screen').style.display = 'block';
@@ -726,33 +725,40 @@ The two most common errors in table creation are trailing commas and misspelled 
         solution: `CREATE TABLE books (\n    book_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\n\nDESCRIBE books;`,
         validate: (rawSql) => {
           const upper = rawSql.toUpperCase();
-          const match = rawSql.match(/CREATE\s+TABLE\s+books\s*\(([\s\S]*?)\);/i);
-          if (!match) throw new Error("Could not find a valid CREATE TABLE books (...); statement.");
           
-          const colDefs = match[1].split(',').map(s => s.trim());
-          const validTypes = ["INT", "INTEGER", "VARCHAR", "DECIMAL", "NUMERIC", "DATE", "CHAR", "TEXT", "FLOAT", "DOUBLE"];
-          
-          colDefs.forEach(def => {
-            const parts = def.split(/\s+/);
-            if (parts.length >= 2) {
-              const typeCandidate = parts[1].replace(/\(.*\)/, '').toUpperCase();
-              if (!validTypes.includes(typeCandidate)) {
-                throw new Error(`Invalid or misspelled MySQL data type '${parts[1]}' for column '${parts[0]}'.`);
-              }
-            }
-          });
-
+          // 1. Verify DESCRIBE books command is present
           if (!upper.includes("DESCRIBE BOOKS") && !upper.includes("DESC BOOKS")) {
             throw new Error("Please ensure you include 'DESCRIBE books;' to verify your table schema.");
           }
 
+          // 2. Verify table exists in the database
           const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
           if (res.length === 0) throw new Error("Table 'books' was not created. Check your CREATE TABLE statement.");
-          
-          const cols = db.exec("PRAGMA table_info(books);")[0].values.map(r => r[1]);
-          if (!cols.includes('title') || !cols.includes('author') || !cols.includes('price')) {
-            throw new Error("Table 'books' is missing required columns.");
+
+          // 3. Inspect columns directly from SQLite metadata (immune to comma-splitting bugs)
+          const cols = db.exec("PRAGMA table_info(books);")[0].values;
+          const colNames = cols.map(r => r[1]);
+          if (!colNames.includes('book_id') || !colNames.includes('title') || !colNames.includes('author') || !colNames.includes('price') || !colNames.includes('published_year')) {
+            throw new Error("Table 'books' is missing required columns. Ensure book_id, title, author, price, and published_year are defined.");
           }
+
+          // 4. Strict MySQL Type Whitelist Validation
+          const validTypes = [
+            "INT", "INTEGER", "TINYINT", "SMALLINT", "MEDIUMINT", "BIGINT",
+            "VARCHAR", "CHAR", "TEXT", "DECIMAL", "NUMERIC", "FLOAT", "DOUBLE",
+            "DATE", "DATETIME", "TIMESTAMP", "TIME", "YEAR", "BOOLEAN", "BOOL"
+          ];
+
+          for (const col of cols) {
+            const colName = col[1];
+            const declaredType = (col[2] || "").trim();
+            // Extracts base name ('DECIMAL' from 'DECIMAL(5,2)', 'VARCHAR' from 'VARCHAR(100)')
+            const baseType = declaredType.split('(')[0].trim().toUpperCase();
+            if (!validTypes.includes(baseType)) {
+              throw new Error(`Invalid or misspelled MySQL data type '${declaredType}' for column '${colName}'.`);
+            }
+          }
+
           return true;
         }
       },
