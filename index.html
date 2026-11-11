@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>D426: SQL Foundations Interactive Launch</title>
+  <title>D426: Data Management Foundations</title>
   <!-- UI Icons, Confetti & In-Browser SQL Engine -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
@@ -28,16 +28,17 @@
     header h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
     #student-badge { background: rgba(255,255,255,0.15); padding: 0.3rem 0.75rem; border-radius: 4px; font-size: 0.85rem; font-family: monospace; }
 
-    .container { max-width: 1040px; margin: 1.75rem auto; padding: 0 1rem; }
+    .container { max-width: 1280px; margin: 1.75rem auto; padding: 0 1rem; }
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
 
-    /* Alert Banner */
+    /* Alert Banners */
     .alert-banner { background: #f0f7ff; border-left: 4px solid var(--wgu-blue); padding: 0.85rem 1.1rem; font-size: 0.88rem; border-radius: 0 6px 6px 0; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
-    
-    /* Consent Scrollbox */
-    .consent-scrollbox { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 1.1rem; font-size: 0.86rem; color: #334155; line-height: 1.6; max-height: 280px; overflow-y: auto; margin-bottom: 1.25rem; }
-    .consent-scrollbox p { margin-bottom: 0.75rem; }
-    .consent-scrollbox p:last-child { margin-bottom: 0; }
+    .desktop-alert { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.86rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem; }
+
+    /* Consent Document - Open Vertical Flow */
+    .consent-document { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 1.25rem; font-size: 0.875rem; color: #334155; line-height: 1.6; margin-bottom: 1.25rem; }
+    .consent-document p { margin-bottom: 0.75rem; }
+    .consent-document p:last-child { margin-bottom: 0; }
     .consent-callout { background: #eff6ff; border-left: 4px solid var(--wgu-blue); padding: 0.65rem 0.85rem; margin: 0.75rem 0; border-radius: 0 4px 4px 0; }
 
     /* Question Formatting */
@@ -65,15 +66,20 @@
     .step-tab.active { background: var(--wgu-blue); color: white; border-color: var(--wgu-blue); }
     .step-tab.completed { border-bottom: 3px solid var(--success); }
 
+    /* 40% / 60% Asymmetrical Workspace Grid */
     .grid { display: grid; grid-template-columns: 2fr 3fr; gap: 1.25rem; }
-    @media (max-width: 920px) { .grid { grid-template-columns: 1fr; } }
+    @media (max-width: 960px) { .grid { grid-template-columns: 1fr; } }
 
     .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; background: #000; margin-bottom: 0.75rem; }
     .video-container iframe { position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0; }
 
-    textarea#sql-editor { width: 100%; height: 260px; background: var(--editor-bg); color: #38bdf8; font-family: "Courier New", Courier, monospace; font-size: 0.92rem; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; resize: vertical; line-height: 1.45; }
+    /* IDE Editor with Synchronized Line Numbers */
+    .editor-wrapper { display: flex; background: var(--editor-bg); border: 1px solid #334155; border-radius: 6px; overflow: hidden; height: 390px; }
+    .line-gutter { width: 44px; background: #0b1120; color: #64748b; font-family: "Courier New", Courier, monospace; font-size: 0.92rem; line-height: 1.45; padding: 0.75rem 0.35rem 0.75rem 0.5rem; text-align: right; user-select: none; border-right: 1px solid #1e293b; overflow: hidden; }
+    textarea#sql-editor { flex: 1; height: 100%; background: transparent; color: #38bdf8; font-family: "Courier New", Courier, monospace; font-size: 0.92rem; padding: 0.75rem; border: none; outline: none; resize: none; line-height: 1.45; white-space: pre; overflow-y: scroll; }
+
     .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
-    #console-output { margin-top: 0.75rem; padding: 0.75rem; border-radius: 6px; font-family: monospace; font-size: 0.85rem; max-height: 220px; overflow-y: auto; }
+    #console-output { margin-top: 0.75rem; padding: 0.75rem; border-radius: 6px; font-family: monospace; font-size: 0.85rem; max-height: 330px; overflow-y: auto; }
     .output-ready { background: #f1f5f9; color: #475569; }
     .output-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
     .output-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
@@ -120,7 +126,7 @@
         <p style="font-size: 0.85rem; color: #64748b;">Please review the following study information carefully before deciding whether to participate.</p>
       </div>
 
-      <div class="consent-scrollbox">
+      <div class="consent-document">
         <p><strong>Study Title:</strong> Evaluating Curricular Sequencing and Learning Preferences in Online Database Education</p>
         <p><strong>Principal Investigator:</strong> Bruce C. Johnson III, Ph.D., Course Instructor, College of Information Technology (b.johnson1@wgu.edu)</p>
         
@@ -132,18 +138,17 @@
 
         <p><strong>1. Purpose of the Study:</strong> You are invited to take part in an educational research study examining whether starting with hands-on query mechanics before reading abstract theoretical concepts (such as normal forms and cardinality) influences study velocity and objective assessment outcomes in D426.</p>
 
-        <p><strong>2. Age & Eligibility Requirement:</strong> You must be at least <strong>18 years of age</strong> to participate in this study. If you are under 18 years of age, you are not eligible to take part.</p>
+        <p><strong>2. Age & Eligibility Requirement:</strong> You must be at least 18 years of age to participate in this study. If you are under 18 years of age, you are not eligible to take part.</p>
 
-        <p><strong>3. Completely Voluntary Participation & No Grade Impact:</strong> Your participation is 100% voluntary. You may choose not to participate, or discontinue at any time. Opting out will have <strong>zero impact on your course grade, academic standing, tuition, progress pacing, or access to course materials and faculty coaching.</strong></p>
+        <p><strong>3. Completely Voluntary Participation & No Grade Impact:</strong> Your participation is 100% voluntary. You may choose not to participate, or discontinue at any time. Opting out will have no impact on your course grade, academic standing, tuition, progress pacing, or access to course materials and faculty coaching.</p>
 
-        <p><strong>4. Study Procedures:</strong> If you consent to participate, you will complete a brief diagnostic regarding your prior SQL experience and study preferences. Depending on study arm assignment, you may also receive optional access to an interactive browser-based SQL sandbox.</p>
+        <p><strong>4. Study Procedures & Time Commitment:</strong> If you consent to participate, you will complete a brief diagnostic survey (~3 minutes). Depending on study arm assignment, you may also receive optional access to an interactive browser-based SQL sandbox (~15 to 20 minutes; total time commitment approximately 20 to 25 minutes).</p>
 
         <p><strong>5. Privacy & Data Handling:</strong> Telemetry interactions and survey responses are securely linked with your student ID for academic matching. All data will be de-identified prior to statistical analysis. Only aggregate findings will ever be reported.</p>
 
         <p><strong>6. Contact Information:</strong> If you have questions about the research, contact Bruce Johnson at b.johnson1@wgu.edu. For questions regarding your rights as a research subject, you may contact the WGU Institutional Review Board at irb@wgu.edu.</p>
       </div>
 
-      <!-- Question 1: Eligibility Certification & Consent Decision -->
       <div class="question-block" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:1rem;">
         <div class="question-title">Question 1: Eligibility Certification & Consent Decision</div>
         <div class="option-list">
@@ -177,7 +182,6 @@
       </div>
 
       <form id="diagnostic-form" onsubmit="handleDiagnosticSubmit(event)">
-        <!-- Question 2: Prior SQL Experience -->
         <div class="question-block">
           <div class="question-title">Question 2: Prior to starting D426, how would you rate your experience with SQL and relational databases?</div>
           <div class="option-list">
@@ -190,7 +194,7 @@
         </div>
 
         <div style="margin: 1.5rem 0 0.5rem 0; font-weight: 700; color: var(--wgu-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.3rem;">
-          Study & Problem Solving Preferences (Felder-Soloman ILS)
+          Study & Problem Solving Preferences
         </div>
         <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 1rem;">
           For each item, choose the option that best reflects your natural learning habits:
@@ -199,7 +203,7 @@
         <div id="randomized-ils-container"></div>
 
         <button type="submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
-          <i class="fa-solid fa-paper-plane"></i> Submit Diagnostic & Continue
+          Submit & Continue
         </button>
       </form>
     </div>
@@ -224,18 +228,36 @@
     </div>
 
     <!-- ========================================================= -->
-    <!-- SCREEN 2B: INTERVENTION ARM (THE 5-MODULE SQL SANDBOX)   -->
+    <!-- SCREEN 2B: INTERVENTION ARM (5-MODULE SQL SANDBOX)       -->
     <!-- ========================================================= -->
     <div id="sandbox-screen" style="display: none;">
       
-      <!-- Reassurance & Pacing Banner -->
+      <!-- Pedagogical Framing & Concreteness Fading Briefing -->
+      <div class="card" style="border-left: 4px solid var(--wgu-blue); padding: 1.15rem 1.35rem; margin-bottom: 1.25rem;">
+        <h3 style="color: var(--wgu-blue); font-size: 1.02rem; margin-bottom: 0.35rem;">
+          <i class="fa-solid fa-graduation-cap"></i> Why Start with the SQL Sandbox?
+        </h3>
+        <p style="font-size: 0.88rem; color: #334155; line-height: 1.55;">
+          Educational research shows that working directly with table schemas and syntax before tackling abstract theoretical models (like normal forms and cardinality) builds immediate mental models. Complete this 5-module launch to gain practical query momentum before beginning your core textbook reading.
+        </p>
+      </div>
+
+      <!-- Desktop Environment Recommendation Alert -->
+      <div class="desktop-alert">
+        <i class="fa-solid fa-desktop" style="font-size: 1.1rem;"></i>
+        <div>
+          <strong>Recommended Learning Environment:</strong> Please complete this interactive coding module on a desktop or laptop browser. A physical keyboard and full screen ensure the best coding and debugging experience.
+        </div>
+      </div>
+
+      <!-- Self-Paced & Autosaved Status Banner -->
       <div class="alert-banner">
         <div>
-          <i class="fa-solid fa-laptop-code" style="color: var(--wgu-blue); margin-right: 0.4rem;"></i>
-          <strong>Self-Paced & Autosaved:</strong> You can pause or step away at any time. Your progress is continuously saved to your browser session.
+          <i class="fa-solid fa-clock-rotate-left" style="color: var(--wgu-blue); margin-right: 0.4rem;"></i>
+          <strong>Self-Paced & Resumable:</strong> You can pause or step away at any time. Reopening your personal link will return you to your active module.
         </div>
         <div style="font-size: 0.8rem; color: #065f46; font-weight: 600;">
-          <i class="fa-solid fa-cloud-arrow-up"></i> Autosaved Locally
+          <i class="fa-solid fa-cloud-arrow-up"></i> Progress Saved to Browser
         </div>
       </div>
 
@@ -251,19 +273,19 @@
       <div class="grid">
         <!-- Left: Instruction & Video Area -->
         <div class="card">
-          <h2 id="step-title" style="margin-bottom: 0.4rem; font-size: 1.05rem;">Module 1: Building Schema Containers</h2>
+          <h2 id="step-title" style="margin-bottom: 0.4rem; font-size: 1.05rem;">Module 1: Schema Architecture (CREATE TABLE)</h2>
           <p id="step-instructions" style="font-size: 0.88rem; color: #475569; margin-bottom: 0.85rem;">
             Learn how to define a schema in MySQL using <code>CREATE TABLE</code> with strict column data types.
           </p>
           
           <div class="video-container">
-            <iframe id="video-frame" src="https://www.youtube-nocookie.com/embed/7S_tz1z_5bA" allowfullscreen></iframe>
+            <iframe id="video-frame" src="https://www.youtube-nocookie.com/embed/VRUb_-0MjKo" allowfullscreen></iframe>
           </div>
 
-          <!-- Collapsible Primary Transcript -->
+          <!-- Primary Video Accessible Collapsible Transcript Drawer -->
           <details id="primary-transcript-drawer" style="font-size: 0.82rem; margin-bottom: 0.75rem; background: #f8fafc; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border);">
             <summary style="cursor: pointer; font-weight: 600; color: #475569;"><i class="fa-solid fa-align-left"></i> View Micro-Lesson Transcript</summary>
-            <div id="primary-transcript-body" style="margin-top: 0.5rem; line-height: 1.45; color: #334155;"></div>
+            <div id="primary-transcript-body" style="margin-top: 0.5rem; line-height: 1.45; color: #334155; white-space: pre-line;"></div>
           </details>
 
           <!-- Collapsible Troubleshooting & Remediation Box -->
@@ -277,11 +299,11 @@
 
             <details id="remedy-transcript-drawer" style="font-size: 0.8rem; margin-bottom: 0.5rem; background: #ffffff; padding: 0.4rem; border-radius: 4px; border: 1px solid #fed7aa;">
               <summary style="cursor: pointer; font-weight: 600; color: #9a3412;"><i class="fa-solid fa-file-lines"></i> Remediation Clip Transcript</summary>
-              <div id="remedy-transcript-body" style="margin-top: 0.35rem; line-height: 1.4; color: #431407;"></div>
+              <div id="remedy-transcript-body" style="margin-top: 0.35rem; line-height: 1.4; color: #431407; white-space: pre-line;"></div>
             </details>
 
             <button id="show-solution-btn" class="btn btn-gold" style="font-size: 0.8rem; padding: 0.4rem 0.8rem; display: none;" onclick="revealSolution()">
-              <i class="fa-solid fa-key"></i> Reveal Working Solution
+              Reveal Working Solution
             </button>
           </div>
         </div>
@@ -293,12 +315,17 @@
             <button class="btn btn-secondary" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;" onclick="resetEditor()">Reset Template</button>
           </div>
 
-          <textarea id="sql-editor" 
-                    autocapitalize="none" 
-                    autocomplete="off" 
-                    autocorrect="off" 
-                    spellcheck="false"
-                    oninput="saveCurrentEditorText()"></textarea>
+          <!-- IDE Code Area with Synchronized Line Numbers -->
+          <div class="editor-wrapper">
+            <div class="line-gutter" id="line-gutter">1</div>
+            <textarea id="sql-editor" 
+                      autocapitalize="none" 
+                      autocomplete="off" 
+                      autocorrect="off" 
+                      spellcheck="false"
+                      oninput="handleEditorInput()"
+                      onscroll="syncScroll()"></textarea>
+          </div>
 
           <div class="actions">
             <button class="btn btn-primary" id="run-btn" onclick="executeUserQuery()">
@@ -307,14 +334,24 @@
             <button class="btn btn-success" id="next-btn" style="display: none;" onclick="advanceStep()">
               Proceed to Next Module <i class="fa-solid fa-arrow-right"></i>
             </button>
-            <!-- Final Stage 1 Graduation Trigger Button -->
+            <!-- Stage 1 Graduation Trigger Button -->
             <button class="btn btn-gold" id="complete-sandbox-btn" style="display: none;" onclick="showGraduationHub()">
               <i class="fa-solid fa-award"></i> Complete Sandbox & View Next Steps <i class="fa-solid fa-arrow-right"></i>
             </button>
           </div>
 
-          <div id="console-output" class="output-ready">Ready to execute query. Click 'Run MySQL Code' to validate your solution.</div>
+          <div id="console-output" class="output-ready" aria-live="polite" role="status">Ready to execute query. Click 'Run MySQL Code' to validate your solution.</div>
           <div id="table-output" style="overflow-x: auto;"></div>
+
+          <!-- Defensive Sandbox Scope & Boundary Notice -->
+          <details style="margin-top: 0.75rem; font-size: 0.8rem; background: #f8fafc; border: 1px solid var(--border); border-radius: 4px; padding: 0.45rem 0.65rem;">
+            <summary style="cursor: pointer; font-weight: 600; color: #64748b;">
+              <i class="fa-solid fa-circle-info"></i> Sandbox Scope & Exploratory Capabilities
+            </summary>
+            <p style="margin-top: 0.4rem; color: #475569; line-height: 1.5;">
+              This practice environment is an in-browser WebAssembly sandbox calibrated specifically for foundational DDL, DML, and DQL operations covered in D426 (table creation, basic constraints, batch inserts, controlled updates, filtering, and standard inner joins). It does not emulate production server features such as stored procedures, triggers, or custom user variables. For unrestricted database experimentation or advanced queries, we recommend using <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener" style="color: var(--wgu-blue); font-weight: 600;">DB Fiddle</a>.
+            </p>
+          </details>
         </div>
       </div>
     </div>
@@ -404,17 +441,17 @@
             <i class="fa-solid fa-house" style="color: var(--wgu-blue);"></i>
             <span>D426 Course Homepage</span>
           </a>
-          <a href="https://wgu.sharepoint.com/sites/InformationTechnology/D426" class="resource-btn" target="_blank" rel="noopener">
+          <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CSH-WST-D426-DataMa-30040017/?web=1" class="resource-btn" target="_blank" rel="noopener">
             <i class="fa-solid fa-cloud" style="color: #0284c7;"></i>
             <span>D426 SharePoint Course Hub</span>
           </a>
-          <a href="https://my.wgu.edu/courses/course/30040017/announcements" class="resource-btn" target="_blank" rel="noopener">
+          <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Supplemental-Resource-Index.aspx" class="resource-btn" target="_blank" rel="noopener">
+            <i class="fa-solid fa-book" style="color: #6366f1;"></i>
+            <span>Course Guide & Supplemental Resources</span>
+          </a>
+          <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Upcoming-Live-Events.aspx" class="resource-btn" target="_blank" rel="noopener">
             <i class="fa-solid fa-bullhorn" style="color: #d97706;"></i>
             <span>Live Cohorts & Webinars</span>
-          </a>
-          <a href="mailto:b.johnson1@wgu.edu" class="resource-btn">
-            <i class="fa-solid fa-envelope" style="color: #059669;"></i>
-            <span>Contact Course Instructor</span>
           </a>
         </div>
       </div>
@@ -487,7 +524,32 @@
     }
 
     // ==========================================
-    // 3. SCREEN 1A: STANDALONE CONSENT GATE
+    // 3. IDE GUTTER & LINE COUNTER ENGINE
+    // ==========================================
+    function updateLineNumbers() {
+      const editor = document.getElementById('sql-editor');
+      const gutter = document.getElementById('line-gutter');
+      const lines = editor.value.split('\n').length;
+      let numbersHtml = '';
+      for (let i = 1; i <= lines; i++) {
+        numbersHtml += i + '<br>';
+      }
+      gutter.innerHTML = numbersHtml;
+    }
+
+    function handleEditorInput() {
+      updateLineNumbers();
+      saveCurrentEditorText();
+    }
+
+    function syncScroll() {
+      const editor = document.getElementById('sql-editor');
+      const gutter = document.getElementById('line-gutter');
+      gutter.scrollTop = editor.scrollTop;
+    }
+
+    // ==========================================
+    // 4. SCREEN 1A: STANDALONE CONSENT GATE
     // ==========================================
     function handleConsentContinue() {
       const selected = document.querySelector('input[name="consent-radio"]:checked');
@@ -507,7 +569,6 @@
         return;
       }
 
-      // Consented
       saveState({ consentGiven: true, optedOut: false });
       document.getElementById('consent-screen').style.display = 'none';
       document.getElementById('survey-screen').style.display = 'block';
@@ -515,7 +576,7 @@
     }
 
     // ==========================================
-    // 4. SCREEN 1B: DIAGNOSTIC SURVEY GENERATOR
+    // 5. SCREEN 1B: DIAGNOSTIC SURVEY GENERATOR
     // ==========================================
     const ilsBank = [
       { id: "ils_1", q: "When I solve math or logic problems, I usually:", 
@@ -613,7 +674,7 @@
     }
 
     // ==========================================
-    // 5. CURRICULUM DEFINITION & SQL ENGINE
+    // 6. MASTER CURRICULUM, VIDEOS & TRANSCRIPTS
     // ==========================================
     let currentStep = 1;
     let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -622,84 +683,210 @@
 
     const curriculum = {
       1: {
-        title: "Module 1: Building Schema Containers (CREATE TABLE)",
-        instructions: "Write a statement to create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>.",
-        videoId: "7S_tz1z_5bA",
-        remediationVideoId: "7S_tz1z_5bA",
-        primaryTranscript: "Welcome to Module 1. In relational databases, every table acts as a strictly typed container. The CREATE TABLE statement defines each column and its data type. Ensure every column is followed by a comma, except the last one.",
-        remedyTranscript: "Troubleshooting CREATE TABLE: Verify that you do not have a trailing comma after the last column definition. In SQL, parentheses wrap all column definitions, terminated by a semicolon.",
-        template: `-- MODULE 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
-        solution: `CREATE TABLE books (\n    book_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
-        validate: () => {
+        title: "Module 1: Schema Architecture (CREATE TABLE)",
+        instructions: "Write a statement to create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>. Run <code>DESCRIBE books;</code> to inspect your schema.",
+        videoId: "VRUb_-0MjKo",             // Take 1.1 (1'39")
+        remediationVideoId: "obBNBGgIsYw",  // Take 1.2 (0'47") - Capital I
+        primaryTranscript: `Hi everyone! Welcome to Module 1 of your D426 SQL Foundations.
+
+Before we dive into textbook theory, we are going to build real database tables from the ground up. In SQL, this is called Data Definition Language, or DDL.
+
+Think of a table as a strict grid. Before storing a single piece of information, you must define the columns and the exact type of data allowed in each.
+
+Look at the starter query on your right. We create the 'books' table:
+First: book_id INT PRIMARY KEY AUTO_INCREMENT. That generates a unique ID number for every row automatically.
+Next: title and author use VARCHAR text. The NOT NULL rule means they can never be left empty.
+Then: price DECIMAL(5,2) gives exact currency formatting, and published_year INT stores the release year.
+
+Notice the punctuation: every column is separated by a comma, but there is NO COMMA after that final column!
+
+Review the code in your editor, and click 'Run MySQL Code' to build your first table!`,
+        remedyTranscript: `Troubleshooting CREATE TABLE:
+The two most common errors in table creation are trailing commas and misspelled data types.
+1. Make sure you do NOT have a comma after published_year INT. In SQL, the last column in your parentheses must not have a trailing comma.
+2. Ensure you have terminating semicolons after your CREATE TABLE statement and after DESCRIBE books;.
+3. Verify that all column definitions are wrapped in parentheses.`,
+        template: `-- MODULE 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\n\nDESCRIBE books;`,
+        solution: `CREATE TABLE books (\n    book_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\n\nDESCRIBE books;`,
+        validate: (rawSql) => {
+          // Strict MySQL Data Type Whitelist
+          const upper = rawSql.toUpperCase();
+          const match = rawSql.match(/CREATE\s+TABLE\s+books\s*\(([\s\S]*?)\);/i);
+          if (!match) throw new Error("Could not find a valid CREATE TABLE books (...); statement.");
+          
+          const colDefs = match[1].split(',').map(s => s.trim());
+          const validTypes = ["INT", "INTEGER", "VARCHAR", "DECIMAL", "NUMERIC", "DATE", "CHAR", "TEXT", "FLOAT", "DOUBLE"];
+          
+          colDefs.forEach(def => {
+            const parts = def.split(/\s+/);
+            if (parts.length >= 2) {
+              const typeCandidate = parts[1].replace(/\(.*\)/, '').toUpperCase();
+              if (!validTypes.includes(typeCandidate)) {
+                throw new Error(`Invalid or misspelled MySQL data type '${parts[1]}' for column '${parts[0]}'.`);
+              }
+            }
+          });
+
+          if (!upper.includes("DESCRIBE BOOKS") && !upper.includes("DESC BOOKS")) {
+            throw new Error("Please ensure you include 'DESCRIBE books;' to verify your table schema.");
+          }
+
           const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
           if (res.length === 0) throw new Error("Table 'books' was not created. Check your CREATE TABLE statement.");
+          
           const cols = db.exec("PRAGMA table_info(books);")[0].values.map(r => r[1]);
-          if (!cols.includes('title') || !cols.includes('author')) throw new Error("Table 'books' is missing required columns.");
+          if (!cols.includes('title') || !cols.includes('author') || !cols.includes('price')) {
+            throw new Error("Table 'books' is missing required columns.");
+          }
           return true;
         }
       },
       2: {
         title: "Module 2: Populating Records (INSERT INTO)",
         instructions: "Insert at least two records into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
-        videoId: "dRBxT2oD1hk",
-        remediationVideoId: "dRBxT2oD1hk",
-        primaryTranscript: "Module 2 explores data entry with INSERT INTO. Character strings must be surrounded by single quotes. Numeric values like prices or years do not take quotation marks.",
-        remedyTranscript: "Troubleshooting INSERT: Confirm each record set is surrounded by parentheses. Multiple records should be separated by commas, with a terminating semicolon after the final set.",
+        videoId: "dRBxT2oD1hk",             // Take 2.1 (1'15")
+        remediationVideoId: "NpdCFRU3Vc8",  // Take 2.2 (0'51")
+        primaryTranscript: `Welcome to Module 2: Data Manipulation Language, or DML!
+
+Now that our 'books' table container exists, we need to populate it with rows using the INSERT INTO command.
+
+Look at the syntax in your editor. We state INSERT INTO books, list the columns we are supplying in parentheses, and follow with the keyword VALUES.
+
+Notice two critical rules:
+First: text and character strings must be surrounded by single quotation marks.
+Second: numbers like prices or years do NOT take quotes.
+Also notice we skipped book_id entirely! Because we configured book_id as AUTO_INCREMENT in Module 1, MySQL generates the primary keys automatically.
+
+Click 'Run MySQL Code' to insert these books into your database!`,
+        remedyTranscript: `Troubleshooting INSERT INTO:
+1. Column Count Mismatch: Ensure the number of values in your VALUES list exactly matches the number of columns listed in parentheses.
+2. String Quotes: Check that all text strings (like book titles and author names) are enclosed in single quotes ('...').
+3. Multiple Rows: Each row must be enclosed in its own set of parentheses, separated by a comma.`,
         template: `INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`,
-        solution: `INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);`,
-        validate: () => {
+        solution: `INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020); SELECT * FROM books;`,
+        validate: (rawSql) => {
           const res = db.exec("SELECT COUNT(*) FROM books;");
-          if (res.length === 0 || res[0].values[0][0] < 2) throw new Error("Please insert at least 2 rows into the 'books' table.");
+          if (res.length === 0 || res[0].values[0][0] < 2) {
+            throw new Error("Please insert at least 2 rows into the 'books' table.");
+          }
           return true;
         }
       },
       3: {
-        title: "Module 3: Controlled Record Updates (UPDATE with WHERE)",
-        instructions: "Update the price of a book using a <code>WHERE</code> clause. Never run an UPDATE without WHERE!",
-        videoId: "7S_tz1z_5bA",
-        remediationVideoId: "7S_tz1z_5bA",
-        primaryTranscript: "Module 3 demonstrates updating existing records. Always specify the target row using a WHERE condition to avoid inadvertently modifying the entire table.",
-        remedyTranscript: "Safety Tip: You wrote an UPDATE statement without a WHERE clause. Always append 'WHERE book_id = ...' to safeguard data integrity.",
-        template: `-- Update the price for book_id 2\nUPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\n-- Verify update\nSELECT * FROM books;`,
-        solution: `UPDATE books SET price = 31.50 WHERE book_id = 2;`,
-        validate: () => {
+        title: "Module 3: Controlled Updates (UPDATE with WHERE)",
+        instructions: "Update the price of <code>book_id = 2</code> to <strong>31.50</strong> using a <code>WHERE</code> clause. Inspect the updated table below!",
+        videoId: "4jQvokPNooQ",             // Take 3.1 (1'26")
+        remediationVideoId: "G07Wd94Y8wg",  // Take 3.2 (0'47")
+        primaryTranscript: `Welcome to Module 3. Today we are tackling one of the most critical safety operations in database administration: the UPDATE statement.
+
+When updating data, you specify the table, use SET to establish the new column values, and append a WHERE clause to pinpoint the target rows.
+
+Rule Number 1 in database administration: NEVER run an UPDATE or DELETE without a WHERE clause! If you omit the WHERE condition, SQL updates EVERY single row in your entire table.
+
+In your editor, notice:
+Line 2: UPDATE books
+Line 3: SET price = 31.50
+Line 4: WHERE book_id = 2;
+
+Run your query to modify the price of book 2 with surgical precision!`,
+        remedyTranscript: `Troubleshooting UPDATE:
+1. Did you include line 4? If you omitted 'WHERE book_id = 2;', you will overwrite every row in the table!
+2. Inspect the table rendered below: if row 2 shows an unexpected value, check for numerical typos.
+3. Terminate your UPDATE statement with a semicolon before running SELECT.`,
+        template: `-- Update the price for book_id 2\nUPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\nSELECT * FROM books;`,
+        solution: `UPDATE books SET price = 31.50 WHERE book_id = 2; SELECT * FROM books;`,
+        validate: (rawSql) => {
+          const upper = rawSql.toUpperCase();
+          if (upper.includes("UPDATE") && !upper.includes("WHERE")) {
+            throw new Error("Safety Alert: You wrote an UPDATE statement without a WHERE clause! Always specify which row to update.");
+          }
           const res = db.exec("SELECT price FROM books WHERE book_id = 2;");
-          if (res.length > 0 && Math.abs(res[0].values[0][0] - 31.50) < 0.01) return true;
+          if (res.length > 0 && res[0].values.length > 0) {
+            const currentPrice = res[0].values[0][0];
+            if (Math.abs(currentPrice - 31.50) > 0.01) {
+              throw new Error(`Book ID 2 price is currently ${currentPrice}, but the prompt asked for 31.50. Inspect the updated table below!`);
+            }
+          } else {
+            throw new Error("Book ID 2 was not found. Make sure your UPDATE statement targeted book_id = 2.");
+          }
           return true;
         }
       },
       4: {
-        title: "Module 4: Precision Filtering (SELECT & ORDER BY)",
+        title: "Module 4: Data Retrieval Foundations (SELECT & Filtering)",
         instructions: "Query the <code>title</code> and <code>price</code> of books published after 2018, sorted by price in descending order.",
-        videoId: "7S_tz1z_5bA",
-        remediationVideoId: "7S_tz1z_5bA",
-        primaryTranscript: "Module 4 focuses on querying. SELECT retrieves specific columns, WHERE filters target records, and ORDER BY sorts the resulting dataset.",
-        remedyTranscript: "Troubleshooting SELECT: Ensure your query contains both 'SELECT', 'WHERE', and 'ORDER BY price DESC'. Verify column names are spelled correctly.",
+        videoId: "KF_xpU-O88s",             // Take 4.1 (1'28") - Capital O
+        remediationVideoId: "vjPaSfKatlA",  // Take 4.2 (0'49")
+        primaryTranscript: `Welcome to Module 4: Data Query Language, or DQL!
+
+Now we transition to querying data. SELECT is the workhorse of relational databases.
+
+Look at the query on your right:
+SELECT title, price tells the database engine to return only those two specific columns (column projection).
+FROM books defines our source table.
+WHERE published_year > 2018 filters out older publications.
+ORDER BY price DESC sorts the resulting records from most expensive to least expensive.
+
+Review the query structure and click 'Run MySQL Code' to view your filtered dataset!`,
+        remedyTranscript: `Troubleshooting SELECT & Filtering:
+1. Ensure your SELECT clause queries 'title, price' (do not use SELECT *).
+2. Check your comparison operator: use > 2018 (strictly greater than), not >= 2018.
+3. Verify 'ORDER BY price DESC' includes the DESC keyword at the end to sort descending.`,
         template: `SELECT title, price \nFROM books \nWHERE published_year > 2018 \nORDER BY price DESC;`,
         solution: `SELECT title, price FROM books WHERE published_year > 2018 ORDER BY price DESC;`,
-        validate: () => {
-          const sql = document.getElementById('sql-editor').value.toUpperCase();
-          if (!sql.includes("SELECT") || !sql.includes("WHERE")) throw new Error("Ensure your query uses both SELECT and WHERE clauses.");
+        validate: (rawSql) => {
+          const upper = rawSql.toUpperCase();
+          if (!upper.includes("SELECT") || !upper.includes("WHERE") || !upper.includes("ORDER BY") || !upper.includes("DESC")) {
+            throw new Error("Ensure your query uses SELECT, WHERE, and ORDER BY ... DESC clauses.");
+          }
+          if (rawSql.includes(">= 2018")) {
+            throw new Error("Check your filter: the prompt asked for books published AFTER 2018 (> 2018), not >= 2018.");
+          }
           return true;
         }
       },
       5: {
-        title: "Module 5: Relational Bridges (INNER JOIN)",
+        title: "Module 5: Relational Bridges (Foreign Keys & INNER JOIN)",
         instructions: "Create the <code>orders</code> table, insert a linked record, and execute an <code>INNER JOIN</code> connecting the tables.",
-        videoId: "7S_tz1z_5bA",
-        remediationVideoId: "7S_tz1z_5bA",
-        primaryTranscript: "Module 5 brings everything together. Relational tables are connected via Foreign Keys. An INNER JOIN matches records across two tables based on a common primary/foreign key.",
-        remedyTranscript: "Troubleshooting JOIN: Ensure your syntax follows 'FROM orders INNER JOIN books ON orders.book_id = books.book_id'.",
+        videoId: "uxCW_EsjC60",             // Take 5.1 (1'46")
+        remediationVideoId: "0iCXN5ZNW7Q",  // Take 5.2 (0'51")
+        primaryTranscript: `Welcome to Module 5! This is the culmination of our hands-on launch: linking relational tables together.
+
+In relational databases, information is stored in specialized tables connected by keys.
+Our 'books' table has a Primary Key: book_id.
+Now we create an 'orders' table. Notice the second column: book_id INT NOT NULL. That is our Foreign Key—it references the book that was purchased!
+
+Look at the final query:
+SELECT orders.order_id, books.title, books.price, orders.quantity
+FROM orders
+INNER JOIN books ON orders.book_id = books.book_id;
+
+Notice the dot-notation: because both tables have columns, prefixing with table.column avoids ambiguous column errors.
+
+Click 'Run MySQL Code' to execute your first relational join and complete the launch sandbox!`,
+        remedyTranscript: `Troubleshooting INNER JOIN:
+1. Verify dot-notation: use orders.book_id = books.book_id in your ON clause.
+2. Confirm the orders table is created and the record is inserted before the SELECT query runs.
+3. Check that the columns in your SELECT list are properly comma-separated.`,
         template: `CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\n\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`,
         solution: `CREATE TABLE orders (order_id INTEGER PRIMARY KEY AUTOINCREMENT, book_id INT, order_date DATE, quantity INT);\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\nSELECT orders.order_id, books.title, books.price, orders.quantity FROM orders INNER JOIN books ON orders.book_id = books.book_id;`,
-        validate: () => {
-          const sql = document.getElementById('sql-editor').value.toUpperCase();
-          if (!sql.includes("JOIN")) throw new Error("Module 5 requires executing an INNER JOIN between 'orders' and 'books'.");
+        validate: (rawSql) => {
+          const upper = rawSql.toUpperCase();
+          if (!upper.includes("INNER JOIN") || !upper.includes(" ON ")) {
+            throw new Error("Module 5 requires executing an INNER JOIN between 'orders' and 'books' with an ON condition.");
+          }
+          const res = db.exec("SELECT COUNT(*) FROM orders;");
+          if (res.length === 0 || res[0].values[0][0] < 1) {
+            throw new Error("Please ensure the 'orders' table is populated with at least 1 record.");
+          }
           return true;
         }
       }
     };
 
+    // ==========================================
+    // 7. WASM DATABASE & EXECUTION ENGINE
+    // ==========================================
     function initWasmEngine() {
       if (db) return;
       initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}` }).then(SQL => {
@@ -720,6 +907,41 @@
           loadStep(1);
         }
       });
+    }
+
+    function seedDatabaseForStep(step) {
+      if (!db) return;
+      if (step === 1) {
+        db.run("DROP TABLE IF EXISTS orders; DROP TABLE IF EXISTS books;");
+      } else if (step >= 2 && step <= 4) {
+        db.run("DROP TABLE IF EXISTS orders; DROP TABLE IF EXISTS books;");
+        db.run(`CREATE TABLE books (
+          book_id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title VARCHAR(100) NOT NULL,
+          author VARCHAR(50) NOT NULL,
+          price DECIMAL(5,2),
+          published_year INT
+        );`);
+        if (step >= 3) {
+          db.run(`INSERT INTO books (title, author, price, published_year) VALUES 
+            ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),
+            ('Learning SQL', 'Alan Beaulieu', 28.00, 2020),
+            ('Database System Concepts', 'Abraham Silberschatz', 85.00, 2011),
+            ('Clean Code', 'Robert Martin', 37.50, 2008);`);
+        }
+      } else if (step === 5) {
+        db.run("DROP TABLE IF EXISTS orders; DROP TABLE IF EXISTS books;");
+        db.run(`CREATE TABLE books (
+          book_id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title VARCHAR(100) NOT NULL,
+          author VARCHAR(50) NOT NULL,
+          price DECIMAL(5,2),
+          published_year INT
+        );`);
+        db.run(`INSERT INTO books (title, author, price, published_year) VALUES 
+          ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),
+          ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);`);
+      }
     }
 
     function loadStep(step) {
@@ -746,9 +968,9 @@
       document.getElementById('next-btn').style.display = 'none';
       document.getElementById('complete-sandbox-btn').style.display = 'none';
 
-      const state = getStoredState();
-      const savedCode = (state && state.codeDrafts && state.codeDrafts[step]) ? state.codeDrafts[step] : cfg.template;
-      document.getElementById('sql-editor').value = savedCode;
+      // Always display fresh template on module load
+      document.getElementById('sql-editor').value = cfg.template;
+      updateLineNumbers();
 
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
@@ -762,6 +984,7 @@
 
     function resetEditor() {
       document.getElementById('sql-editor').value = curriculum[currentStep].template;
+      updateLineNumbers();
       saveCurrentEditorText();
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
@@ -774,6 +997,7 @@
 
     function revealSolution() {
       document.getElementById('sql-editor').value = curriculum[currentStep].solution;
+      updateLineNumbers();
       saveCurrentEditorText();
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
@@ -789,17 +1013,54 @@
       const tblContainer = document.getElementById('table-output');
       tblContainer.innerHTML = '';
 
+      // Clean-slate seed before execution
+      seedDatabaseForStep(currentStep);
+
+      // Dialect normalization (MySQL -> SQLite WASM)
       let normalizedSql = rawSql
         .replace(/\bINT\s+PRIMARY\s+KEY\s+AUTO_INCREMENT\b/gi, 'INTEGER PRIMARY KEY AUTOINCREMENT')
         .replace(/\bAUTO_INCREMENT\b/gi, 'AUTOINCREMENT');
 
+      // Intercept DESCRIBE / DESC books;
+      let hasDescribe = false;
+      let describeTable = null;
+      const descMatch = rawSql.match(/\b(?:DESCRIBE|DESC)\s+([a-zA-Z0-9_]+)\s*;/i);
+      if (descMatch) {
+        hasDescribe = true;
+        describeTable = descMatch[1];
+        normalizedSql = normalizedSql.replace(/\b(?:DESCRIBE|DESC)\s+([a-zA-Z0-9_]+)\s*;/gi, '');
+      }
+
       try {
-        const results = db.exec(normalizedSql);
-        curriculum[currentStep].validate();
+        let results = [];
+        if (normalizedSql.trim().length > 0) {
+          results = db.exec(normalizedSql);
+        }
 
-        out.className = 'output-success';
-        out.innerText = `Query executed successfully! (${results.length} result set returned). Criteria satisfied!`;
+        // Handle DESCRIBE formatted output
+        if (hasDescribe) {
+          const tblCheck = db.exec(`SELECT name FROM sqlite_master WHERE type='table' AND name='${describeTable}';`);
+          if (tblCheck.length === 0) {
+            throw new Error(`Table '${describeTable}' does not exist.`);
+          }
+          const pragmaRes = db.exec(`PRAGMA table_info(${describeTable});`);
+          if (pragmaRes.length > 0) {
+            const mysqlSchema = {
+              columns: ["Field", "Type", "Null", "Key", "Default", "Extra"],
+              values: pragmaRes[0].values.map(r => [
+                r[1],
+                r[2],
+                r[3] === 0 ? "YES" : "NO",
+                r[5] === 1 ? "PRI" : "",
+                r[4] !== null ? r[4] : "NULL",
+                r[5] === 1 ? "auto_increment" : ""
+              ])
+            };
+            results.push(mysqlSchema);
+          }
+        }
 
+        // Render table results FIRST so students see their data
         if (results.length > 0) {
           const res = results[results.length - 1];
           let html = '<table class="data-table"><thead><tr>';
@@ -813,6 +1074,12 @@
           html += '</tbody></table>';
           tblContainer.innerHTML = html;
         }
+
+        // Validate second (throws if criteria fail, but output table remains visible)
+        curriculum[currentStep].validate(rawSql);
+
+        out.className = 'output-success';
+        out.innerText = `Query executed successfully! (${results.length} result set returned). Criteria satisfied!`;
 
         handleStepSuccess();
       } catch (err) {
@@ -844,7 +1111,7 @@
         remText.innerText = "Check your commas! You have a trailing comma after your last column before the closing parenthesis ')'.";
       } else if (upper.includes("UPDATE") && !upper.includes("WHERE")) {
         remText.innerText = "Safety Alert: You wrote an UPDATE statement without a WHERE clause! Always specify which row to update.";
-      } else if (errMsg.includes("no such table")) {
+      } else if (errMsg.includes("no such table") || errMsg.includes("does not exist")) {
         remText.innerText = "The database cannot find that table. Ensure you ran Module 1 and the table name is spelled correctly.";
       } else {
         remText.innerText = `Error detail: ${errMsg}. Check semicolons, spelling of keywords, and quotes around text strings.`;
@@ -862,11 +1129,9 @@
       if (currentStep < 5) {
         document.getElementById('next-btn').style.display = 'inline-flex';
       } else {
-        // Module 5 Complete: Fire Immediate Telemetry & Trigger Confetti Milestone
         triggerMilestoneBurst();
         fireCompletionWebhook();
         
-        // Show Stage 1 completion prompt
         const out = document.getElementById('console-output');
         out.className = 'output-success';
         out.innerHTML = `<strong><i class="fa-solid fa-circle-check"></i> Module 5 Validated — Hands-On SQL Launch Mastered!</strong><br>` +
@@ -886,11 +1151,7 @@
 
     function triggerMilestoneBurst() {
       if (typeof confetti === 'function') {
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
+        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
       }
     }
 
@@ -914,7 +1175,7 @@
     }
 
     // ==========================================
-    // 6. SCREEN 3: TRANSITION TO GRADUATION HUB
+    // 8. SCREEN 3: TRANSITION TO GRADUATION HUB
     // ==========================================
     function showGraduationHub() {
       saveState({ sandboxCompleted: true });
@@ -922,7 +1183,6 @@
       document.getElementById('completion-screen').style.display = 'block';
       window.scrollTo(0, 0);
 
-      // Second celebratory confetti burst upon arriving at Hub
       if (typeof confetti === 'function') {
         setTimeout(() => {
           confetti({ particleCount: 120, spread: 80, origin: { y: 0.4 } });
@@ -937,7 +1197,7 @@
     }
 
     // ==========================================
-    // 7. INITIALIZATION & REHYDRATION
+    // 9. INITIALIZATION & REHYDRATION
     // ==========================================
     renderDiagnosticSurvey();
 
@@ -950,18 +1210,4 @@
         if (savedState.optedOut || assignedArm === 'ctrl') {
           document.getElementById('control-screen').style.display = 'block';
         } else if (savedState.sandboxCompleted) {
-          // Returning student who already finished: Render Completion Hub directly
-          document.getElementById('completion-screen').style.display = 'block';
-        } else {
-          document.getElementById('sandbox-screen').style.display = 'block';
-          initWasmEngine();
-        }
-      } else if (savedState.consentGiven) {
-        // Consented previously, resume survey
-        document.getElementById('consent-screen').style.display = 'none';
-        document.getElementById('survey-screen').style.display = 'block';
-      }
-    }
-  </script>
-</body>
-</html>
+          document.getElementById('completion-
