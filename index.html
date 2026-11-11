@@ -163,8 +163,14 @@
         </div>
       </div>
 
-      <button type="button" class="btn btn-primary" style="width: 100%;" onclick="handleConsentContinue()">
-        Continue <i class="fa-solid fa-arrow-right"></i>
+      <!-- Dynamically updating button -->
+      <button type="button" 
+              id="consent-continue-btn" 
+              class="btn btn-secondary" 
+              style="width: 100%; opacity: 0.65; cursor: not-allowed;" 
+              onclick="handleConsentContinue()" 
+              disabled>
+        Select an Option Above to Continue
       </button>
 
       <div style="font-size: 0.75rem; color: #64748b; margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.5rem;">
@@ -232,7 +238,6 @@
     <!-- ========================================================= -->
     <div id="sandbox-screen" style="display: none;">
       
-      <!-- Pedagogical Framing & Concreteness Fading Briefing -->
       <div class="card" style="border-left: 4px solid var(--wgu-blue); padding: 1.15rem 1.35rem; margin-bottom: 1.25rem;">
         <h3 style="color: var(--wgu-blue); font-size: 1.02rem; margin-bottom: 0.35rem;">
           <i class="fa-solid fa-graduation-cap"></i> Why Start with the SQL Sandbox?
@@ -242,7 +247,6 @@
         </p>
       </div>
 
-      <!-- Desktop Environment Recommendation Alert -->
       <div class="desktop-alert">
         <i class="fa-solid fa-desktop" style="font-size: 1.1rem;"></i>
         <div>
@@ -250,7 +254,6 @@
         </div>
       </div>
 
-      <!-- Self-Paced & Autosaved Status Banner -->
       <div class="alert-banner">
         <div>
           <i class="fa-solid fa-clock-rotate-left" style="color: var(--wgu-blue); margin-right: 0.4rem;"></i>
@@ -261,7 +264,6 @@
         </div>
       </div>
 
-      <!-- Module Navigation Stepper -->
       <div class="stepper">
         <div class="step-tab active" id="tab-1" onclick="switchStep(1)">1. DDL Schema</div>
         <div class="step-tab" id="tab-2" onclick="switchStep(2)">2. DML Insert</div>
@@ -271,7 +273,6 @@
       </div>
 
       <div class="grid">
-        <!-- Left: Instruction & Video Area -->
         <div class="card">
           <h2 id="step-title" style="margin-bottom: 0.4rem; font-size: 1.05rem;">Module 1: Schema Architecture (CREATE TABLE)</h2>
           <p id="step-instructions" style="font-size: 0.88rem; color: #475569; margin-bottom: 0.85rem;">
@@ -282,13 +283,11 @@
             <iframe id="video-frame" src="https://www.youtube-nocookie.com/embed/VRUb_-0MjKo" allowfullscreen></iframe>
           </div>
 
-          <!-- Primary Video Accessible Collapsible Transcript Drawer -->
           <details id="primary-transcript-drawer" style="font-size: 0.82rem; margin-bottom: 0.75rem; background: #f8fafc; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border);">
             <summary style="cursor: pointer; font-weight: 600; color: #475569;"><i class="fa-solid fa-align-left"></i> View Micro-Lesson Transcript</summary>
             <div id="primary-transcript-body" style="margin-top: 0.5rem; line-height: 1.45; color: #334155; white-space: pre-line;"></div>
           </details>
 
-          <!-- Collapsible Troubleshooting & Remediation Box -->
           <div id="remediation-box" class="hint-box">
             <strong><i class="fa-solid fa-lightbulb"></i> Troubleshooting & Targeted Guidance:</strong>
             <p id="remediation-text" style="margin: 0.35rem 0 0.5rem 0; font-size: 0.85rem; color: #78350f;"></p>
@@ -308,14 +307,12 @@
           </div>
         </div>
 
-        <!-- Right: Interactive Editor & Output Console -->
         <div class="card" style="display: flex; flex-direction: column; gap: 0.65rem;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <span style="font-size: 0.85rem; font-weight: 600; color: #64748b;">MySQL Sandbox Editor</span>
             <button class="btn btn-secondary" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;" onclick="resetEditor()">Reset Template</button>
           </div>
 
-          <!-- IDE Code Area with Synchronized Line Numbers -->
           <div class="editor-wrapper">
             <div class="line-gutter" id="line-gutter">1</div>
             <textarea id="sql-editor" 
@@ -334,7 +331,6 @@
             <button class="btn btn-success" id="next-btn" style="display: none;" onclick="advanceStep()">
               Proceed to Next Module <i class="fa-solid fa-arrow-right"></i>
             </button>
-            <!-- Stage 1 Graduation Trigger Button -->
             <button class="btn btn-gold" id="complete-sandbox-btn" style="display: none;" onclick="showGraduationHub()">
               <i class="fa-solid fa-award"></i> Complete Sandbox & View Next Steps <i class="fa-solid fa-arrow-right"></i>
             </button>
@@ -343,13 +339,12 @@
           <div id="console-output" class="output-ready" aria-live="polite" role="status">Ready to execute query. Click 'Run MySQL Code' to validate your solution.</div>
           <div id="table-output" style="overflow-x: auto;"></div>
 
-          <!-- Defensive Sandbox Scope & Boundary Notice -->
           <details style="margin-top: 0.75rem; font-size: 0.8rem; background: #f8fafc; border: 1px solid var(--border); border-radius: 4px; padding: 0.45rem 0.65rem;">
             <summary style="cursor: pointer; font-weight: 600; color: #64748b;">
               <i class="fa-solid fa-circle-info"></i> Sandbox Scope & Exploratory Capabilities
             </summary>
             <p style="margin-top: 0.4rem; color: #475569; line-height: 1.5;">
-              This practice environment is an in-browser WebAssembly sandbox calibrated specifically for foundational DDL, DML, and DQL operations covered in D426 (table creation, basic constraints, batch inserts, controlled updates, filtering, and standard inner joins). It does not emulate production server features such as stored procedures, triggers, or custom user variables. For unrestricted database experimentation or advanced queries, we recommend using <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener" style="color: var(--wgu-blue); font-weight: 600;">DB Fiddle</a>.
+              This practice environment is an in-browser WebAssembly sandbox calibrated specifically for foundational DDL, DML, and DQL operations covered in D426. It does not emulate production server features such as stored procedures, triggers, or custom user variables. For unrestricted database experimentation, we recommend using <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener" style="color: var(--wgu-blue); font-weight: 600;">DB Fiddle</a>.
             </p>
           </details>
         </div>
@@ -361,7 +356,6 @@
     <!-- ========================================================= -->
     <div id="completion-screen" style="display: none;">
       
-      <!-- Top Crest & Mastery Badge -->
       <div class="badge-card">
         <div class="badge-crest">
           <i class="fa-solid fa-award"></i>
@@ -372,7 +366,6 @@
         </p>
       </div>
 
-      <!-- Confirmation Notice -->
       <div class="card" style="border-left: 4px solid var(--success); padding: 1.25rem;">
         <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
           <i class="fa-solid fa-circle-check" style="font-size: 1.4rem; color: var(--success); margin-top: 0.15rem;"></i>
@@ -385,7 +378,6 @@
         </div>
       </div>
 
-      <!-- Two Study Pathways Recommendation -->
       <div class="card">
         <h3 style="color: var(--wgu-blue); font-size: 1.15rem; margin-bottom: 0.4rem;">
           <i class="fa-solid fa-compass"></i> Recommended Next Steps: Choose Your Study Pathway
@@ -395,7 +387,6 @@
         </p>
 
         <div class="pathway-grid">
-          <!-- Pathway A: Hands-on / Inductive -->
           <div class="pathway-card">
             <div>
               <div style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem;">
@@ -411,7 +402,6 @@
             </a>
           </div>
 
-          <!-- Pathway B: Foundations / Deductive -->
           <div class="pathway-card">
             <div>
               <div style="display: inline-block; background: #f1f5f9; color: #475569; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem;">
@@ -429,7 +419,6 @@
         </div>
       </div>
 
-      <!-- Essential D426 Resource Directory -->
       <div class="card">
         <h3 style="color: var(--wgu-blue); font-size: 1.05rem; margin-bottom: 0.25rem;">
           <i class="fa-solid fa-folder-open"></i> Essential D426 Student Directory
@@ -456,7 +445,6 @@
         </div>
       </div>
 
-      <!-- Sandbox Return Safety Valve -->
       <div style="text-align: center; margin-top: 1.5rem;">
         <button type="button" class="btn btn-secondary" onclick="returnToSandbox()">
           <i class="fa-solid fa-arrow-left"></i> Return to Interactive SQL Sandbox
@@ -529,6 +517,7 @@
     function updateLineNumbers() {
       const editor = document.getElementById('sql-editor');
       const gutter = document.getElementById('line-gutter');
+      if (!editor || !gutter) return;
       const lines = editor.value.split('\n').length;
       let numbersHtml = '';
       for (let i = 1; i <= lines; i++) {
@@ -545,12 +534,36 @@
     function syncScroll() {
       const editor = document.getElementById('sql-editor');
       const gutter = document.getElementById('line-gutter');
-      gutter.scrollTop = editor.scrollTop;
+      if (editor && gutter) {
+        gutter.scrollTop = editor.scrollTop;
+      }
     }
 
     // ==========================================
-    // 4. SCREEN 1A: STANDALONE CONSENT GATE
+    // 4. SCREEN 1A: CONSENT LISTENERS & GATE
     // ==========================================
+    function initConsentListeners() {
+      const radios = document.querySelectorAll('input[name="consent-radio"]');
+      const btn = document.getElementById('consent-continue-btn');
+      if (!btn) return;
+
+      radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          btn.style.cursor = 'pointer';
+
+          if (radio.value === 'yes') {
+            btn.className = 'btn btn-primary';
+            btn.innerHTML = 'Confirm & Continue to Diagnostic <i class="fa-solid fa-arrow-right"></i>';
+          } else if (radio.value === 'no') {
+            btn.className = 'btn btn-secondary';
+            btn.innerHTML = 'Confirm & Exit to Course Materials <i class="fa-solid fa-arrow-right"></i>';
+          }
+        });
+      });
+    }
+
     function handleConsentContinue() {
       const selected = document.querySelector('input[name="consent-radio"]:checked');
       if (!selected) {
@@ -566,9 +579,11 @@
         document.getElementById('landing-title').innerText = "Participation Opt-Out Acknowledged";
         document.getElementById('landing-msg').innerText = "Thank you. You have chosen not to participate in this study. Opting out will have zero effect on your course standing or grade. You can access standard course materials below:";
         controlScreen.style.display = 'block';
+        window.scrollTo(0, 0);
         return;
       }
 
+      // Consented
       saveState({ consentGiven: true, optedOut: false });
       document.getElementById('consent-screen').style.display = 'none';
       document.getElementById('survey-screen').style.display = 'block';
@@ -613,6 +628,7 @@
 
     function renderDiagnosticSurvey() {
       const container = document.getElementById('randomized-ils-container');
+      if (!container) return;
       container.innerHTML = '';
       const shuffledItems = shuffle([...ilsBank]);
 
@@ -709,7 +725,6 @@ The two most common errors in table creation are trailing commas and misspelled 
         template: `-- MODULE 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\n\nDESCRIBE books;`,
         solution: `CREATE TABLE books (\n    book_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\n\nDESCRIBE books;`,
         validate: (rawSql) => {
-          // Strict MySQL Data Type Whitelist
           const upper = rawSql.toUpperCase();
           const match = rawSql.match(/CREATE\s+TABLE\s+books\s*\(([\s\S]*?)\);/i);
           if (!match) throw new Error("Could not find a valid CREATE TABLE books (...); statement.");
@@ -968,7 +983,6 @@ Click 'Run MySQL Code' to execute your first relational join and complete the la
       document.getElementById('next-btn').style.display = 'none';
       document.getElementById('complete-sandbox-btn').style.display = 'none';
 
-      // Always display fresh template on module load
       document.getElementById('sql-editor').value = cfg.template;
       updateLineNumbers();
 
@@ -1013,15 +1027,12 @@ Click 'Run MySQL Code' to execute your first relational join and complete the la
       const tblContainer = document.getElementById('table-output');
       tblContainer.innerHTML = '';
 
-      // Clean-slate seed before execution
       seedDatabaseForStep(currentStep);
 
-      // Dialect normalization (MySQL -> SQLite WASM)
       let normalizedSql = rawSql
         .replace(/\bINT\s+PRIMARY\s+KEY\s+AUTO_INCREMENT\b/gi, 'INTEGER PRIMARY KEY AUTOINCREMENT')
         .replace(/\bAUTO_INCREMENT\b/gi, 'AUTOINCREMENT');
 
-      // Intercept DESCRIBE / DESC books;
       let hasDescribe = false;
       let describeTable = null;
       const descMatch = rawSql.match(/\b(?:DESCRIBE|DESC)\s+([a-zA-Z0-9_]+)\s*;/i);
@@ -1037,7 +1048,6 @@ Click 'Run MySQL Code' to execute your first relational join and complete the la
           results = db.exec(normalizedSql);
         }
 
-        // Handle DESCRIBE formatted output
         if (hasDescribe) {
           const tblCheck = db.exec(`SELECT name FROM sqlite_master WHERE type='table' AND name='${describeTable}';`);
           if (tblCheck.length === 0) {
@@ -1060,7 +1070,6 @@ Click 'Run MySQL Code' to execute your first relational join and complete the la
           }
         }
 
-        // Render table results FIRST so students see their data
         if (results.length > 0) {
           const res = results[results.length - 1];
           let html = '<table class="data-table"><thead><tr>';
@@ -1075,7 +1084,6 @@ Click 'Run MySQL Code' to execute your first relational join and complete the la
           tblContainer.innerHTML = html;
         }
 
-        // Validate second (throws if criteria fail, but output table remains visible)
         curriculum[currentStep].validate(rawSql);
 
         out.className = 'output-success';
@@ -1199,6 +1207,7 @@ Click 'Run MySQL Code' to execute your first relational join and complete the la
     // ==========================================
     // 9. INITIALIZATION & REHYDRATION
     // ==========================================
+    initConsentListeners();
     renderDiagnosticSurvey();
 
     const savedState = getStoredState();
@@ -1210,4 +1219,16 @@ Click 'Run MySQL Code' to execute your first relational join and complete the la
         if (savedState.optedOut || assignedArm === 'ctrl') {
           document.getElementById('control-screen').style.display = 'block';
         } else if (savedState.sandboxCompleted) {
-          document.getElementById('completion-
+          document.getElementById('completion-screen').style.display = 'block';
+        } else {
+          document.getElementById('sandbox-screen').style.display = 'block';
+          initWasmEngine();
+        }
+      } else if (savedState.consentGiven) {
+        document.getElementById('consent-screen').style.display = 'none';
+        document.getElementById('survey-screen').style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
