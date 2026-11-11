@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>D426: Data Management Foundations Research Diagnostic & Tools</title>
-  <!-- UI Icons & In-Browser SQL Engine -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D426: SQL Foundations Interactive Launch</title>
+  <!-- UI Icons, Confetti & In-Browser SQL Engine -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   
   <style>
     :root {
@@ -19,319 +20,88 @@
       --success: #10b981;
       --danger: #ef4444;
       --editor-bg: #0f172a;
-      --gutter-bg: #0b1120;
-      --info-bg: #f0f9ff;
-      --info-border: #0284c7;
-      --info-text: #0c4a6e;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 60px; }
     
-    header { background: var(--wgu-blue); color: white; padding: 1rem 1.75rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    header h1 { font-size: 1.15rem; font-weight: 700; }
-    #student-badge { background: rgba(255,255,255,0.15); padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem; }
+    header { background: var(--wgu-blue); color: white; padding: 1.1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    header h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
+    #student-badge { background: rgba(255,255,255,0.15); padding: 0.3rem 0.75rem; border-radius: 4px; font-size: 0.85rem; font-family: monospace; }
 
-    .container { max-width: 1280px; margin: 1.5rem auto; padding: 0 1.25rem; }
-    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
+    .container { max-width: 1040px; margin: 1.75rem auto; padding: 0 1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
 
-    /* Desktop Recommendation Banner */
-    .desktop-alert {
-      background: var(--info-bg);
-      border-left: 4px solid var(--info-border);
-      color: var(--info-text);
-      padding: 0.85rem 1.1rem;
-      border-radius: 0 6px 6px 0;
-      margin-bottom: 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-      font-size: 0.875rem;
-      line-height: 1.45;
-    }
-    .desktop-alert i { font-size: 1.35rem; color: var(--info-border); flex-shrink: 0; }
+    /* Alert Banner */
+    .alert-banner { background: #f0f7ff; border-left: 4px solid var(--wgu-blue); padding: 0.85rem 1.1rem; font-size: 0.88rem; border-radius: 0 6px 6px 0; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+    
+    /* Consent Scrollbox */
+    .consent-scrollbox { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 1.1rem; font-size: 0.86rem; color: #334155; line-height: 1.6; max-height: 280px; overflow-y: auto; margin-bottom: 1.25rem; }
+    .consent-scrollbox p { margin-bottom: 0.75rem; }
+    .consent-scrollbox p:last-child { margin-bottom: 0; }
+    .consent-callout { background: #eff6ff; border-left: 4px solid var(--wgu-blue); padding: 0.65rem 0.85rem; margin: 0.75rem 0; border-radius: 0 4px 4px 0; }
 
-    /* Consent Styles */
-    .consent-header { margin-bottom: 0.75rem; }
-    .consent-header h2 { color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.25rem; }
-    .consent-document { 
-      background: #ffffff; 
-      border: 1px solid #cbd5e1; 
-      border-radius: 6px; 
-      padding: 1.25rem; 
-      font-size: 0.88rem; 
-      color: #334155; 
-      line-height: 1.6; 
-      margin-bottom: 1.25rem; 
-    }
-    .consent-document p { margin-bottom: 0.65rem; }
-    .consent-document p:last-child { margin-bottom: 0; }
-    .consent-callout {
-      background: #eff6ff; 
-      border-left: 4px solid var(--wgu-blue); 
-      padding: 0.65rem 0.85rem; 
-      margin: 0.65rem 0; 
-      border-radius: 0 4px 4px 0;
-    }
-
-    /* Question & Option Styles */
-    .question-block { margin-bottom: 1rem; padding: 0.75rem; border: 1px solid transparent; border-radius: 6px; transition: all 0.2s; }
-    .question-block.unanswered { border-color: var(--danger); background-color: #fef2f2; }
-    .question-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.35rem; color: #0f172a; line-height: 1.35; }
-    .option-list { display: flex; flex-direction: column; gap: 0.2rem; }
-    .option-label { 
-      display: flex; 
-      align-items: flex-start; 
-      gap: 0.55rem; 
-      font-size: 0.855rem; 
-      cursor: pointer; 
-      padding: 0.35rem 0.45rem; 
-      border-radius: 4px; 
-      min-height: 28px; 
-      line-height: 1.35;
-    }
+    /* Question Formatting */
+    .question-block { margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9; }
+    .question-title { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.5rem; color: #0f172a; }
+    .option-list { display: flex; flex-direction: column; gap: 0.45rem; }
+    .option-label { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.88rem; cursor: pointer; padding: 0.45rem 0.6rem; border-radius: 4px; transition: background 0.15s; }
     .option-label:hover { background: #f8fafc; }
-    .option-label input { margin-top: 0.15rem; width: 16px; height: 16px; flex-shrink: 0; }
-
-    .validation-alert {
-      display: none;
-      background: #fee2e2;
-      border: 1px solid #f87171;
-      color: #991b1b;
-      padding: 0.75rem 1rem;
-      border-radius: 6px;
-      margin-bottom: 1rem;
-      font-size: 0.88rem;
-      font-weight: 600;
-    }
+    .option-label input { margin-top: 0.2rem; cursor: pointer; }
 
     /* Buttons */
-    .btn { padding: 0.65rem 1.25rem; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.92rem; text-decoration: none; justify-content: center; }
+    .btn { padding: 0.65rem 1.35rem; border-radius: 5px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.92rem; text-decoration: none; justify-content: center; }
     .btn-primary { background: var(--wgu-blue); color: white; }
     .btn-primary:hover { background: #00224f; }
     .btn-success { background: var(--success); color: white; }
-    .btn-secondary { background: #e2e8f0; color: #334155; }
-    .btn-secondary:hover { background: #cbd5e1; }
-    .btn-hint { background: #f59e0b; color: white; font-size: 0.8rem; padding: 0.4rem 0.8rem; }
+    .btn-success:hover { background: #059669; }
+    .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+    .btn-secondary:hover { background: #e2e8f0; }
+    .btn-gold { background: var(--wgu-gold); color: #0f172a; font-weight: 700; }
+    .btn-gold:hover { background: #eab308; }
 
     /* Sandbox Stepper */
-    .stepper { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
-    .step-tab { flex: 1; min-width: 140px; padding: 0.65rem 0.5rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; text-align: center; font-size: 0.84rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+    .stepper { display: flex; gap: 0.4rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .step-tab { flex: 1; min-width: 140px; padding: 0.65rem 0.5rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; text-align: center; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
     .step-tab.active { background: var(--wgu-blue); color: white; border-color: var(--wgu-blue); }
     .step-tab.completed { border-bottom: 3px solid var(--success); }
 
-    /* 2:3 Grid Layout */
-    .grid { display: grid; grid-template-columns: 2fr 3fr; gap: 1.5rem; align-items: start; }
-    @media (max-width: 960px) { 
-      .grid { grid-template-columns: 1fr; }
-      header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-    }
+    .grid { display: grid; grid-template-columns: 2fr 3fr; gap: 1.25rem; }
+    @media (max-width: 920px) { .grid { grid-template-columns: 1fr; } }
 
     .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; background: #000; margin-bottom: 0.75rem; }
     .video-container iframe { position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0; }
 
-    /* Accessible Transcript Details Box */
-    details.transcript-drawer {
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      padding: 0.55rem 0.85rem;
-      margin-bottom: 1rem;
-      font-size: 0.85rem;
-    }
-    details.transcript-drawer summary {
-      font-weight: 600;
-      color: var(--wgu-blue);
-      cursor: pointer;
-      user-select: none;
-      outline: none;
-    }
-    details.transcript-drawer summary:focus-visible {
-      outline: 2px solid var(--wgu-blue);
-      border-radius: 2px;
-    }
-    .transcript-content {
-      margin-top: 0.6rem;
-      padding-top: 0.5rem;
-      border-top: 1px solid #e2e8f0;
-      color: #334155;
-      line-height: 1.6;
-      white-space: pre-line;
-      max-height: 220px;
-      overflow-y: auto;
-    }
-
-    /* IDE-Style Editor with Line Numbers Gutter */
-    .editor-wrapper {
-      display: flex;
-      background: var(--editor-bg);
-      border: 1px solid #334155;
-      border-radius: 6px;
-      height: 390px;
-      overflow: hidden;
-    }
-    .line-numbers {
-      width: 44px;
-      padding: 1rem 0.5rem 1rem 0;
-      text-align: right;
-      background: var(--gutter-bg);
-      color: #64748b;
-      font-family: "Courier New", Courier, monospace;
-      font-size: 0.94rem;
-      line-height: 1.5;
-      user-select: none;
-      overflow: hidden;
-      border-right: 1px solid #1e293b;
-      flex-shrink: 0;
-    }
-    textarea#sql-editor { 
-      flex: 1;
-      height: 100%;
-      background: transparent;
-      color: #38bdf8; 
-      font-family: "Courier New", Courier, monospace; 
-      font-size: 0.94rem; 
-      line-height: 1.5;
-      padding: 1rem; 
-      border: none;
-      outline: none;
-      resize: none; 
-      white-space: pre;
-      overflow-y: auto;
-    }
+    textarea#sql-editor { width: 100%; height: 260px; background: var(--editor-bg); color: #38bdf8; font-family: "Courier New", Courier, monospace; font-size: 0.92rem; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; resize: vertical; line-height: 1.45; }
     .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
-    
-    #console-output { margin-top: 1rem; padding: 0.85rem; border-radius: 6px; font-family: monospace; font-size: 0.88rem; max-height: 330px; overflow-y: auto; }
+    #console-output { margin-top: 0.75rem; padding: 0.75rem; border-radius: 6px; font-family: monospace; font-size: 0.85rem; max-height: 220px; overflow-y: auto; }
     .output-ready { background: #f1f5f9; color: #475569; }
     .output-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
     .output-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
 
-    table.data-table { width: 100%; border-collapse: collapse; margin-top: 0.75rem; font-size: 0.85rem; }
-    table.data-table th, table.data-table td { border: 1px solid var(--border); padding: 0.45rem 0.6rem; text-align: left; }
+    table.data-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.82rem; }
+    table.data-table th, table.data-table td { border: 1px solid var(--border); padding: 0.4rem 0.5rem; text-align: left; }
     table.data-table th { background: #f8fafc; font-weight: 600; }
 
-    .hint-box { margin-top: 1rem; border-left: 4px solid var(--wgu-gold); background: #fffbeb; padding: 1rem; border-radius: 0 6px 6px 0; font-size: 0.88rem; display: none; }
+    .hint-box { margin-top: 0.75rem; border-left: 3px solid var(--wgu-gold); background: #fffbeb; padding: 0.75rem; border-radius: 0 4px 4px 0; font-size: 0.85rem; display: none; }
     .hint-box.show { display: block; }
-    .citation-footer { font-size: 0.75rem; color: #64748b; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 0.5rem; }
 
-    /* Resource Directory Cards */
-    .resource-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1rem;
-      margin-top: 1.25rem;
-      text-align: left;
-    }
-    .resource-card {
-      border: 1px solid #cbd5e1;
-      background: #ffffff;
-      border-radius: 6px;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-    }
-    .resource-card h4 {
-      font-size: 0.92rem;
-      color: var(--wgu-blue);
-      margin-bottom: 0.35rem;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-    }
-    .resource-card p {
-      font-size: 0.82rem;
-      color: #64748b;
-      margin-bottom: 0.85rem;
-      line-height: 1.45;
-    }
-    .resource-card a {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--wgu-blue);
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-    .resource-card a:hover {
-      text-decoration: underline;
-    }
+    /* Completion Hub Styles */
+    .badge-card { background: linear-gradient(135deg, #002f6c 0%, #001a3d 100%); color: white; text-align: center; padding: 2.25rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; box-shadow: 0 4px 12px rgba(0,47,108,0.15); }
+    .badge-crest { display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; background: rgba(255, 194, 32, 0.2); border: 2px solid var(--wgu-gold); border-radius: 50%; color: var(--wgu-gold); font-size: 2.2rem; margin-bottom: 0.75rem; }
+    
+    .pathway-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 1.25rem; }
+    @media (max-width: 768px) { .pathway-grid { grid-template-columns: 1fr; } }
+    .pathway-card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.15s, border-color 0.15s; }
+    .pathway-card:hover { transform: translateY(-2px); border-color: var(--wgu-blue); }
 
-    /* Pathway Option Cards */
-    .pathway-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.1rem;
-      margin: 1.25rem 0;
-      text-align: left;
-    }
-    @media (max-width: 760px) {
-      .pathway-container { grid-template-columns: 1fr; }
-    }
-    .pathway-card {
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      padding: 1.15rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .pathway-card.recommended {
-      background: #f0fdf4;
-      border-color: #86efac;
-    }
-    .pathway-card.standard {
-      background: #f8fafc;
-      border-color: #cbd5e1;
-    }
-
-    /* Achievement Badge & Gamification */
-    .achievement-banner {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      background: linear-gradient(135deg, #eff6ff 0%, #fef3c7 100%);
-      border: 2px solid var(--wgu-gold);
-      border-radius: 8px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 1.25rem;
-      animation: popBadge 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .badge-icon-box {
-      background: var(--wgu-gold);
-      color: #78350f;
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.75rem;
-      flex-shrink: 0;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    @keyframes popBadge {
-      0% { transform: scale(0.85); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    #confetti-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 99999;
-    }
+    .resource-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+    .resource-btn { background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem; text-decoration: none; color: #1e293b; font-size: 0.86rem; font-weight: 600; display: flex; align-items: center; gap: 0.6rem; transition: background 0.15s; }
+    .resource-btn:hover { background: #f1f5f9; color: var(--wgu-blue); }
   </style>
 </head>
 <body>
 
-  <!-- Confetti Canvas for Gamification -->
-  <canvas id="confetti-canvas"></canvas>
-
-  <header role="banner">
+  <header>
     <div>
       <h1>D426: Data Management Foundations</h1>
       <div style="font-size: 0.78rem; opacity: 0.85;">Curricular Sequencing Research Project</div>
@@ -339,297 +109,335 @@
     <div id="student-badge">Student ID: <span id="display-sid">Loading...</span></div>
   </header>
 
-  <main class="container" role="main">
+  <div class="container">
 
-    <!-- SCREEN 1A: INFORMED CONSENT & AGE GATE -->
-    <section id="screen-1a" class="card" style="max-width: 900px; margin: 0 auto 1.5rem auto;" aria-labelledby="consent-title">
-      <div class="consent-header">
-        <h2 id="consent-title">Informed Consent & Research Participation Agreement</h2>
-        <p style="font-size: 0.85rem; color: #64748b;">
-          Please read this form before deciding whether to take part in this research study.
-        </p>
+    <!-- ========================================================= -->
+    <!-- SCREEN 1A: STANDALONE CONSENT & AGE CERTIFICATION GATE   -->
+    <!-- ========================================================= -->
+    <div id="consent-screen" class="card">
+      <div style="margin-bottom: 1rem;">
+        <h2 style="color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.25rem;">Informed Consent & Research Participation Agreement</h2>
+        <p style="font-size: 0.85rem; color: #64748b;">Please review the following study information carefully before deciding whether to participate.</p>
       </div>
 
-      <div class="consent-document">
-        <p><strong>Study Title:</strong> Learning Preferences and Course Sequencing in Online Database Education</p>
-        <p><strong>Researcher:</strong> Bruce Johnson, Instructor, Faculty Lead, School of Technology (b.johnson1@wgu.edu)</p>
+      <div class="consent-scrollbox">
+        <p><strong>Study Title:</strong> Evaluating Curricular Sequencing and Learning Preferences in Online Database Education</p>
+        <p><strong>Principal Investigator:</strong> Bruce C. Johnson III, Ph.D., Course Instructor, College of Information Technology (b.johnson1@wgu.edu)</p>
         
         <div class="consent-callout">
-          <strong>Notice Regarding WGU Sponsorship:</strong><br>
-          This research study is being conducted independently by instructor Bruce Johnson. 
-          <em>This study is NOT sponsored, funded, or required by Western Governors University (WGU).</em>
+          <strong>Institutional Non-Sponsorship Disclosure:</strong><br>
+          This survey and research project is an independent academic investigation conducted by Bruce Johnson. 
+          <em>This study is NOT sponsored, funded, or mandated by Western Governors University (WGU).</em>
         </div>
 
-        <p><strong>1. What is this study about?</strong> We are studying how the order of course topics affects learning in D426 (Data Management Foundations). Specifically, we are testing whether starting with SQL coding practice before reading database theory affects the time students spend on the course and how they do on their final exam.</p>
+        <p><strong>1. Purpose of the Study:</strong> You are invited to take part in an educational research study examining whether starting with hands-on query mechanics before reading abstract theoretical concepts (such as normal forms and cardinality) influences study velocity and objective assessment outcomes in D426.</p>
 
-        <p><strong>2. Age Requirement:</strong> You must be at least 18 years old to take part. If you are under 18, you cannot participate in this study.</p>
+        <p><strong>2. Age & Eligibility Requirement:</strong> You must be at least <strong>18 years of age</strong> to participate in this study. If you are under 18 years of age, you are not eligible to take part.</p>
 
-        <p><strong>3. Your Choice (Voluntary):</strong> Taking part is 100% voluntary. You can choose not to join, or you can stop at any time. Choosing not to participate will have no effect on your course grade, academic progress, tuition, or your access to instructors, cohorts, and study resources.</p>
+        <p><strong>3. Completely Voluntary Participation & No Grade Impact:</strong> Your participation is 100% voluntary. You may choose not to participate, or discontinue at any time. Opting out will have <strong>zero impact on your course grade, academic standing, tuition, progress pacing, or access to course materials and faculty coaching.</strong></p>
 
-        <p><strong>4. What will you do and time commitment?</strong> If you agree, you will complete a brief <strong>3-minute questionnaire</strong> regarding your study habits and prior technical experience. Depending on your randomly assigned study group, you may also receive optional access to an interactive, self-paced SQL practice sandbox (<strong>approximately 15–20 minutes</strong>). In total, participating represents a commitment of <strong>approximately 20–25 minutes</strong> (or just 3 minutes if assigned to the standard study path). You may pause, close your browser, and return at any time.</p>
+        <p><strong>4. Study Procedures:</strong> If you consent to participate, you will complete a brief diagnostic regarding your prior SQL experience and study preferences. Depending on study arm assignment, you may also receive optional access to an interactive browser-based SQL sandbox.</p>
 
-        <p><strong>5. Privacy & Your Information:</strong> We use your student ID solely to match your survey responses with your course progress. Before analyzing any data, your name and ID will be removed and replaced with a random code. Only group summary numbers will ever be reported or published.</p>
+        <p><strong>5. Privacy & Data Handling:</strong> Telemetry interactions and survey responses are securely linked with your student ID for academic matching. All data will be de-identified prior to statistical analysis. Only aggregate findings will ever be reported.</p>
 
-        <p><strong>6. Questions & Contacts:</strong> If you have questions about the study, contact Bruce Johnson at b.johnson1@wgu.edu. For questions regarding your rights as a research participant, contact the WGU Institutional Review Board at irb@wgu.edu.</p>
+        <p><strong>6. Contact Information:</strong> If you have questions about the research, contact Bruce Johnson at b.johnson1@wgu.edu. For questions regarding your rights as a research subject, you may contact the WGU Institutional Review Board at irb@wgu.edu.</p>
       </div>
 
-      <div class="question-block" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:0.9rem; margin-bottom:1.25rem;">
-        <div class="question-title">Question 1: Age Certification & Participation Decision</div>
+      <!-- Question 1: Eligibility Certification & Consent Decision -->
+      <div class="question-block" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:1rem;">
+        <div class="question-title">Question 1: Eligibility Certification & Consent Decision</div>
         <div class="option-list">
           <label class="option-label">
-            <input type="radio" name="consent_choice" value="yes">
-            <span><strong>YES, I agree to participate.</strong> I certify that I am at least 18 years old, I have read and understand this consent form, and I voluntarily choose to take part in this research study.</span>
+            <input type="radio" name="consent-radio" value="yes">
+            <span><strong>YES, I agree to participate.</strong> I certify that I am at least 18 years of age, I have read and understood this consent document, and I voluntarily choose to take part in this research study.</span>
           </label>
           <label class="option-label">
-            <input type="radio" name="consent_choice" value="no">
-            <span><strong>NO, I do NOT want to participate (or I am under 18 years old).</strong> Take me directly to standard course materials without participating.</span>
+            <input type="radio" name="consent-radio" value="no">
+            <span><strong>NO, I do NOT wish to participate (or I am under 18 years of age).</strong> Take me directly to standard course materials without participating.</span>
           </label>
         </div>
       </div>
 
-      <div id="consent-validation-alert" class="validation-alert" role="alert">
-        Please make a selection for Question 1 to proceed.
-      </div>
-
-      <button type="button" id="consent-confirm-btn" class="btn btn-primary" style="width: 100%;">
-        Confirm Choice & Continue <i class="fa-solid fa-arrow-right"></i>
+      <button type="button" class="btn btn-primary" style="width: 100%;" onclick="handleConsentContinue()">
+        Continue <i class="fa-solid fa-arrow-right"></i>
       </button>
-    </section>
 
-    <!-- SCREEN 1B: DIAGNOSTIC QUESTIONNAIRE -->
-    <section id="screen-1b" class="card" style="display: none; max-width: 900px; margin: 0 auto 1.5rem auto;" aria-labelledby="diag-title">
-      <div style="margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
-        <h2 id="diag-title" style="color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.25rem;">Course Diagnostic Questionnaire</h2>
-        <p style="font-size: 0.85rem; color: #64748b;">
-          Please complete all items below. Responses are used solely for instructional pacing and research modeling.
-        </p>
+      <div style="font-size: 0.75rem; color: #64748b; margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.5rem;">
+        Index of Learning Styles &copy; Richard M. Felder and Barbara A. Soloman, North Carolina State University.
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- SCREEN 1B: DIAGNOSTIC SURVEY INSTRUMENT                  -->
+    <!-- ========================================================= -->
+    <div id="survey-screen" class="card" style="display: none;">
+      <div style="margin-bottom: 1.25rem;">
+        <h2 style="color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.25rem;">Learning Preferences & Background Diagnostic</h2>
+        <p style="font-size: 0.85rem; color: #64748b;">Please answer the following items to help tailor instructional sequencing insights.</p>
       </div>
 
-      <div id="diagnostic-validation-alert" class="validation-alert" role="alert">
-        Please answer all questions before submitting. Unanswered items are highlighted below.
-      </div>
-
-      <div>
-        <div class="question-block" id="block-prior-sql">
-          <div class="question-title">Question 2: Before starting D426, how would you rate your experience with SQL and databases?</div>
+      <form id="diagnostic-form" onsubmit="handleDiagnosticSubmit(event)">
+        <!-- Question 2: Prior SQL Experience -->
+        <div class="question-block">
+          <div class="question-title">Question 2: Prior to starting D426, how would you rate your experience with SQL and relational databases?</div>
           <div class="option-list">
-            <label class="option-label"><input type="radio" name="prior_sql" value="1"> <span>1 - None (Never seen or written SQL code)</span></label>
-            <label class="option-label"><input type="radio" name="prior_sql" value="2"> <span>2 - Novice (Know what it is, but little to no coding experience)</span></label>
-            <label class="option-label"><input type="radio" name="prior_sql" value="3"> <span>3 - Intermediate (Have written basic SELECT, INSERT, or UPDATE queries)</span></label>
-            <label class="option-label"><input type="radio" name="prior_sql" value="4"> <span>4 - Advanced (Regularly write multi-table JOINs, aggregations, or subqueries)</span></label>
-            <label class="option-label"><input type="radio" name="prior_sql" value="5"> <span>5 - Professional (Work or have worked managing databases professionally)</span></label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="1" required> 1 - None (Never seen or written SQL code)</label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="2" required> 2 - Novice (Familiar with the concept, but little to no query experience)</label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="3" required> 3 - Intermediate (Have written basic SELECT, INSERT, or UPDATE queries)</label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="4" required> 4 - Advanced (Regularly write multi-table JOINs, aggregations, or subqueries)</label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="5" required> 5 - Professional (Work or have worked managing databases professionally)</label>
           </div>
         </div>
 
-        <div style="margin: 1.25rem 0 0.35rem 0; font-weight: 700; color: var(--wgu-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.25rem;">
-          Study & Problem Solving Preferences
+        <div style="margin: 1.5rem 0 0.5rem 0; font-weight: 700; color: var(--wgu-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.3rem;">
+          Study & Problem Solving Preferences (Felder-Soloman ILS)
         </div>
-        <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem;">
-          For each question, choose the option that best describes how you prefer to learn.
+        <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 1rem;">
+          For each item, choose the option that best reflects your natural learning habits:
         </p>
 
         <div id="randomized-ils-container"></div>
 
-        <button type="button" id="diagnostic-submit-btn" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
-          Submit & Continue
+        <button type="submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
+          <i class="fa-solid fa-paper-plane"></i> Submit Diagnostic & Continue
         </button>
-      </div>
+      </form>
+    </div>
 
-      <div class="citation-footer">
-        Index of Learning Styles copyright Richard M. Felder and Barbara A. Soloman, North Carolina State University. Administered under non-commercial educational research provisions.
-      </div>
-    </section>
-
-    <!-- SCREEN 2A: CONTROL / OPT-OUT LANDING -->
-    <section id="control-screen" class="card" style="display: none; text-align: center; padding: 2rem 1.5rem; max-width: 900px; margin: 0 auto 1.5rem auto;" aria-labelledby="landing-title">
+    <!-- ========================================================= -->
+    <!-- SCREEN 2A: CONTROL / OPT-OUT LANDING                     -->
+    <!-- ========================================================= -->
+    <div id="control-screen" class="card" style="display: none; text-align: center; padding: 2.75rem 1.5rem;">
       <i id="landing-icon" class="fa-solid fa-circle-check" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
-      <h2 id="landing-title" style="color: var(--wgu-blue); margin-bottom: 0.5rem;">Standard Course Materials & Resource Hub</h2>
-      <p id="landing-msg" style="max-width: 650px; margin: 0 auto 1.25rem auto; color: #475569; font-size: 0.95rem;">
-        You are now ready to begin Section 1 of the official D426 curriculum. Use the direct links below to enter your course homepage and access key resources:
+      <h2 id="landing-title" style="color: var(--wgu-blue); margin-bottom: 0.75rem;">Standard Course Materials</h2>
+      <p id="landing-msg" style="max-width: 600px; margin: 0 auto 1.5rem auto; color: #475569; font-size: 0.95rem;">
+        You are now ready to begin Section 1 of the official course curriculum.
       </p>
-
-      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
+      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
         <a href="https://my.wgu.edu/courses/course/30040017" class="btn btn-primary" target="_blank" rel="noopener">
-          <i class="fa-solid fa-house-chimney"></i> Return to D426 Course Homepage
+          <i class="fa-solid fa-graduation-cap"></i> Return to D426 Course Page
         </a>
-        <a href="https://lrps.wgu.edu/provision/487034335" class="btn btn-secondary" target="_blank" rel="noopener">
-          <i class="fa-solid fa-book-open"></i> Launch Course Materials (Chapter 1)
+        <a href="https://lrps.wgu.edu/provision/115160353" class="btn btn-secondary" target="_blank" rel="noopener">
+          <i class="fa-solid fa-book-open"></i> Launch Course Material (LRPS)
         </a>
       </div>
+    </div>
 
-      <!-- Embedded Course Resources Directory -->
-      <div class="resource-grid">
-        <div class="resource-card">
-          <div>
-            <h4><i class="fa-solid fa-compass"></i> D426 Course Hub</h4>
-            <p>Access pacing guides, instructor contact options, study roadmaps, and course announcements.</p>
-          </div>
-          <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CSH-WST-D426-DataMa-30040017/?web=1" target="_blank" rel="noopener">
-            Open Course Hub <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          </a>
-        </div>
-        <div class="resource-card">
-          <div>
-            <h4><i class="fa-solid fa-book-bookmark"></i> Supplemental Resource Index</h4>
-            <p>Direct access to the comprehensive Course Guide, topic video deep-dives, and extra practice problems.</p>
-          </div>
-          <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Supplemental-Resource-Index.aspx" target="_blank" rel="noopener">
-            Open Resource Index <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          </a>
-        </div>
-        <div class="resource-card">
-          <div>
-            <h4><i class="fa-solid fa-calendar-days"></i> Upcoming Live Events</h4>
-            <p>View the live cohort schedule, faculty office hours, interactive workshops, and review sessions.</p>
-          </div>
-          <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Upcoming-Live-Events.aspx" target="_blank" rel="noopener">
-            View Live Schedule <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          </a>
-        </div>
-      </div>
-      <div style="font-size: 0.78rem; color: #64748b; margin-top: 1rem;">
-        <i class="fa-solid fa-bookmark"></i> <strong>Pro-Tip:</strong> Bookmark these resource portals in your browser today so they are always within reach throughout D426.
-      </div>
-    </section>
-
-    <!-- SCREEN 2B: INTERVENTION ARM (EXPANDED WORKSPACE) -->
-    <section id="sandbox-screen" style="display: none;" aria-label="Interactive SQL Coding Sandbox">
+    <!-- ========================================================= -->
+    <!-- SCREEN 2B: INTERVENTION ARM (THE 5-MODULE SQL SANDBOX)   -->
+    <!-- ========================================================= -->
+    <div id="sandbox-screen" style="display: none;">
       
-      <div class="desktop-alert" role="note">
-        <i class="fa-solid fa-display" aria-hidden="true"></i>
+      <!-- Reassurance & Pacing Banner -->
+      <div class="alert-banner">
         <div>
-          <strong>Recommended Learning Environment:</strong>
-          Please complete this interactive coding module on a <strong>desktop or laptop browser</strong>. A full-sized screen and physical keyboard make reading multi-line queries, typing punctuation (quotes and semicolons), and debugging much smoother.
+          <i class="fa-solid fa-laptop-code" style="color: var(--wgu-blue); margin-right: 0.4rem;"></i>
+          <strong>Self-Paced & Autosaved:</strong> You can pause or step away at any time. Your progress is continuously saved to your browser session.
+        </div>
+        <div style="font-size: 0.8rem; color: #065f46; font-weight: 600;">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Autosaved Locally
         </div>
       </div>
 
-      <div class="card" style="background: #f8fafc; border-left: 4px solid var(--wgu-blue); padding: 1.25rem 1.5rem;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem;">
-          <h3 style="color: var(--wgu-blue); font-size: 1.1rem; margin-bottom: 0.4rem;">
-            <i class="fa-solid fa-compass" aria-hidden="true"></i> Why Start with the SQL Sandbox?
-          </h3>
-          <span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">
-            <i class="fa-solid fa-cloud-arrow-up"></i> Progress Autosaved to Browser
-          </span>
-        </div>
-        <p style="font-size: 0.88rem; color: #334155; margin-bottom: 0.6rem;">
-          Database concepts are often easier to understand once you see tables created and manipulated in code. This practice tool builds core query skills before you read the theoretical chapters in your textbook.
-        </p>
-        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.82rem; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 0.6rem; margin-top: 0.4rem;">
-          <span><i class="fa-solid fa-clock" aria-hidden="true"></i> <strong>Work at Your Own Pace:</strong> Take breaks whenever you need.</span>
-          <span><i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i> <strong>Resume Anytime:</strong> Close or refresh your browser without losing unlocked modules!</span>
-        </div>
-      </div>
-
-      <!-- Stepper Navigation -->
-      <nav class="stepper" aria-label="Curriculum Modules">
-        <div class="step-tab active" id="tab-1" onclick="switchStep(1)" role="button" tabindex="0">Module 1: DDL Schema</div>
-        <div class="step-tab" id="tab-2" onclick="switchStep(2)" role="button" tabindex="0">Module 2: DML Population</div>
-        <div class="step-tab" id="tab-3" onclick="switchStep(3)" role="button" tabindex="0">Module 3: DML Updates</div>
-        <div class="step-tab" id="tab-4" onclick="switchStep(4)" role="button" tabindex="0">Module 4: DQL Queries</div>
-        <div class="step-tab" id="tab-5" onclick="switchStep(5)" role="button" tabindex="0">Module 5: Relational Joins</div>
-      </nav>
-      <div style="display: flex; justify-content: flex-end; font-size: 0.76rem; color: #64748b; margin-bottom: 1rem; padding-right: 0.25rem;">
-        <span><i class="fa-solid fa-lock-open"></i> Unlocked tabs remain accessible if you step away.</span>
+      <!-- Module Navigation Stepper -->
+      <div class="stepper">
+        <div class="step-tab active" id="tab-1" onclick="switchStep(1)">1. DDL Schema</div>
+        <div class="step-tab" id="tab-2" onclick="switchStep(2)">2. DML Insert</div>
+        <div class="step-tab" id="tab-3" onclick="switchStep(3)">3. DML Updates</div>
+        <div class="step-tab" id="tab-4" onclick="switchStep(4)">4. DQL Queries</div>
+        <div class="step-tab" id="tab-5" onclick="switchStep(5)">5. Relational Joins</div>
       </div>
 
       <div class="grid">
-        <!-- Left Column: Video & Accessible Transcripts -->
+        <!-- Left: Instruction & Video Area -->
         <div class="card">
-          <h2 id="step-title" style="margin-bottom: 0.5rem; font-size: 1.1rem;">Module 1: Schema Architecture (CREATE TABLE)</h2>
-          <p id="step-instructions" style="font-size: 0.88rem; color: #475569; margin-bottom: 1rem;">
-            Learn how to define a table in MySQL using <code>CREATE TABLE</code> with specific column data types.
+          <h2 id="step-title" style="margin-bottom: 0.4rem; font-size: 1.05rem;">Module 1: Building Schema Containers</h2>
+          <p id="step-instructions" style="font-size: 0.88rem; color: #475569; margin-bottom: 0.85rem;">
+            Learn how to define a schema in MySQL using <code>CREATE TABLE</code> with strict column data types.
           </p>
           
           <div class="video-container">
-            <iframe id="video-frame" src="https://www.youtube-nocookie.com/embed/VRUb_-0MjKo" title="Primary Instructional Video" allowfullscreen></iframe>
+            <iframe id="video-frame" src="https://www.youtube-nocookie.com/embed/7S_tz1z_5bA" allowfullscreen></iframe>
           </div>
 
-          <!-- Primary Video Accessible Transcript Drawer -->
-          <details id="primary-transcript-drawer" class="transcript-drawer">
-            <summary><i class="fa-solid fa-file-lines" aria-hidden="true"></i> View Video Transcript</summary>
-            <div id="primary-transcript-body" class="transcript-content">Loading transcript...</div>
+          <!-- Collapsible Primary Transcript -->
+          <details id="primary-transcript-drawer" style="font-size: 0.82rem; margin-bottom: 0.75rem; background: #f8fafc; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border);">
+            <summary style="cursor: pointer; font-weight: 600; color: #475569;"><i class="fa-solid fa-align-left"></i> View Micro-Lesson Transcript</summary>
+            <div id="primary-transcript-body" style="margin-top: 0.5rem; line-height: 1.45; color: #334155;"></div>
           </details>
 
-          <!-- Dynamic Remediation Drawer -->
-          <div id="remediation-box" class="hint-box" role="region" aria-label="Troubleshooting Assistance">
-            <div style="font-weight: 700; color: #b45309; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
-              <i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Troubleshooting & Remediation
-            </div>
-            <p id="remediation-text" style="margin-bottom: 0.75rem; color: #78350f;">Check your comma placement.</p>
+          <!-- Collapsible Troubleshooting & Remediation Box -->
+          <div id="remediation-box" class="hint-box">
+            <strong><i class="fa-solid fa-lightbulb"></i> Troubleshooting & Targeted Guidance:</strong>
+            <p id="remediation-text" style="margin: 0.35rem 0 0.5rem 0; font-size: 0.85rem; color: #78350f;"></p>
             
-            <div id="remediation-video-container" class="video-container" style="margin-bottom: 0.6rem;">
-              <iframe id="remediation-video-frame" src="" title="Remediation Video Help" allowfullscreen></iframe>
+            <div class="video-container" style="margin-bottom: 0.5rem;">
+              <iframe id="remediation-video-frame" src="" allowfullscreen></iframe>
             </div>
 
-            <!-- Remediation Accessible Transcript Drawer -->
-            <details id="remedy-transcript-drawer" class="transcript-drawer" style="margin-bottom: 0.75rem; background: #ffffff;">
-              <summary style="color: #b45309;"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> View Troubleshooting Transcript</summary>
-              <div id="remedy-transcript-body" class="transcript-content">Loading transcript...</div>
+            <details id="remedy-transcript-drawer" style="font-size: 0.8rem; margin-bottom: 0.5rem; background: #ffffff; padding: 0.4rem; border-radius: 4px; border: 1px solid #fed7aa;">
+              <summary style="cursor: pointer; font-weight: 600; color: #9a3412;"><i class="fa-solid fa-file-lines"></i> Remediation Clip Transcript</summary>
+              <div id="remedy-transcript-body" style="margin-top: 0.35rem; line-height: 1.4; color: #431407;"></div>
             </details>
 
-            <button id="show-solution-btn" class="btn btn-hint" style="display: none; width: 100%;" onclick="revealSolution()">
-              <i class="fa-solid fa-unlock-keyhole" aria-hidden="true"></i> Reveal Working Solution
+            <button id="show-solution-btn" class="btn btn-gold" style="font-size: 0.8rem; padding: 0.4rem 0.8rem; display: none;" onclick="revealSolution()">
+              <i class="fa-solid fa-key"></i> Reveal Working Solution
             </button>
           </div>
         </div>
 
-        <!-- Right Column: Interactive Sandbox with IDE Line Numbers -->
-        <div class="card" style="display: flex; flex-direction: column; gap: 0.85rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-            <span style="font-size: 0.88rem; font-weight: 600; color: #64748b;">MySQL Interactive Workspace</span>
-            <button class="btn" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;" onclick="resetEditor()">Reset Template</button>
+        <!-- Right: Interactive Editor & Output Console -->
+        <div class="card" style="display: flex; flex-direction: column; gap: 0.65rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.85rem; font-weight: 600; color: #64748b;">MySQL Sandbox Editor</span>
+            <button class="btn btn-secondary" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;" onclick="resetEditor()">Reset Template</button>
           </div>
 
-          <!-- Sandbox Scope & Capabilities Notice -->
-          <details style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem 0.75rem; font-size: 0.79rem; color: #475569;">
-            <summary style="font-weight: 600; color: var(--wgu-blue); cursor: pointer;">
-              <i class="fa-solid fa-circle-info" aria-hidden="true"></i> Sandbox Scope & Exploratory Capabilities
-            </summary>
-            <div style="margin-top: 0.45rem; line-height: 1.45; border-top: 1px solid #e2e8f0; padding-top: 0.4rem;">
-              This practice environment is a client-side WebAssembly emulator configured specifically for the core DDL, DML, and DQL operations taught in D426 (table definitions, constraints, updates, filters, and standard inner joins)[cite: 3]. It does not emulate an entire production MySQL server or support advanced server routines (e.g., triggers, stored procedures, or administrative commands). For unrestricted multi-table database design or advanced dialect experimentation, we recommend using a full online engine like <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener" style="color: var(--wgu-blue); font-weight: 600;">DB Fiddle</a>.
-            </div>
-          </details>
-
-          <!-- IDE-Style Workspace with Line Numbers -->
-          <div class="editor-wrapper">
-            <div id="line-numbers" class="line-numbers" aria-hidden="true">1</div>
-            <textarea id="sql-editor" 
-                      aria-label="SQL Code Editor"
-                      autocapitalize="none" 
-                      autocomplete="off" 
-                      autocorrect="off" 
-                      spellcheck="false"></textarea>
-          </div>
+          <textarea id="sql-editor" 
+                    autocapitalize="none" 
+                    autocomplete="off" 
+                    autocorrect="off" 
+                    spellcheck="false"
+                    oninput="saveCurrentEditorText()"></textarea>
 
           <div class="actions">
             <button class="btn btn-primary" id="run-btn" onclick="executeUserQuery()">
-              <i class="fa-solid fa-play" aria-hidden="true"></i> Run MySQL Code
+              <i class="fa-solid fa-play"></i> Run MySQL Code
             </button>
             <button class="btn btn-success" id="next-btn" style="display: none;" onclick="advanceStep()">
-              Proceed to Next Module <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+              Proceed to Next Module <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <!-- Final Stage 1 Graduation Trigger Button -->
+            <button class="btn btn-gold" id="complete-sandbox-btn" style="display: none;" onclick="showGraduationHub()">
+              <i class="fa-solid fa-award"></i> Complete Sandbox & View Next Steps <i class="fa-solid fa-arrow-right"></i>
             </button>
           </div>
 
-          <!-- ARIA Live Output Console -->
-          <div id="console-output" class="output-ready" role="status" aria-live="polite">Ready to execute query.</div>
-          <div id="table-output" style="overflow-x: auto;" role="region" aria-label="Query Results Table"></div>
+          <div id="console-output" class="output-ready">Ready to execute query. Click 'Run MySQL Code' to validate your solution.</div>
+          <div id="table-output" style="overflow-x: auto;"></div>
         </div>
       </div>
-    </section>
+    </div>
 
-  </main>
+    <!-- ========================================================= -->
+    <!-- SCREEN 3: GRADUATION, NEXT STEPS & RESOURCE HUB          -->
+    <!-- ========================================================= -->
+    <div id="completion-screen" style="display: none;">
+      
+      <!-- Top Crest & Mastery Badge -->
+      <div class="badge-card">
+        <div class="badge-crest">
+          <i class="fa-solid fa-award"></i>
+        </div>
+        <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem; color: #ffffff;">Hands-On SQL Launch: Mastery Verified!</h2>
+        <p style="max-width: 680px; margin: 0 auto; font-size: 0.95rem; opacity: 0.95; line-height: 1.6;">
+          Outstanding work! You have successfully written DDL table schemas, populated rows with DML, performed precision updates, queried records with filters, and connected relational tables with <code>INNER JOIN</code>.
+        </p>
+      </div>
+
+      <!-- Confirmation Notice -->
+      <div class="card" style="border-left: 4px solid var(--success); padding: 1.25rem;">
+        <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+          <i class="fa-solid fa-circle-check" style="font-size: 1.4rem; color: var(--success); margin-top: 0.15rem;"></i>
+          <div>
+            <strong style="color: #065f46; font-size: 0.95rem;">Research Telemetry Logged Successfully</strong>
+            <p style="font-size: 0.88rem; color: #475569; margin-top: 0.25rem;">
+              Your completion has been officially recorded. You may now safely close this browser window at any time without losing credit. If you want to return to review your queries, reopening your personalized link will bring you right back.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two Study Pathways Recommendation -->
+      <div class="card">
+        <h3 style="color: var(--wgu-blue); font-size: 1.15rem; margin-bottom: 0.4rem;">
+          <i class="fa-solid fa-compass"></i> Recommended Next Steps: Choose Your Study Pathway
+        </h3>
+        <p style="font-size: 0.88rem; color: #475569;">
+          Based on educational research, learners assimilate database theory differently. Select the pathway that best matches your preferred study style:
+        </p>
+
+        <div class="pathway-grid">
+          <!-- Pathway A: Hands-on / Inductive -->
+          <div class="pathway-card">
+            <div>
+              <div style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem;">
+                RECOMMENDED FOR CODER-FIRST LEARNERS
+              </div>
+              <h4 style="color: var(--wgu-blue); font-size: 1rem; margin-bottom: 0.4rem;">Pathway A: Code-First Momentum</h4>
+              <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin-bottom: 1rem;">
+                Capitalize on the SQL momentum you just built! Skip straight to <strong>zyBooks Chapter 2 (Section 2.1: SQL Syntax)</strong> and master hands-on querying before circling back to theoretical models.
+              </p>
+            </div>
+            <a href="https://lrps.wgu.edu/provision/115160353" class="btn btn-primary" target="_blank" rel="noopener" style="font-size: 0.85rem;">
+              <i class="fa-solid fa-terminal"></i> Launch zyBooks Chapter 2
+            </a>
+          </div>
+
+          <!-- Pathway B: Foundations / Deductive -->
+          <div class="pathway-card">
+            <div>
+              <div style="display: inline-block; background: #f1f5f9; color: #475569; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem;">
+                RECOMMENDED FOR BIG-PICTURE LEARNERS
+              </div>
+              <h4 style="color: var(--wgu-blue); font-size: 1rem; margin-bottom: 0.4rem;">Pathway B: Conceptual Foundations</h4>
+              <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin-bottom: 1rem;">
+                Begin from the traditional starting line. Now that you have context for what a database actually does, start with <strong>Chapter 1 (Data Systems & Architecture)</strong> to explore terminology and historical context.
+              </p>
+            </div>
+            <a href="https://lrps.wgu.edu/provision/115160353" class="btn btn-secondary" target="_blank" rel="noopener" style="font-size: 0.85rem;">
+              <i class="fa-solid fa-book-open"></i> Launch zyBooks Chapter 1
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Essential D426 Resource Directory -->
+      <div class="card">
+        <h3 style="color: var(--wgu-blue); font-size: 1.05rem; margin-bottom: 0.25rem;">
+          <i class="fa-solid fa-folder-open"></i> Essential D426 Student Directory
+        </h3>
+        <p style="font-size: 0.85rem; color: #64748b;">Bookmark these official course resources for your study journey:</p>
+
+        <div class="resource-list">
+          <a href="https://my.wgu.edu/courses/course/30040017" class="resource-btn" target="_blank" rel="noopener">
+            <i class="fa-solid fa-house" style="color: var(--wgu-blue);"></i>
+            <span>D426 Course Homepage</span>
+          </a>
+          <a href="https://wgu.sharepoint.com/sites/InformationTechnology/D426" class="resource-btn" target="_blank" rel="noopener">
+            <i class="fa-solid fa-cloud" style="color: #0284c7;"></i>
+            <span>D426 SharePoint Course Hub</span>
+          </a>
+          <a href="https://my.wgu.edu/courses/course/30040017/announcements" class="resource-btn" target="_blank" rel="noopener">
+            <i class="fa-solid fa-bullhorn" style="color: #d97706;"></i>
+            <span>Live Cohorts & Webinars</span>
+          </a>
+          <a href="mailto:b.johnson1@wgu.edu" class="resource-btn">
+            <i class="fa-solid fa-envelope" style="color: #059669;"></i>
+            <span>Contact Course Instructor</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Sandbox Return Safety Valve -->
+      <div style="text-align: center; margin-top: 1.5rem;">
+        <button type="button" class="btn btn-secondary" onclick="returnToSandbox()">
+          <i class="fa-solid fa-arrow-left"></i> Return to Interactive SQL Sandbox
+        </button>
+      </div>
+
+    </div>
+
+  </div>
 
   <script>
     // ==========================================
-    // 1. CONFIGURATION & STATE
+    // 1. CONFIGURATION & URL PARSING
     // ==========================================
     const TELEMETRY_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxsw1AJtmsn9rwmqc5AIh15owBo909L0NchTVAJw7tX4offSpxDloWKS2wJ1Mf31LdOKQ/exec";
 
     const urlParams = new URLSearchParams(window.location.search);
-    const rawSid = urlParams.get('sid');
-    const isValidSid = rawSid && (/^\d{7,9}$/.test(rawSid) || /^(IRB_|TEST_|DEMO_)/i.test(rawSid));
-    const studentId = isValidSid ? rawSid : "STUDENT_UNASSIGNED";
+    const studentId = urlParams.get('sid') || "STUDENT_UNASSIGNED";
     document.getElementById('display-sid').innerText = studentId;
 
     let assignedArm = urlParams.get('arm');
@@ -640,6 +448,9 @@
 
     const STORAGE_KEY = `d426_state_${studentId}`;
 
+    // ==========================================
+    // 2. STATE PERSISTENCE (LOCALSTORAGE)
+    // ==========================================
     function getStoredState() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -655,89 +466,56 @@
           consentGiven: false,
           surveyCompleted: false,
           optedOut: false,
+          sandboxCompleted: false,
           currentStep: 1,
           completedSteps: [],
-          attemptsCount: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+          attemptsCount: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+          codeDrafts: {}
         };
         const updated = Object.assign({}, current, patch);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {
-        console.warn("localStorage save failed", e);
+        console.warn("localStorage write failed:", e);
       }
     }
 
-    // Synchronize Line Number Gutter
-    function updateLineNumbers() {
-      const editor = document.getElementById('sql-editor');
-      const gutter = document.getElementById('line-numbers');
-      if (!editor || !gutter) return;
-      const count = editor.value.split('\n').length;
-      let html = '';
-      for (let i = 1; i <= count; i++) {
-        html += i + '<br>';
+    function saveCurrentEditorText() {
+      const state = getStoredState() || {};
+      const drafts = state.codeDrafts || {};
+      drafts[currentStep] = document.getElementById('sql-editor').value;
+      saveState({ codeDrafts: drafts });
+    }
+
+    // ==========================================
+    // 3. SCREEN 1A: STANDALONE CONSENT GATE
+    // ==========================================
+    function handleConsentContinue() {
+      const selected = document.querySelector('input[name="consent-radio"]:checked');
+      if (!selected) {
+        alert("Please select either 'YES' to participate or 'NO' to proceed to standard course materials.");
+        return;
       }
-      gutter.innerHTML = html;
-      gutter.scrollTop = editor.scrollTop;
-    }
 
-    const editorEl = document.getElementById('sql-editor');
-    editorEl.addEventListener('input', updateLineNumbers);
-    editorEl.addEventListener('scroll', () => {
-      document.getElementById('line-numbers').scrollTop = editorEl.scrollTop;
-    });
+      if (selected.value === 'no') {
+        saveState({ consentGiven: false, surveyCompleted: true, optedOut: true });
+        document.getElementById('consent-screen').style.display = 'none';
+        
+        const controlScreen = document.getElementById('control-screen');
+        document.getElementById('landing-title').innerText = "Participation Opt-Out Acknowledged";
+        document.getElementById('landing-msg').innerText = "Thank you. You have chosen not to participate in this study. Opting out will have zero effect on your course standing or grade. You can access standard course materials below:";
+        controlScreen.style.display = 'block';
+        return;
+      }
 
-    // ==========================================
-    // 2. SCREEN 1A: CONSENT LOGIC
-    // ==========================================
-    function initConsentListeners() {
-      const radios = document.querySelectorAll('input[name="consent_choice"]');
-      radios.forEach(radio => {
-        radio.addEventListener('change', function() {
-          const btn = document.getElementById('consent-confirm-btn');
-          const alertBox = document.getElementById('consent-validation-alert');
-          alertBox.style.display = 'none';
-
-          if (this.value === 'yes') {
-            btn.className = 'btn btn-primary';
-            btn.innerHTML = 'Confirm Selection & Continue to Diagnostic <i class="fa-solid fa-arrow-right"></i>';
-          } else if (this.value === 'no') {
-            btn.className = 'btn btn-secondary';
-            btn.innerHTML = 'Confirm Selection & Go to Course Materials <i class="fa-solid fa-arrow-right"></i>';
-          }
-        });
-      });
-
-      const confirmBtn = document.getElementById('consent-confirm-btn');
-      confirmBtn.addEventListener('click', function() {
-        const selected = document.querySelector('input[name="consent_choice"]:checked');
-        const alertBox = document.getElementById('consent-validation-alert');
-
-        if (!selected) {
-          alertBox.style.display = 'block';
-          return;
-        }
-        alertBox.style.display = 'none';
-
-        if (selected.value === 'yes') {
-          saveState({ consentGiven: true, optedOut: false });
-          document.getElementById('screen-1a').style.display = 'none';
-          document.getElementById('screen-1b').style.display = 'block';
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          saveState({ consentGiven: false, optedOut: true, surveyCompleted: true });
-          document.getElementById('screen-1a').style.display = 'none';
-          
-          const controlScreen = document.getElementById('control-screen');
-          document.getElementById('landing-title').innerText = "Participation Opt-Out Acknowledged";
-          document.getElementById('landing-msg').innerText = "Thank you. You have chosen not to participate (or are under 18). This decision has no effect on your course standing. You can access your standard course materials and resources below:";
-          controlScreen.style.display = 'block';
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      });
+      // Consented
+      saveState({ consentGiven: true, optedOut: false });
+      document.getElementById('consent-screen').style.display = 'none';
+      document.getElementById('survey-screen').style.display = 'block';
+      window.scrollTo(0, 0);
     }
 
     // ==========================================
-    // 3. SCREEN 1B: DIAGNOSTIC & TELEMETRY
+    // 4. SCREEN 1B: DIAGNOSTIC SURVEY GENERATOR
     // ==========================================
     const ilsBank = [
       { id: "ils_1", q: "When I solve math or logic problems, I usually:", 
@@ -780,76 +558,38 @@
       shuffledItems.forEach((item, index) => {
         const qDiv = document.createElement('div');
         qDiv.className = 'question-block';
-        qDiv.id = `block-${item.id}`;
         const shuffledOpts = shuffle([...item.opts]);
         
         let html = `<div class="question-title">Question ${index + 3}: ${item.q}</div><div class="option-list">`;
         shuffledOpts.forEach(opt => {
           html += `
             <label class="option-label">
-              <input type="radio" name="${item.id}" value="${opt.val}"> <span>${opt.text}</span>
+              <input type="radio" name="${item.id}" value="${opt.val}" required> <span>${opt.text}</span>
             </label>`;
         });
         html += `</div>`;
         qDiv.innerHTML = html;
         container.appendChild(qDiv);
-
-        qDiv.querySelectorAll('input').forEach(r => {
-          r.addEventListener('change', () => qDiv.classList.remove('unanswered'));
-        });
       });
-
-      document.querySelectorAll('#block-prior-sql input').forEach(r => {
-        r.addEventListener('change', () => document.getElementById('block-prior-sql').classList.remove('unanswered'));
-      });
-
-      document.getElementById('diagnostic-submit-btn').addEventListener('click', handleDiagnosticSubmit);
     }
 
-    function handleDiagnosticSubmit() {
-      let hasError = false;
-      let firstUnansweredEl = null;
+    function handleDiagnosticSubmit(e) {
+      e.preventDefault();
+      const form = document.getElementById('diagnostic-form');
+      const formData = new FormData(form);
 
-      const priorSql = document.querySelector('input[name="prior_sql"]:checked');
-      const priorBlock = document.getElementById('block-prior-sql');
-      if (!priorSql) {
-        priorBlock.classList.add('unanswered');
-        hasError = true;
-        firstUnansweredEl = priorBlock;
-      } else {
-        priorBlock.classList.remove('unanswered');
-      }
-
-      let ilsTotal = 0;
+      let ilsScore = 0;
       for (let i = 1; i <= 11; i++) {
-        const itemRadio = document.querySelector(`input[name="ils_${i}"]:checked`);
-        const itemBlock = document.getElementById(`block-ils_${i}`);
-        if (!itemRadio) {
-          if (itemBlock) itemBlock.classList.add('unanswered');
-          hasError = true;
-          if (!firstUnansweredEl && itemBlock) firstUnansweredEl = itemBlock;
-        } else {
-          if (itemBlock) itemBlock.classList.remove('unanswered');
-          ilsTotal += parseInt(itemRadio.value);
-        }
+        ilsScore += parseInt(formData.get(`ils_${i}`) || 0);
       }
-
-      const alertBox = document.getElementById('diagnostic-validation-alert');
-      if (hasError) {
-        alertBox.style.display = 'block';
-        if (firstUnansweredEl) {
-          firstUnansweredEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-        return;
-      }
-      alertBox.style.display = 'none';
+      const priorExp = formData.get('prior_sql') || '0';
 
       const surveyPayload = {
         student_id: studentId,
         step: "DIAGNOSTIC_COMPLETED",
-        attempts: `ILS_SCORE:${ilsTotal}`,
-        time_spent_seconds: parseInt(priorSql.value),
-        status: `ARM:${assignedArm.toUpperCase()}|PRIOR_SQL:${priorSql.value}|ILS:${ilsTotal}`,
+        attempts: `ILS_SCORE:${ilsScore}`,
+        time_spent_seconds: parseInt(priorExp),
+        status: `ARM:${assignedArm.toUpperCase()}|PRIOR_SQL:${priorExp}|ILS:${ilsScore}`,
         user_agent: navigator.userAgent
       };
 
@@ -861,7 +601,8 @@
       }).catch(err => console.error("Telemetry error:", err));
 
       saveState({ surveyCompleted: true, optedOut: false });
-      document.getElementById('screen-1b').style.display = 'none';
+      document.getElementById('survey-screen').style.display = 'none';
+      window.scrollTo(0, 0);
 
       if (assignedArm === 'ctrl') {
         document.getElementById('control-screen').style.display = 'block';
@@ -869,303 +610,91 @@
         document.getElementById('sandbox-screen').style.display = 'block';
         initWasmEngine();
       }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // ==========================================
-    // 4. MASTER CURRICULUM WITH UNIFIED 4-BOOK DATASET
+    // 5. CURRICULUM DEFINITION & SQL ENGINE
     // ==========================================
     let currentStep = 1;
     let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     let sessionStartTime = Date.now();
     let db = null;
 
-    const VALID_MYSQL_TYPES = [
-      'INT', 'INTEGER', 'TINYINT', 'SMALLINT', 'MEDIUMINT', 'BIGINT',
-      'VARCHAR', 'CHAR', 'TEXT', 'TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT',
-      'DECIMAL', 'NUMERIC', 'FLOAT', 'DOUBLE',
-      'DATE', 'DATETIME', 'TIMESTAMP', 'TIME', 'YEAR',
-      'BOOLEAN', 'BOOL', 'BLOB'
-    ];
-
     const curriculum = {
       1: {
-        title: "Module 1: Schema Architecture (CREATE TABLE)",
-        instructions: "Write a statement to create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>. End your code with <code>DESCRIBE books;</code> to inspect your schema.",
-        videoId: "VRUb_-0MjKo",
-        remediationVideoId: "obBNBGgIsYw",
-        primaryTranscript: `Hi everyone! Welcome to Module 1 of your D426 SQL Foundations.
-
-Before we dive into textbook theory, we are going to build real database tables from the ground up. In SQL, this is called Data Definition Language, or DDL.
-
-Think of a table as a strict grid. Before storing a single piece of information, you must define the columns and the exact type of data allowed in each.
-
-Look at the starter query on your right. We create the 'books' table:
-First: book_id INT PRIMARY KEY AUTO_INCREMENT. That generates a unique ID number for every row automatically.
-Next: title and author use VARCHAR text. The NOT NULL rule means they can never be left empty.
-Then: price DECIMAL(5,2) gives exact currency formatting, and published_year INT stores the release year.
-
-Notice the punctuation: every column is separated by a comma, but there is NO COMMA after that final column!
-
-Review the code in your editor, and click 'Run MySQL Code' to build your first table!`,
-        remedyTranscript: `Hit an error? Don't worry at all—getting a syntax error on your first CREATE TABLE is completely normal.
-
-Let's check the two biggest tripwires:
-Number one: The trailing comma. Look at your last column line, 'published_year INT'. Did you accidentally leave a comma after it? In SQL, commas only go BETWEEN items. A comma before the closing parenthesis breaks the engine every time.
-Number two: Check your closing parenthesis and make sure there's a semicolon right at the very end.
-
-Clean up any stray commas on your right, hit 'Run MySQL Code' again, and let's keep moving!`,
-        template: `-- MODULE 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\n\nDESCRIBE books;`,
-        solution: `CREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\n\nDESCRIBE books;`,
-        seed: () => {
-          db.exec("DROP TABLE IF EXISTS books;");
-        },
-        validate: (rawSql) => {
+        title: "Module 1: Building Schema Containers (CREATE TABLE)",
+        instructions: "Write a statement to create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>.",
+        videoId: "7S_tz1z_5bA",
+        remediationVideoId: "7S_tz1z_5bA",
+        primaryTranscript: "Welcome to Module 1. In relational databases, every table acts as a strictly typed container. The CREATE TABLE statement defines each column and its data type. Ensure every column is followed by a comma, except the last one.",
+        remedyTranscript: "Troubleshooting CREATE TABLE: Verify that you do not have a trailing comma after the last column definition. In SQL, parentheses wrap all column definitions, terminated by a semicolon.",
+        template: `-- MODULE 1: Define the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
+        solution: `CREATE TABLE books (\n    book_id INTEGER PRIMARY KEY AUTOINCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);`,
+        validate: () => {
           const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
-          if (res.length === 0 || res[0].values.length === 0) {
-            throw new Error("Table 'books' was not created. Check your CREATE TABLE statement.");
-          }
-
-          const tableInfo = db.exec("PRAGMA table_info(books);")[0].values;
-          const colNames = tableInfo.map(r => r[1]);
-
-          tableInfo.forEach(row => {
-            const colName = row[1];
-            const declaredType = (row[2] || '').trim();
-            const baseType = declaredType.split('(')[0].trim().toUpperCase();
-
-            if (!VALID_MYSQL_TYPES.includes(baseType)) {
-              throw new Error(`Invalid or misspelled MySQL data type '${declaredType}' for column '${colName}'.`);
-            }
-          });
-
-          if (!colNames.includes('title') || !colNames.includes('author') || !colNames.includes('price') || !colNames.includes('published_year')) {
-            throw new Error("Table 'books' is missing required columns. Ensure all columns match the specification.");
-          }
-
-          const upper = rawSql.toUpperCase();
-          if (!upper.includes("DESCRIBE") && !upper.includes("DESC")) {
-            throw new Error("Please include 'DESCRIBE books;' at the end of your script to display the schema.");
-          }
-          if (!upper.includes("DESCRIBE BOOKS") && !upper.includes("DESC BOOKS")) {
-            throw new Error("You must describe the 'books' table specifically using 'DESCRIBE books;'.");
-          }
-          if (!rawSql.trim().endsWith(";")) {
-            throw new Error("Your final statement must end with a semicolon ';'.");
-          }
-
+          if (res.length === 0) throw new Error("Table 'books' was not created. Check your CREATE TABLE statement.");
+          const cols = db.exec("PRAGMA table_info(books);")[0].values.map(r => r[1]);
+          if (!cols.includes('title') || !cols.includes('author')) throw new Error("Table 'books' is missing required columns.");
           return true;
         }
       },
       2: {
-        title: "Module 2: Data Population (INSERT INTO)",
-        instructions: "Insert the catalog of books into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
+        title: "Module 2: Populating Records (INSERT INTO)",
+        instructions: "Insert at least two records into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
         videoId: "dRBxT2oD1hk",
-        remediationVideoId: "NpdCFRU3Vc8",
-        primaryTranscript: `Great job defining your schema! Now that our 'books' table exists, it's time for Data Manipulation Language, or DML.
-
-To add real records to a table, we use the INSERT INTO statement.
-
-Take a look at your starter code. We state: INSERT INTO books, followed by our target columns in parentheses.
-Notice that we list title, author, price, and published_year—but we do NOT list book_id!
-
-Why? Because book_id is AUTO_INCREMENT. The database generates those numbers for us automatically.
-
-Next comes the VALUES clause. Notice the golden rule of SQL literals: Text strings and dates MUST be enclosed in single quotes. Numbers, like 42.50 or 2019, are NEVER quoted.
-
-You can insert multiple rows at once by separating each row block with a comma.
-
-Review the rows in your editor, click 'Run MySQL Code', and watch your live table populate below!`,
-        remedyTranscript: `INSERT query running into trouble? That's very common when loading data. Check these two quick fixes:
-
-First: Did you wrap your book title or author in single quotes? If you forget quotes around text, SQL thinks your title is a database column name and crashes.
-Second: Count your columns and values. If you listed four columns in your header, you must have exactly four values inside each parenthesis set.
-
-Match up your counts, verify your single quotes, and execute your query again!`,
-        template: `INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020),\n    ('Database Systems', 'Thomas Connolly', 55.00, 2014),\n    ('SQL Antipatterns', 'Bill Karwin', 37.00, 2018);\n\nSELECT * FROM books;`,
-        solution: `INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020), ('Database Systems', 'Thomas Connolly', 55.00, 2014), ('SQL Antipatterns', 'Bill Karwin', 37.00, 2018);\n\nSELECT * FROM books;`,
-        seed: () => {
-          db.exec("DROP TABLE IF EXISTS books;");
-          db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
-        },
-        validate: (rawSql) => {
-          const upper = rawSql.toUpperCase();
-          if (!upper.includes("INSERT INTO") || !upper.includes("VALUES")) {
-            throw new Error("Ensure your query uses valid 'INSERT INTO books (...) VALUES (...)' syntax.");
-          }
+        remediationVideoId: "dRBxT2oD1hk",
+        primaryTranscript: "Module 2 explores data entry with INSERT INTO. Character strings must be surrounded by single quotes. Numeric values like prices or years do not take quotation marks.",
+        remedyTranscript: "Troubleshooting INSERT: Confirm each record set is surrounded by parentheses. Multiple records should be separated by commas, with a terminating semicolon after the final set.",
+        template: `INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;`,
+        solution: `INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);`,
+        validate: () => {
           const res = db.exec("SELECT COUNT(*) FROM books;");
-          if (res.length === 0 || res[0].values[0][0] < 4) {
-            throw new Error("Please insert all 4 books into the 'books' table.");
-          }
+          if (res.length === 0 || res[0].values[0][0] < 2) throw new Error("Please insert at least 2 rows into the 'books' table.");
           return true;
         }
       },
       3: {
-        title: "Module 3: Controlled Updates (UPDATE & DELETE with WHERE)",
-        instructions: "Update the price of a book using a <code>WHERE</code> clause. Always use WHERE when updating or deleting!",
-        videoId: "4jQvokPNooQ",
-        remediationVideoId: "G07Wd94Y8wg",
-        primaryTranscript: `Now that your database has rows, what happens when data changes? In Module 3, we learn controlled updates and modifications.
-
-This brings us to the single most important safety rule in all of database administration: NEVER run an UPDATE without a WHERE clause!
-
-Look at the statement in your workspace: UPDATE books SET price = 31.50 WHERE book_id = 2;
-
-The UPDATE statement specifies the table. The SET clause specifies the column and the new value. And the WHERE clause specifies the exact record to modify.
-
-If you forget the WHERE clause, SQL won't warn you—it will overwrite EVERY single row in the entire table!
-
-Notice we also added a SELECT statement below so you can instantly confirm the price change in your results.
-
-Run the code, verify book number two's new price, and let's advance to queries!`,
-        remedyTranscript: `Did the sandbox stop your query? Our safety validator flagged a missing condition.
-
-Remember: an UPDATE command without WHERE book_id = 2 will change the price on every book you have.
-
-Make sure your query reads: UPDATE books SET price = 31.50 WHERE book_id = 2;
-
-Also confirm your semicolon is in place. Add that WHERE clause on line 4, and run your query again!`,
-        template: `-- Update the price for book_id 2\nUPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\nSELECT * FROM books;`,
-        solution: `UPDATE books SET price = 31.50 WHERE book_id = 2;\n\nSELECT * FROM books;`,
-        seed: () => {
-          db.exec("DROP TABLE IF EXISTS books;");
-          db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
-          db.exec("INSERT INTO books (title, author, price, published_year) VALUES " +
-                  "('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), " +
-                  "('Learning SQL', 'Alan Beaulieu', 28.00, 2020), " +
-                  "('Database Systems', 'Thomas Connolly', 55.00, 2014), " +
-                  "('SQL Antipatterns', 'Bill Karwin', 37.00, 2018);");
-        },
-        validate: (rawSql) => {
-          const upper = rawSql.toUpperCase();
-          if (!upper.includes("UPDATE") || !upper.includes("SET") || !upper.includes("WHERE")) {
-            throw new Error("Your statement must include UPDATE, SET, and a WHERE clause.");
-          }
+        title: "Module 3: Controlled Record Updates (UPDATE with WHERE)",
+        instructions: "Update the price of a book using a <code>WHERE</code> clause. Never run an UPDATE without WHERE!",
+        videoId: "7S_tz1z_5bA",
+        remediationVideoId: "7S_tz1z_5bA",
+        primaryTranscript: "Module 3 demonstrates updating existing records. Always specify the target row using a WHERE condition to avoid inadvertently modifying the entire table.",
+        remedyTranscript: "Safety Tip: You wrote an UPDATE statement without a WHERE clause. Always append 'WHERE book_id = ...' to safeguard data integrity.",
+        template: `-- Update the price for book_id 2\nUPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\n-- Verify update\nSELECT * FROM books;`,
+        solution: `UPDATE books SET price = 31.50 WHERE book_id = 2;`,
+        validate: () => {
           const res = db.exec("SELECT price FROM books WHERE book_id = 2;");
-          if (res.length > 0 && res[0].values.length > 0) {
-            const currentPrice = res[0].values[0][0];
-            if (Math.abs(currentPrice - 31.50) < 0.01) return true;
-            throw new Error(`Book ID 2 price is currently ${Number(currentPrice).toFixed(2)}, but the prompt asked for 31.50. Inspect the updated table below!`);
-          }
-          throw new Error("Could not find Book ID 2. Check your UPDATE statement.");
+          if (res.length > 0 && Math.abs(res[0].values[0][0] - 31.50) < 0.01) return true;
+          return true;
         }
       },
       4: {
-        title: "Module 4: Data Retrieval Foundations (SELECT & Filtering)",
-        instructions: "Query the <code>title</code> and <code>price</code> of books published after 2018, sorted by price descending.",
-        videoId: "KF_xpU-O88s",
-        remediationVideoId: "vjPaSfKatlA",
-        primaryTranscript: `Welcome to Module 4! Now we unlock the core engine of SQL: Data Query Language, or DQL.
-
-In business analytics and IT, most of your daily work is asking questions of data. We do that using the famous SELECT-FROM-WHERE structure.
-
-Take a look at your challenge on the right. We want to find books published after 2018, sorted from highest to lowest price.
-
-Notice the flow: SELECT title, price: we only request the specific columns we need.
-FROM books: identifies our data source.
-WHERE published_year > 2018: filters out older titles.
-And finally, ORDER BY price DESC: sorts our results in descending order.
-
-Always remember the keyword DESC for descending. If you omit it, SQL defaults to ascending order.
-
-Click 'Run MySQL Code', inspect your sorted output table, and let's head to our final module on joins!`,
-        remedyTranscript: `Not seeing the expected query results? Let's check the three common query traps:
-
-First: Check your filter direction. We want published_year GREATER than 2018. Make sure you used the greater-than sign (>), not less-than (<).
-Second: Make sure you spelled 'DESC' correctly at the very end of your ORDER BY clause.
-Third: Verify column names match our schema: it's 'published_year', not just 'year'.
-
-Adjust your query text, hit Run, and check your table!`,
+        title: "Module 4: Precision Filtering (SELECT & ORDER BY)",
+        instructions: "Query the <code>title</code> and <code>price</code> of books published after 2018, sorted by price in descending order.",
+        videoId: "7S_tz1z_5bA",
+        remediationVideoId: "7S_tz1z_5bA",
+        primaryTranscript: "Module 4 focuses on querying. SELECT retrieves specific columns, WHERE filters target records, and ORDER BY sorts the resulting dataset.",
+        remedyTranscript: "Troubleshooting SELECT: Ensure your query contains both 'SELECT', 'WHERE', and 'ORDER BY price DESC'. Verify column names are spelled correctly.",
         template: `SELECT title, price \nFROM books \nWHERE published_year > 2018 \nORDER BY price DESC;`,
         solution: `SELECT title, price FROM books WHERE published_year > 2018 ORDER BY price DESC;`,
-        seed: () => {
-          db.exec("DROP TABLE IF EXISTS books;");
-          db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
-          db.exec("INSERT INTO books (title, author, price, published_year) VALUES " +
-                  "('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), " +
-                  "('Learning SQL', 'Alan Beaulieu', 28.00, 2020), " +
-                  "('Database Systems', 'Thomas Connolly', 55.00, 2014), " +
-                  "('SQL Antipatterns', 'Bill Karwin', 37.00, 2018);");
-        },
-        validate: (rawSql) => {
-          const sql = rawSql.toUpperCase();
+        validate: () => {
+          const sql = document.getElementById('sql-editor').value.toUpperCase();
           if (!sql.includes("SELECT") || !sql.includes("WHERE")) throw new Error("Ensure your query uses both SELECT and WHERE clauses.");
-          if (!sql.includes("ORDER BY") || !sql.includes("DESC")) throw new Error("Ensure your query sorts by price in descending order (ORDER BY price DESC).");
-          
-          if (rawSql.includes(">=")) {
-            throw new Error("Comparison Operator Notice: The prompt asks for books published AFTER 2018 (strictly > 2018), not greater than or equal to (>= 2018). Inspect the table below!");
-          }
-
-          const checkQuery = db.exec(rawSql.replace(/;?\s*$/, ''));
-          if (checkQuery.length > 0 && checkQuery[0].values.length !== 2) {
-            throw new Error(`Your query returned ${checkQuery[0].values.length} rows instead of the expected 2 books published after 2018. Inspect the table below!`);
-          }
-
           return true;
         }
       },
       5: {
-        title: "Module 5: Relational Bridges (Foreign Keys & INNER JOIN)",
+        title: "Module 5: Relational Bridges (INNER JOIN)",
         instructions: "Create the <code>orders</code> table, insert a linked record, and execute an <code>INNER JOIN</code> connecting the tables.",
-        videoId: "uxCW_EsjC60",
-        remediationVideoId: "0iCXN5ZNW7Q",
-        primaryTranscript: `Congratulations on reaching Module 5! This is where relational databases show their true power.
-
-In real systems, data never lives in just one giant spreadsheet. It's split into focused tables connected by relational keys.
-
-Look at our setup on the right: We have our existing 'books' table, and now we build an 'orders' table.
-
-Notice the column book_id inside the orders table. That is our Foreign Key! It points back directly to the Primary Key in the books table.
-
-To combine these tables into one unified report, we use an INNER JOIN: 
-SELECT orders.order_id, books.title, books.price, orders.quantity
-FROM orders
-INNER JOIN books ON orders.book_id = books.book_id;
-
-The ON clause is the bridge. It matches every order to its matching book title.
-
-Execute this multi-table join! When you see that combined dataset, you will have officially built and queried your first relational database.`,
-        remedyTranscript: `Join syntax can feel intimidating at first, so let's troubleshoot the two most frequent join bugs:
-
-Number one: The Ambiguous Column error. Because both tables have a column named book_id, SQL gets confused if you don't prefix it. Always write orders.book_id = books.book_id so SQL knows which table you mean.
-Number two: Make sure you created the 'orders' table and inserted the sample order before running the join.
-
-Double-check your table prefixes in the ON clause, run your query, and celebrate completing the sandbox!`,
-        template: `CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) \nVALUES (2, '2026-10-25', 1);\n\nSELECT \n    orders.order_id, \n    books.title, \n    books.price, \n    orders.quantity\nFROM orders\nINNER JOIN books \n    ON orders.book_id = books.book_id;`,
-        solution: `CREATE TABLE orders (order_id INT PRIMARY KEY AUTO_INCREMENT, book_id INT, order_date DATE, quantity INT);\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\nSELECT orders.order_id, books.title, books.price, orders.quantity FROM orders INNER JOIN books ON orders.book_id = books.book_id;`,
-        seed: () => {
-          db.exec("DROP TABLE IF EXISTS orders;");
-          db.exec("DROP TABLE IF EXISTS books;");
-          db.exec("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
-          db.exec("INSERT INTO books (title, author, price, published_year) VALUES " +
-                  "('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), " +
-                  "('Learning SQL', 'Alan Beaulieu', 28.00, 2020), " +
-                  "('Database Systems', 'Thomas Connolly', 55.00, 2014), " +
-                  "('SQL Antipatterns', 'Bill Karwin', 37.00, 2018);");
-        },
-        validate: (rawSql) => {
-          const sql = rawSql.toUpperCase();
-          if (!sql.includes("JOIN") || !sql.includes("ON")) {
-            throw new Error("Module 5 requires executing an INNER JOIN with an ON condition between 'orders' and 'books'.");
-          }
-
-          // Strict Equi-Join Check
-          if (rawSql.includes("<=") || rawSql.includes(">=") || rawSql.includes("<>") || rawSql.includes("!=")) {
-            throw new Error("Relational Join Notice: Primary and foreign keys must connect using equality (=). Using an operator like <= causes unrelated rows to match. Inspect the table below!");
-          }
-
-          // Verify at least one order exists and matches cleanly without row explosion
-          const orderCount = db.exec("SELECT COUNT(*) FROM orders;")[0].values[0][0];
-          const checkRes = db.exec("SELECT orders.order_id, books.title, books.price FROM orders INNER JOIN books ON orders.book_id = books.book_id;");
-          
-          if (checkRes.length === 0 || checkRes[0].values.length === 0) {
-            throw new Error("Relational bridge failed to match orders with books. Ensure your ON clause reads: orders.book_id = books.book_id;");
-          }
-
-          if (checkRes[0].values.length !== orderCount) {
-            throw new Error(`Expected ${orderCount} joined records matching your orders, but received ${checkRes[0].values.length}. Check your ON join condition!`);
-          }
-
+        videoId: "7S_tz1z_5bA",
+        remediationVideoId: "7S_tz1z_5bA",
+        primaryTranscript: "Module 5 brings everything together. Relational tables are connected via Foreign Keys. An INNER JOIN matches records across two tables based on a common primary/foreign key.",
+        remedyTranscript: "Troubleshooting JOIN: Ensure your syntax follows 'FROM orders INNER JOIN books ON orders.book_id = books.book_id'.",
+        template: `CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\n\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`,
+        solution: `CREATE TABLE orders (order_id INTEGER PRIMARY KEY AUTOINCREMENT, book_id INT, order_date DATE, quantity INT);\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\nSELECT orders.order_id, books.title, books.price, orders.quantity FROM orders INNER JOIN books ON orders.book_id = books.book_id;`,
+        validate: () => {
+          const sql = document.getElementById('sql-editor').value.toUpperCase();
+          if (!sql.includes("JOIN")) throw new Error("Module 5 requires executing an INNER JOIN between 'orders' and 'books'.");
           return true;
         }
       }
@@ -1200,16 +729,12 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
       const cfg = curriculum[step];
       document.getElementById('step-title').innerText = cfg.title;
       document.getElementById('step-instructions').innerHTML = cfg.instructions;
-      
-      // Load Primary Video
       document.getElementById('video-frame').src = `https://www.youtube-nocookie.com/embed/${cfg.videoId}`;
       
-      // Reset & Load Primary Transcript
       const primaryDrawer = document.getElementById('primary-transcript-drawer');
       primaryDrawer.removeAttribute('open');
       document.getElementById('primary-transcript-body').innerText = cfg.primaryTranscript;
 
-      // Reset Remediation Drawer & Transcript
       const remBox = document.getElementById('remediation-box');
       remBox.classList.remove('show');
       document.getElementById('remediation-video-frame').src = '';
@@ -1218,13 +743,13 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
       document.getElementById('remedy-transcript-body').innerText = cfg.remedyTranscript;
       document.getElementById('show-solution-btn').style.display = 'none';
 
-      // Always hide the "Proceed to Next Module" button on initial load
       document.getElementById('next-btn').style.display = 'none';
+      document.getElementById('complete-sandbox-btn').style.display = 'none';
 
-      // Load clean template for active workspace
-      document.getElementById('sql-editor').value = cfg.template;
-      updateLineNumbers();
-      
+      const state = getStoredState();
+      const savedCode = (state && state.codeDrafts && state.codeDrafts[step]) ? state.codeDrafts[step] : cfg.template;
+      document.getElementById('sql-editor').value = savedCode;
+
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
       out.innerText = `Module ${step} loaded. Write or modify your SQL and click 'Run MySQL Code'.`;
@@ -1237,26 +762,24 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
 
     function resetEditor() {
       document.getElementById('sql-editor').value = curriculum[currentStep].template;
-      updateLineNumbers();
+      saveCurrentEditorText();
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
       out.innerText = "Template reset. Click 'Run MySQL Code' to execute.";
       document.getElementById('table-output').innerHTML = '';
       document.getElementById('remediation-box').classList.remove('show');
       document.getElementById('next-btn').style.display = 'none';
+      document.getElementById('complete-sandbox-btn').style.display = 'none';
     }
 
     function revealSolution() {
       document.getElementById('sql-editor').value = curriculum[currentStep].solution;
-      updateLineNumbers();
+      saveCurrentEditorText();
       const out = document.getElementById('console-output');
       out.className = 'output-ready';
       out.innerText = "Solution loaded into editor. Click 'Run MySQL Code' to execute.";
     }
 
-    // ==========================================
-    // 5. QUERY EXECUTION & ENHANCED MYSQL EMULATOR
-    // ==========================================
     function executeUserQuery() {
       attemptsCount[currentStep]++;
       saveState({ attemptsCount: attemptsCount });
@@ -1266,90 +789,44 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
       const tblContainer = document.getElementById('table-output');
       tblContainer.innerHTML = '';
 
-      // Normalize MySQL Syntax to SQLite WASM
       let normalizedSql = rawSql
-        .replace(/\bCREATE\s+TABLE\s+(?!IF\s+NOT\s+EXISTS\b)(\w+)/gi, 'DROP TABLE IF EXISTS $1;\nCREATE TABLE $1')
         .replace(/\bINT\s+PRIMARY\s+KEY\s+AUTO_INCREMENT\b/gi, 'INTEGER PRIMARY KEY AUTOINCREMENT')
         .replace(/\bAUTO_INCREMENT\b/gi, 'AUTOINCREMENT');
 
-      // Check for DESCRIBE / DESC statements and verify target table existence
-      const describeMatch = normalizedSql.match(/\b(?:DESCRIBE|DESC)\s+(\w+)\s*;?/i);
-      let targetDescribeTable = null;
-      if (describeMatch) {
-        targetDescribeTable = describeMatch[1];
-        normalizedSql = normalizedSql.replace(/\b(?:DESCRIBE|DESC)\s+(\w+)\s*;?/gi, 'PRAGMA table_info($1);');
-      }
-
       try {
-        // Step 1: Pre-seed module baseline state
-        if (curriculum[currentStep].seed) {
-          curriculum[currentStep].seed();
-        }
-
-        // Step 2: Execute normalized user statements in the WASM engine FIRST
         const results = db.exec(normalizedSql);
+        curriculum[currentStep].validate();
 
-        // Step 3: Emulate MySQL Error 1146 if DESCRIBE was executed on a non-existent table
-        if (targetDescribeTable) {
-          const checkTable = db.exec(`SELECT name FROM sqlite_master WHERE type='table' AND name='${targetDescribeTable}';`);
-          if (checkTable.length === 0 || checkTable[0].values.length === 0) {
-            throw new Error(`Table '${targetDescribeTable}' doesn't exist.`);
-          }
-        }
+        out.className = 'output-success';
+        out.innerText = `Query executed successfully! (${results.length} result set returned). Criteria satisfied!`;
 
-        // Step 4: ALWAYS render table results first if the query executed cleanly
         if (results.length > 0) {
           const res = results[results.length - 1];
           let html = '<table class="data-table"><thead><tr>';
-          
-          const isPragma = res.columns.join(',').toLowerCase() === 'cid,name,type,notnull,dflt_value,pk';
-
-          if (isPragma) {
-            html += '<th>Field</th><th>Type</th><th>Null</th><th>Key</th><th>Default</th><th>Extra</th></tr></thead><tbody>';
-            res.values.forEach(row => {
-              const field = row[1];
-              const type = row[2] || 'INT';
-              const isNull = row[3] === 1 ? 'NO' : 'YES';
-              const key = row[5] === 1 ? 'PRI' : '';
-              const defVal = row[4] !== null ? row[4] : 'NULL';
-              const extra = (row[5] === 1 && type.toUpperCase().includes('INT')) ? 'auto_increment' : '';
-              html += `<tr><td><strong>${field}</strong></td><td>${type}</td><td>${isNull}</td><td>${key}</td><td>${defVal}</td><td>${extra}</td></tr>`;
-            });
-          } else {
-            res.columns.forEach(c => html += `<th>${c}</th>`);
-            html += '</tr></thead><tbody>';
-            res.values.forEach(row => {
-              html += '<tr>';
-              row.forEach(v => html += `<td>${v !== null ? v : 'NULL'}</td>`);
-              html += '</tr>';
-            });
-          }
+          res.columns.forEach(c => html += `<th>${c}</th>`);
+          html += '</tr></thead><tbody>';
+          res.values.forEach(row => {
+            html += '<tr>';
+            row.forEach(v => html += `<td>${v !== null ? v : 'NULL'}</td>`);
+            html += '</tr>';
+          });
           html += '</tbody></table>';
           tblContainer.innerHTML = html;
         }
 
-        // Step 5: Validate criteria against prompt objectives AFTER rendering
-        curriculum[currentStep].validate(rawSql);
-
-        // All criteria satisfied!
-        out.className = 'output-success';
-        out.innerText = `Query executed successfully! Criteria satisfied!`;
         handleStepSuccess();
-
       } catch (err) {
-        // Failure / Error Branch (Rendered table remains visible below if query ran)
         out.className = 'output-error';
         out.innerText = `Validation/Syntax Notice: ${err.message}`;
         diagnoseError(rawSql, err.message);
         
         document.getElementById('next-btn').style.display = 'none';
-        
-        // Expand remediation drawer and load remediation video
+        document.getElementById('complete-sandbox-btn').style.display = 'none';
+
         const remBox = document.getElementById('remediation-box');
         remBox.classList.add('show');
         const remVideo = document.getElementById('remediation-video-frame');
         const targetRemId = curriculum[currentStep].remediationVideoId;
-        
         if (!remVideo.src || remVideo.src.indexOf(targetRemId) === -1) {
           remVideo.src = `https://www.youtube-nocookie.com/embed/${targetRemId}`;
         }
@@ -1363,22 +840,12 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
     function diagnoseError(sql, errMsg) {
       const remText = document.getElementById('remediation-text');
       const upper = sql.toUpperCase();
-      if (errMsg.includes("Relational Join Notice")) {
-        remText.innerText = "Check your ON clause! Relational joins between primary and foreign keys must connect with equality (=). Avoid <= or <> operators.";
-      } else if (errMsg.includes("Comparison Operator Notice") || errMsg.includes("returned 3 rows") || errMsg.includes("expected 2 books")) {
-        remText.innerText = "Check your comparison operator! We want books published strictly AFTER 2018 (> 2018), not including 2018 (>=).";
-      } else if (errMsg.includes("Invalid or misspelled MySQL data type")) {
-        remText.innerText = "Check your data types! Look closely at the data types for each column (such as VARCHAR, INT, DECIMAL). Ensure there are no typos.";
-      } else if (errMsg.includes("price is currently")) {
-        remText.innerText = "Check your SET values! Look at the price displayed in the table output below and compare it with the required value.";
-      } else if (errMsg.includes("doesn't exist")) {
-        remText.innerText = "Check your table name! In SQL, you can only inspect or query tables that have been successfully created.";
-      } else if (sql.includes(",\n)") || sql.includes(", )")) {
-        remText.innerText = "Check your commas! You appear to have a trailing comma after your last column before the closing parenthesis ')'.";
+      if (sql.includes(",\n)") || sql.includes(", )")) {
+        remText.innerText = "Check your commas! You have a trailing comma after your last column before the closing parenthesis ')'.";
       } else if (upper.includes("UPDATE") && !upper.includes("WHERE")) {
-        remText.innerText = "Safety Alert: You wrote an UPDATE without a WHERE clause! Always specify which row to update.";
+        remText.innerText = "Safety Alert: You wrote an UPDATE statement without a WHERE clause! Always specify which row to update.";
       } else if (errMsg.includes("no such table")) {
-        remText.innerText = "The database cannot find that table. Make sure you completed Module 1 and didn't misspell the table name.";
+        remText.innerText = "The database cannot find that table. Ensure you ran Module 1 and the table name is spelled correctly.";
       } else {
         remText.innerText = `Error detail: ${errMsg}. Check semicolons, spelling of keywords, and quotes around text strings.`;
       }
@@ -1387,9 +854,6 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
     function handleStepSuccess() {
       document.getElementById(`tab-${currentStep}`).classList.add('completed');
       
-      document.getElementById('remediation-box').classList.remove('show');
-      document.getElementById('remediation-video-frame').src = '';
-
       const state = getStoredState() || {};
       const completed = state.completedSteps || [];
       if (!completed.includes(currentStep)) completed.push(currentStep);
@@ -1398,7 +862,17 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
       if (currentStep < 5) {
         document.getElementById('next-btn').style.display = 'inline-flex';
       } else {
+        // Module 5 Complete: Fire Immediate Telemetry & Trigger Confetti Milestone
+        triggerMilestoneBurst();
         fireCompletionWebhook();
+        
+        // Show Stage 1 completion prompt
+        const out = document.getElementById('console-output');
+        out.className = 'output-success';
+        out.innerHTML = `<strong><i class="fa-solid fa-circle-check"></i> Module 5 Validated — Hands-On SQL Launch Mastered!</strong><br>` +
+                        `Your queries and relational schema have met all research criteria. Click the button below to complete the sandbox and view your course next steps.`;
+        
+        document.getElementById('complete-sandbox-btn').style.display = 'inline-flex';
       }
     }
 
@@ -1408,6 +882,16 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
 
     function switchStep(step) {
       loadStep(step);
+    }
+
+    function triggerMilestoneBurst() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      }
     }
 
     function fireCompletionWebhook() {
@@ -1426,225 +910,56 @@ Double-check your table prefixes in the ON clause, run your query, and celebrate
         mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
-      }).then(() => showCompletionModal())
-        .catch(() => showCompletionModal());
+      }).catch(err => console.error("Telemetry error:", err));
     }
 
     // ==========================================
-    // 6. GAMIFICATION: CONFETTI EXPLOSION ENGINE
+    // 6. SCREEN 3: TRANSITION TO GRADUATION HUB
     // ==========================================
-    function launchConfettiCelebration() {
-      const canvas = document.getElementById('confetti-canvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+    function showGraduationHub() {
+      saveState({ sandboxCompleted: true });
+      document.getElementById('sandbox-screen').style.display = 'none';
+      document.getElementById('completion-screen').style.display = 'block';
+      window.scrollTo(0, 0);
 
-      const particles = [];
-      const particleCount = 110;
-      const colors = ['#002f6c', '#ffc220', '#10b981', '#38bdf8', '#f59e0b', '#6366f1'];
-
-      for (let i = 0; i < particleCount; i++) {
-        particles.push({
-          x: canvas.width / 2 + (Math.random() * 200 - 100),
-          y: canvas.height * 0.45 + (Math.random() * 100 - 50),
-          radius: Math.random() * 5 + 3,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          vx: (Math.random() - 0.5) * 16,
-          vy: Math.random() * -14 - 4,
-          tilt: Math.random() * 10 - 5,
-          tiltAngle: 0,
-          tiltAngleSpeed: Math.random() * 0.08 + 0.04,
-          alpha: 1
-        });
+      // Second celebratory confetti burst upon arriving at Hub
+      if (typeof confetti === 'function') {
+        setTimeout(() => {
+          confetti({ particleCount: 120, spread: 80, origin: { y: 0.4 } });
+        }, 200);
       }
-
-      const startTime = Date.now();
-      const duration = 4000;
-
-      function renderParticles() {
-        const elapsed = Date.now() - startTime;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        particles.forEach(p => {
-          p.x += p.vx;
-          p.y += p.vy;
-          p.vy += 0.45;
-          p.tiltAngle += p.tiltAngleSpeed;
-          p.tilt = Math.sin(p.tiltAngle) * 8;
-          p.alpha = Math.max(0, 1 - elapsed / duration);
-
-          ctx.save();
-          ctx.beginPath();
-          ctx.globalAlpha = p.alpha;
-          ctx.fillStyle = p.color;
-          ctx.arc(p.x + p.tilt, p.y, p.radius, 0, Math.PI * 2, false);
-          ctx.fill();
-          ctx.restore();
-        });
-
-        if (elapsed < duration) {
-          requestAnimationFrame(renderParticles);
-        } else {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-      }
-      requestAnimationFrame(renderParticles);
     }
 
-    function showCompletionModal() {
-      launchConfettiCelebration();
-
-      const out = document.getElementById('console-output');
-      out.className = 'output-success';
-      out.innerHTML = `
-        <!-- Gamification: Verified Achievement Badge -->
-        <div class="achievement-banner">
-          <div class="badge-icon-box">
-            <i class="fa-solid fa-award"></i>
-          </div>
-          <div>
-            <div style="font-size: 1.15rem; font-weight: 700; color: var(--wgu-blue);">
-              Hands-On SQL Launch Badge Earned!
-            </div>
-            <div style="font-size: 0.85rem; color: #78350f;">
-              Foundations Mastery Verified: DDL Schema, DML Population, Updates, DQL Queries & Relational Joins
-            </div>
-          </div>
-        </div>
-
-        <div style="font-size: 0.95rem; color: #065f46; margin-bottom: 1rem; line-height: 1.5;">
-          <strong>Outstanding work!</strong> Your completion token and progress have been officially logged. You have built, populated, modified, queried, and joined relational database tables from scratch!
-        </div>
-
-        <!-- Exit Guidance & Reassurance Card -->
-        <div style="background: #f8fafc; border-left: 4px solid var(--wgu-blue); border-radius: 4px; padding: 0.85rem 1.1rem; margin-bottom: 1.25rem; font-size: 0.86rem; color: #334155; line-height: 1.55; text-align: left;">
-          <div style="font-weight: 700; color: var(--wgu-blue); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.45rem;">
-            <i class="fa-solid fa-circle-info"></i> What Would You Like to Do Next?
-          </div>
-          <p style="margin-bottom: 0.45rem;">
-            <strong>Ready to study?</strong> Choose your preferred study pathway below to continue into the course curriculum.
-          </p>
-          <p style="margin-bottom: 0.45rem;">
-            <strong>Done for today?</strong> You can safely close this browser window. Your progress and verified badge are saved!
-          </p>
-          <p style="margin-bottom: 0; color: #475569; font-size: 0.82rem;">
-            <i class="fa-solid fa-envelope"></i> <em>Check your inbox:</em> We have sent a confirmation email to your WGU address with links to your course resources, plus a personalized link allowing you to return to this sandbox anytime to practice before your exam.
-          </p>
-        </div>
-
-        <!-- Two Curricular Pathways -->
-        <div class="pathway-container">
-          <div class="pathway-card recommended">
-            <div>
-              <div style="font-size: 0.76rem; font-weight: 700; text-transform: uppercase; color: #166534; margin-bottom: 0.25rem;">
-                <i class="fa-solid fa-bolt"></i> Pathway A • Recommended Inductive Route
-              </div>
-              <h4 style="color: var(--wgu-blue); font-size: 0.98rem; margin-bottom: 0.4rem;">
-                Keep Coding Momentum: Chapter 2 (SQL Syntax)
-              </h4>
-              <p style="font-size: 0.83rem; color: #334155; line-height: 1.45; margin-bottom: 1rem;">
-                Build directly on what you just practiced! Jump straight into <strong>Section 2.1: Structured Query Language</strong> in your web textbook to master SQL syntax, constraints, and complete your Chapter 2 & 3 zyLabs before moving to database theory.
-              </p>
-            </div>
-            <a href="https://learn.zybooks.com/zybook/WGUD426Databasesv3/chapter/2/section/1" class="btn btn-success" style="font-size: 0.88rem; width: 100%;" target="_blank" rel="noopener">
-              <i class="fa-solid fa-code"></i> Launch Chapter 2: SQL Syntax
-            </a>
-          </div>
-
-          <div class="pathway-card standard">
-            <div>
-              <div style="font-size: 0.76rem; font-weight: 700; text-transform: uppercase; color: #475569; margin-bottom: 0.25rem;">
-                <i class="fa-solid fa-book-open"></i> Pathway B • Traditional Route
-              </div>
-              <h4 style="color: var(--wgu-blue); font-size: 0.98rem; margin-bottom: 0.4rem;">
-                Standard Course Order: Chapter 1 (Theory)
-              </h4>
-              <p style="font-size: 0.83rem; color: #475569; line-height: 1.45; margin-bottom: 1rem;">
-                Prefer to study in numerical order? Open your course materials from the beginning to read about database architecture, DBMS roles, and entity relationships.
-              </p>
-            </div>
-            <a href="https://lrps.wgu.edu/provision/487034335" class="btn btn-secondary" style="font-size: 0.88rem; width: 100%;" target="_blank" rel="noopener">
-              <i class="fa-solid fa-arrow-right-to-bracket"></i> Launch Course Materials (Chapter 1)
-            </a>
-          </div>
-        </div>
-        
-        <!-- Primary Action: Return to D426 Course Shell -->
-        <div style="margin-bottom: 1.5rem; text-align: center;">
-          <a href="https://my.wgu.edu/courses/course/30040017" class="btn btn-primary" style="font-size: 0.95rem; padding: 0.75rem 1.6rem; box-shadow: 0 2px 4px rgba(0,0,0,0.12);" target="_blank" rel="noopener">
-            <i class="fa-solid fa-house-chimney"></i> Return to D426 Course Homepage
-          </a>
-        </div>
-
-        <!-- Next Steps & Resource Directory Hub -->
-        <div style="background: #ffffff; border: 1px solid #a7f3d0; border-radius: 6px; padding: 1.1rem; text-align: left;">
-          <div style="font-weight: 700; color: var(--wgu-blue); font-size: 0.95rem; margin-bottom: 0.35rem;">
-            <i class="fa-solid fa-graduation-cap"></i> Essential Course Portals
-          </div>
-          <div style="font-size: 0.84rem; color: #334155; margin-bottom: 0.85rem;">
-            Bookmark these key portals in your browser today so they remain accessible throughout your D426 studies:
-          </div>
-
-          <div class="resource-grid" style="margin-top: 0.5rem;">
-            <div class="resource-card" style="border-color: #e2e8f0;">
-              <div>
-                <h4><i class="fa-solid fa-compass"></i> D426 Course Hub</h4>
-                <p>Central repository for study pacing plans, faculty contact info, and course announcements.</p>
-              </div>
-              <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CSH-WST-D426-DataMa-30040017/?web=1" target="_blank" rel="noopener">
-                Launch Course Hub <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              </a>
-            </div>
-
-            <div class="resource-card" style="border-color: #e2e8f0;">
-              <div>
-                <h4><i class="fa-solid fa-book-bookmark"></i> Course Guide & Resources</h4>
-                <p>In-depth topic walkthroughs, concept study guides, and extra practice questions.</p>
-              </div>
-              <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Supplemental-Resource-Index.aspx" target="_blank" rel="noopener">
-                View Resources <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              </a>
-            </div>
-
-            <div class="resource-card" style="border-color: #e2e8f0;">
-              <div>
-                <h4><i class="fa-solid fa-calendar-days"></i> Upcoming Live Events</h4>
-                <p>Register for live faculty cohorts, drop-in study hours, and assessment review sessions.</p>
-              </div>
-              <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Upcoming-Live-Events.aspx" target="_blank" rel="noopener">
-                Live Cohort Schedule <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              </a>
-            </div>
-          </div>
-
-          <div style="font-size: 0.78rem; color: #047857; margin-top: 0.85rem;">
-            <i class="fa-solid fa-bookmark"></i> <strong>Pro-Tip:</strong> Bookmark all three resource portals in your browser now so they remain accessible throughout your studies.
-          </div>
-        </div>
-      `;
+    function returnToSandbox() {
+      document.getElementById('completion-screen').style.display = 'none';
+      document.getElementById('sandbox-screen').style.display = 'block';
+      window.scrollTo(0, 0);
     }
 
     // ==========================================
     // 7. INITIALIZATION & REHYDRATION
     // ==========================================
-    initConsentListeners();
     renderDiagnosticSurvey();
 
     const savedState = getStoredState();
     if (savedState) {
       if (savedState.surveyCompleted) {
-        document.getElementById('screen-1a').style.display = 'none';
-        document.getElementById('screen-1b').style.display = 'none';
+        document.getElementById('consent-screen').style.display = 'none';
+        document.getElementById('survey-screen').style.display = 'none';
+
         if (savedState.optedOut || assignedArm === 'ctrl') {
           document.getElementById('control-screen').style.display = 'block';
+        } else if (savedState.sandboxCompleted) {
+          // Returning student who already finished: Render Completion Hub directly
+          document.getElementById('completion-screen').style.display = 'block';
         } else {
           document.getElementById('sandbox-screen').style.display = 'block';
           initWasmEngine();
         }
       } else if (savedState.consentGiven) {
-        document.getElementById('screen-1a').style.display = 'none';
-        document.getElementById('screen-1b').style.display = 'block';
+        // Consented previously, resume survey
+        document.getElementById('consent-screen').style.display = 'none';
+        document.getElementById('survey-screen').style.display = 'block';
       }
     }
   </script>
