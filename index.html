@@ -146,7 +146,7 @@
   <header>
     <div>
       <h1>D426: Data Management Foundations</h1>
-      <div style="font-size: 0.78rem; opacity: 0.85;">Curricular Sequencing Research Project</div>
+      <div style="font-size: 0.78rem; opacity: 0.85;">Interactive SQL Practice & Study Prep</div>
     </div>
     <div class="header-controls">
       <button type="button" id="open-tour-btn" class="btn btn-sm btn-ghost-light" style="display: none;">
@@ -169,13 +169,13 @@
       </div>
       <div class="modal-body">
         <p style="font-size: 0.9rem; color: #334155; margin-bottom: 0.85rem;">
-          Take 4 minutes to see how this interactive sandbox works, how to navigate between modules, and how to experiment with live SQL commands (~25–30 minutes total).
+          Take 4 minutes to see how this practice sandbox works, how to move between modules, and how to test out live SQL commands (~25–30 minutes total).
         </p>
         <div class="video-container">
           <iframe id="welcome-video-frame" src="" allowfullscreen></iframe>
         </div>
         <details style="font-size: 0.82rem; background: #f8fafc; padding: 0.55rem 0.75rem; border-radius: 5px; border: 1px solid var(--border);">
-          <summary style="cursor: pointer; font-weight: 600; color: #475569;"><i class="fa-solid fa-align-left"></i> View Welcome Orientation Transcript</summary>
+          <summary style="cursor: pointer; font-weight: 600; color: #475569;"><i class="fa-solid fa-align-left"></i> Read Video Transcript</summary>
           <div style="margin-top: 0.5rem; line-height: 1.48; color: #334155; max-height: 170px; overflow-y: auto; white-space: pre-line;">Hey there, and welcome to the D426 SQL Sandbox! First off, thank you so much for jumping in and participating in this research study—I’m genuinely excited you’re here.
 
 So, what is this all about? Well, when you’re starting out in Data Management Foundations, diving straight into dense textbook theory can feel a little overwhelming. We think that spending just about 30 minutes getting your hands dirty with a few of the most common, high-impact SQL commands right up front will help you hit the ground running—and potentially boost your Objective Assessment score and help you pass the course faster, too.
@@ -194,7 +194,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
         </details>
       </div>
       <div class="modal-footer">
-        <span style="font-size: 0.8rem; color: #64748b;"><i class="fa-solid fa-circle-info"></i> You can reopen this video anytime via <strong>Sandbox Tour & Help</strong> in the top bar.</span>
+        <span style="font-size: 0.8rem; color: #64748b;"><i class="fa-solid fa-circle-info"></i> You can rewatch this tour anytime by clicking <strong>Sandbox Tour & Help</strong> at the top.</span>
         <button type="button" id="start-sandbox-btn" class="btn btn-gold">
           Let's Get Started <i class="fa-solid fa-arrow-right"></i>
         </button>
@@ -223,12 +223,12 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
     <!-- ========================================================= -->
     <div id="access-denied-screen" class="card" style="display: none; text-align: center; padding: 3rem 1.5rem;">
       <i class="fa-solid fa-lock" style="font-size: 2.75rem; color: var(--wgu-blue); margin-bottom: 1rem;"></i>
-      <h2 style="color: var(--wgu-blue); margin-bottom: 0.6rem;">Personalized Research Link Required</h2>
+      <h2 style="color: var(--wgu-blue); margin-bottom: 0.6rem;">Personal Study Link Required</h2>
       <p style="max-width: 580px; margin: 0 auto 1.25rem auto; color: #475569; font-size: 0.95rem;">
-        Direct access without a valid participant link is not available. Please open this page using the personal link sent to your WGU email address.
+        To open this page, please use the personal link sent to your WGU email address.
       </p>
       <a href="https://my.wgu.edu/courses/course/30040017" class="btn btn-primary" target="_blank" rel="noopener">
-        <i class="fa-solid fa-graduation-cap"></i> Return to D426 Course Page
+        <i class="fa-solid fa-graduation-cap"></i> Go to D426 Course Page
       </a>
     </div>
 
@@ -288,31 +288,31 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
     </div>
 
     <!-- ========================================================= -->
-    <!-- SCREEN 1B: DIAGNOSTIC SURVEY INSTRUMENT                  -->
+    <!-- SCREEN 1B: QUICK STUDY STYLE CHECK-IN                     -->
     <!-- ========================================================= -->
     <div id="survey-screen" class="card" style="display: none;">
       <div style="margin-bottom: 1.25rem;">
-        <h2 style="color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.25rem;">Learning Preferences & Background Diagnostic</h2>
-        <p style="font-size: 0.85rem; color: #64748b;">Please answer the following items to help tailor instructional sequencing insights.</p>
+        <h2 style="color: var(--wgu-blue); font-size: 1.25rem; margin-bottom: 0.25rem;">Quick Study Style Check-In</h2>
+        <p style="font-size: 0.85rem; color: #64748b;">Answer these quick questions about your database background and how you like to learn.</p>
       </div>
 
       <form id="diagnostic-form">
         <div class="question-block">
-          <div class="question-title">Question 2: Prior to starting D426, how would you rate your experience with SQL and relational databases?</div>
+          <div class="question-title">Question 2: Before starting D426, how much experience did you have with SQL and databases?</div>
           <div class="option-list">
-            <label class="option-label"><input type="radio" name="prior_sql" value="1" required> 1 - None (Never seen or written SQL code)</label>
-            <label class="option-label"><input type="radio" name="prior_sql" value="2" required> 2 - Novice (Familiar with the concept, but little to no query experience)</label>
-            <label class="option-label"><input type="radio" name="prior_sql" value="3" required> 3 - Intermediate (Have written basic SELECT, INSERT, or UPDATE queries)</label>
-            <label class="option-label"><input type="radio" name="prior_sql" value="4" required> 4 - Advanced (Regularly write multi-table JOINs, aggregations, or subqueries)</label>
-            <label class="option-label"><input type="radio" name="prior_sql" value="5" required> 5 - Professional (Work or have worked managing databases professionally)</label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="1" required> 1 - None (I have never seen or written SQL code)</label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="2" required> 2 - Beginner (I know what SQL is, but have little or no practice writing it)</label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="3" required> 3 - Some Experience (I have written basic SELECT, INSERT, or UPDATE queries)</label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="4" required> 4 - Experienced (I regularly write multi-table JOINs and complex queries)</label>
+            <label class="option-label"><input type="radio" name="prior_sql" value="5" required> 5 - Professional (I work or have worked with databases as part of my job)</label>
           </div>
         </div>
 
         <div style="margin: 1.5rem 0 0.5rem 0; font-weight: 700; color: var(--wgu-blue); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.3rem;">
-          Study & Problem Solving Preferences
+          How You Like to Study & Solve Problems
         </div>
         <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 1rem;">
-          For each item, choose the option that best reflects your natural learning habits:
+          For each question below, pick the answer that feels closest to how you usually learn best:
         </p>
 
         <div id="randomized-ils-container"></div>
@@ -328,16 +328,16 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
     <!-- ========================================================= -->
     <div id="control-screen" class="card" style="display: none; text-align: center; padding: 2.75rem 1.5rem;">
       <i id="landing-icon" class="fa-solid fa-circle-check" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
-      <h2 id="landing-title" style="color: var(--wgu-blue); margin-bottom: 0.75rem;">Standard Course Materials</h2>
+      <h2 id="landing-title" style="color: var(--wgu-blue); margin-bottom: 0.75rem;">You're Ready to Start D426!</h2>
       <p id="landing-msg" style="max-width: 600px; margin: 0 auto 1.5rem auto; color: #475569; font-size: 0.95rem;">
-        You are now ready to begin Section 1 of the official course curriculum.
+        Thank you for checking in! Click below to open your D426 course page or jump straight into Section 1 of your course materials.
       </p>
       <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
         <a href="https://my.wgu.edu/courses/course/30040017" class="btn btn-primary" target="_blank" rel="noopener">
-          <i class="fa-solid fa-graduation-cap"></i> Return to D426 Course Page
+          <i class="fa-solid fa-graduation-cap"></i> Go to D426 Course Page
         </a>
         <a href="https://lrps.wgu.edu/provision/487034335" class="btn btn-secondary" target="_blank" rel="noopener">
-          <i class="fa-solid fa-book-open"></i> Launch Course Material (LRPS)
+          <i class="fa-solid fa-book-open"></i> Open Course Book (Section 1)
         </a>
       </div>
     </div>
@@ -351,7 +351,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
       <div class="desktop-alert">
         <i class="fa-solid fa-desktop" style="font-size: 1.1rem;"></i>
         <div>
-          <strong>Recommended Environment:</strong> Complete this interactive SQL sandbox (~25–30 minutes) on a desktop or laptop computer with a physical keyboard for the smoothest experience.
+          <strong>Best on a Computer:</strong> This practice sandbox (~25–30 minutes) works smoothest on a laptop or desktop computer with a physical keyboard.
         </div>
       </div>
 
@@ -359,7 +359,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
       <div class="alert-banner">
         <div>
           <i class="fa-solid fa-cloud-arrow-up" style="color: var(--wgu-blue); margin-right: 0.4rem;"></i>
-          <strong>Progress Saved Automatically:</strong> Step away anytime and return using your personal link.
+          <strong>Your Progress Saves Automatically:</strong> Take a break anytime and return using your personal link.
         </div>
         <div class="link-tools">
           <button type="button" id="copy-link-btn" class="btn btn-sm btn-secondary">
@@ -400,7 +400,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
         <div class="card">
           <h2 id="step-title" style="margin-bottom: 0.4rem; font-size: 1.05rem;">Module 1: Creating Tables (CREATE TABLE)</h2>
           <p id="step-instructions" style="font-size: 0.88rem; color: #475569; margin-bottom: 0.85rem;">
-            Learn how to define a table in MySQL using <code>CREATE TABLE</code> with strict column data types.
+            Create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>. Run <code>DESCRIBE books;</code> to check your table layout.
           </p>
           
           <div class="video-container">
@@ -409,13 +409,13 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
 
           <!-- Primary Video Accessible Collapsible Transcript Drawer -->
           <details id="primary-transcript-drawer" style="font-size: 0.82rem; margin-bottom: 0.75rem; background: #f8fafc; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border);">
-            <summary style="cursor: pointer; font-weight: 600; color: #475569;"><i class="fa-solid fa-align-left"></i> View Micro-Lesson Transcript</summary>
+            <summary style="cursor: pointer; font-weight: 600; color: #475569;"><i class="fa-solid fa-align-left"></i> Read Video Transcript</summary>
             <div id="primary-transcript-body" style="margin-top: 0.5rem; line-height: 1.45; color: #334155; white-space: pre-line;"></div>
           </details>
 
           <!-- Collapsible Troubleshooting & Remediation Box -->
           <div id="remediation-box" class="hint-box">
-            <strong><i class="fa-solid fa-lightbulb"></i> Troubleshooting & Targeted Guidance:</strong>
+            <strong><i class="fa-solid fa-lightbulb"></i> Troubleshooting & Helpful Tips:</strong>
             <p id="remediation-text" style="margin: 0.35rem 0 0.5rem 0; font-size: 0.85rem; color: #78350f;"></p>
             
             <div class="video-container" style="margin-bottom: 0.5rem;">
@@ -423,12 +423,12 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
             </div>
 
             <details id="remedy-transcript-drawer" style="font-size: 0.8rem; margin-bottom: 0.5rem; background: #ffffff; padding: 0.4rem; border-radius: 4px; border: 1px solid #fed7aa;">
-              <summary style="cursor: pointer; font-weight: 600; color: #9a3412;"><i class="fa-solid fa-file-lines"></i> Remediation Clip Transcript</summary>
+              <summary style="cursor: pointer; font-weight: 600; color: #9a3412;"><i class="fa-solid fa-file-lines"></i> Read Troubleshooting Transcript</summary>
               <div id="remedy-transcript-body" style="margin-top: 0.35rem; line-height: 1.4; color: #431407; white-space: pre-line;"></div>
             </details>
 
             <button type="button" id="show-solution-btn" class="btn btn-gold" style="font-size: 0.8rem; padding: 0.4rem 0.8rem; display: none;">
-              Reveal Working Solution
+              Show Working Solution
             </button>
           </div>
         </div>
@@ -436,7 +436,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
         <!-- Right: Interactive Editor & Output Console -->
         <div class="card" style="display: flex; flex-direction: column; gap: 0.65rem;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 0.85rem; font-weight: 600; color: #64748b;">MySQL Sandbox Editor</span>
+            <span style="font-size: 0.85rem; font-weight: 600; color: #64748b;">MySQL Practice Editor</span>
             <button type="button" id="reset-btn" class="btn btn-secondary" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;">Reset Template</button>
           </div>
 
@@ -464,21 +464,21 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
                 Proceed to Next Module <i class="fa-solid fa-arrow-right"></i>
               </button>
               <button type="button" class="btn btn-gold" id="complete-sandbox-btn" style="display: none;">
-                <i class="fa-solid fa-award"></i> Complete Sandbox & View Next Steps <i class="fa-solid fa-arrow-right"></i>
+                <i class="fa-solid fa-award"></i> Finish Sandbox & See Next Steps <i class="fa-solid fa-arrow-right"></i>
               </button>
             </div>
           </div>
 
-          <div id="console-output" class="output-ready" aria-live="polite" role="status">Ready to execute query. Click 'Run MySQL Code' to validate your solution.</div>
+          <div id="console-output" class="output-ready" aria-live="polite" role="status">Ready! Click 'Run MySQL Code' to test your query.</div>
           <div id="table-output" style="overflow-x: auto;"></div>
 
-          <!-- Defensive Sandbox Scope & Boundary Notice -->
+          <!-- Student-Friendly Sandbox Scope & Tips -->
           <details style="margin-top: 0.75rem; font-size: 0.8rem; background: #f8fafc; border: 1px solid var(--border); border-radius: 4px; padding: 0.45rem 0.65rem;">
             <summary style="cursor: pointer; font-weight: 600; color: #64748b;">
-              <i class="fa-solid fa-circle-info"></i> Sandbox Scope & Exploratory Capabilities
+              <i class="fa-solid fa-circle-info"></i> About This Practice Sandbox
             </summary>
             <p style="margin-top: 0.4rem; color: #475569; line-height: 1.5;">
-              This practice environment is an in-browser WebAssembly sandbox calibrated specifically for foundational SQL operations covered in D426 (creating tables, basic constraints, inserting rows, controlled updates, querying/filtering, and inner joins). It does not emulate production server features such as stored procedures, triggers, or custom user variables. For unrestricted database experimentation or advanced queries, you can explore <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener" style="color: var(--wgu-blue); font-weight: 600;">DB Fiddle</a>.
+              This practice tool runs right inside your web browser and is built specifically for the core SQL commands you learn in D426 (creating tables, adding data, updating rows, searching and sorting data, and joining tables). It doesn't include advanced database server tools like triggers or stored procedures. Want to build bigger, unrestricted database projects on your own? Try <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener" style="color: var(--wgu-blue); font-weight: 600;">DB Fiddle</a>.
             </p>
           </details>
         </div>
@@ -495,20 +495,20 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
         <div class="badge-crest">
           <i class="fa-solid fa-award"></i>
         </div>
-        <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem; color: #ffffff;">Hands-On SQL Launch: Mastery Verified!</h2>
+        <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem; color: #ffffff;">You Did It! SQL Sandbox Complete</h2>
         <p style="max-width: 680px; margin: 0 auto; font-size: 0.95rem; opacity: 0.95; line-height: 1.6;">
-          Outstanding work! You have successfully created tables, added records, performed precision updates, queried data with filters, and connected relational tables with <code>INNER JOIN</code>.
+          Awesome job! You just created a database table, added new records, updated data safely, searched and sorted results, and connected two tables together using <code>INNER JOIN</code>.
         </p>
       </div>
 
-      <!-- Confirmation Notice -->
+      <!-- Student-Centric Completion & Reassurance Card -->
       <div class="card" style="border-left: 4px solid var(--success); padding: 1.25rem;">
         <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
           <i class="fa-solid fa-circle-check" style="font-size: 1.4rem; color: var(--success); margin-top: 0.15rem;"></i>
           <div>
-            <strong style="color: #065f46; font-size: 0.95rem;">Research Telemetry Logged Successfully</strong>
+            <strong style="color: #065f46; font-size: 0.95rem;">You're All Set — Your Progress Is Saved!</strong>
             <p style="font-size: 0.88rem; color: #475569; margin-top: 0.25rem;">
-              Your completion has been officially recorded. You may now safely close this browser window at any time without losing credit. If you want to return to review your queries, reopening your personalized link will bring you right back.
+              You have finished all 5 sandbox modules. You can close this browser tab anytime you're ready for a break—or jump right into your D426 course below. Want to come back and practice before your exam? Just reopen your personal link anytime.
             </p>
           </div>
         </div>
@@ -517,42 +517,42 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
       <!-- Two Study Pathways Recommendation -->
       <div class="card">
         <h3 style="color: var(--wgu-blue); font-size: 1.15rem; margin-bottom: 0.4rem;">
-          <i class="fa-solid fa-compass"></i> Recommended Next Steps: Choose Your Study Pathway
+          <i class="fa-solid fa-compass"></i> Where Would You Like to Start in D426?
         </h3>
         <p style="font-size: 0.88rem; color: #475569;">
-          Based on educational research, learners assimilate database theory differently. Select the pathway that best matches your preferred study style:
+          Everyone learns differently. Pick the starting path below that feels best to you:
         </p>
 
         <div class="pathway-grid">
-          <!-- Pathway A: Hands-on / Inductive -->
+          <!-- Pathway A: Hands-on / Code-First -->
           <div class="pathway-card">
             <div>
               <div style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem;">
-                RECOMMENDED FOR CODER-FIRST LEARNERS
+                GREAT IF YOU LIKE LEARNING BY DOING
               </div>
-              <h4 style="color: var(--wgu-blue); font-size: 1rem; margin-bottom: 0.4rem;">Pathway A: Code-First Momentum</h4>
+              <h4 style="color: var(--wgu-blue); font-size: 1rem; margin-bottom: 0.4rem;">Pathway A: Jump Right Into SQL Coding</h4>
               <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin-bottom: 1rem;">
-                Capitalize on the SQL momentum you just built! Skip straight to <strong>zyBooks Chapter 2 (Section 2.1: SQL Syntax)</strong> and master hands-on querying before circling back to theoretical models.
+                Keep your coding momentum going! Jump straight to <strong>zyBooks Chapter 2 (Section 2.1: SQL Syntax)</strong> to practice writing queries first, then circle back to Chapter 1 concepts later.
               </p>
             </div>
             <a href="https://learn.zybooks.com/zybook/WGUD426Databasesv3/chapter/2/section/1" class="btn btn-primary" target="_blank" rel="noopener" style="font-size: 0.85rem;">
-              <i class="fa-solid fa-terminal"></i> Launch zyBooks Chapter 2
+              <i class="fa-solid fa-terminal"></i> Open zyBooks Chapter 2
             </a>
           </div>
 
-          <!-- Pathway B: Foundations / Deductive -->
+          <!-- Pathway B: Big Picture First -->
           <div class="pathway-card">
             <div>
               <div style="display: inline-block; background: #f1f5f9; color: #475569; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem;">
-                RECOMMENDED FOR BIG-PICTURE LEARNERS
+                GREAT IF YOU LIKE THE BIG PICTURE FIRST
               </div>
-              <h4 style="color: var(--wgu-blue); font-size: 1rem; margin-bottom: 0.4rem;">Pathway B: Conceptual Foundations</h4>
+              <h4 style="color: var(--wgu-blue); font-size: 1rem; margin-bottom: 0.4rem;">Pathway B: Start From the Beginning</h4>
               <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin-bottom: 1rem;">
-                Begin from the traditional starting line. Now that you have context for what a database actually does, start with <strong>Chapter 1 (Data Systems & Architecture)</strong> to explore terminology and historical context.
+                Prefer to start at Chapter 1? Now that you have seen how SQL commands work in action, start with <strong>Chapter 1 (Data Systems & Architecture)</strong> to see how databases fit together.
               </p>
             </div>
             <a href="https://lrps.wgu.edu/provision/487034335" class="btn btn-secondary" target="_blank" rel="noopener" style="font-size: 0.85rem;">
-              <i class="fa-solid fa-book-open"></i> Launch zyBooks Chapter 1
+              <i class="fa-solid fa-book-open"></i> Open zyBooks Chapter 1
             </a>
           </div>
         </div>
@@ -561,9 +561,9 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
       <!-- Essential D426 Resource Directory -->
       <div class="card">
         <h3 style="color: var(--wgu-blue); font-size: 1.05rem; margin-bottom: 0.25rem;">
-          <i class="fa-solid fa-folder-open"></i> Essential D426 Student Directory
+          <i class="fa-solid fa-folder-open"></i> Helpful D426 Links
         </h3>
-        <p style="font-size: 0.85rem; color: #64748b;">Bookmark these official course resources for your study journey:</p>
+        <p style="font-size: 0.85rem; color: #64748b;">Bookmark these pages so you can find your course materials and live help fast:</p>
 
         <div class="resource-list">
           <a href="https://my.wgu.edu/courses/course/30040017" class="resource-btn" target="_blank" rel="noopener">
@@ -576,7 +576,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
           </a>
           <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Supplemental-Resource-Index.aspx" class="resource-btn" target="_blank" rel="noopener">
             <i class="fa-solid fa-book" style="color: #6366f1;"></i>
-            <span>Course Guide & Supplemental Resources</span>
+            <span>Course Guide & Practice Resources</span>
           </a>
           <a href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Upcoming-Live-Events.aspx" class="resource-btn" target="_blank" rel="noopener">
             <i class="fa-solid fa-bullhorn" style="color: #d97706;"></i>
@@ -588,7 +588,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
       <!-- Sandbox Return Safety Valve -->
       <div style="text-align: center; margin-top: 1.5rem;">
         <button type="button" id="return-sandbox-btn" class="btn btn-secondary">
-          <i class="fa-solid fa-arrow-left"></i> Return to Interactive SQL Sandbox
+          <i class="fa-solid fa-arrow-left"></i> Go Back to SQL Practice Sandbox
         </button>
       </div>
 
@@ -693,7 +693,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
       const emailLinkBtn = document.getElementById("email-link-btn");
       const mailSubject = encodeURIComponent("My D426 Interactive SQL Sandbox Link");
       const mailBody = encodeURIComponent(
-        "Here is my personal link to resume the D426 Interactive SQL Sandbox anytime:\n\n" + cleanPersonalUrl
+        "Here is my personal link to open the D426 Interactive SQL Sandbox anytime:\n\n" + cleanPersonalUrl
       );
       emailLinkBtn.href = "mailto:?subject=" + mailSubject + "&body=" + mailBody;
 
@@ -795,7 +795,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
       document.getElementById("consent-continue-btn").addEventListener("click", function() {
         const selected = document.querySelector('input[name="consent-radio"]:checked');
         if (!selected) {
-          alert("Please select either 'YES' to participate or 'NO' to proceed to standard course materials.");
+          alert("Please select either 'YES' to participate or 'NO' to go straight to your course materials.");
           return;
         }
 
@@ -804,8 +804,8 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
           document.getElementById("consent-screen").style.display = "none";
           
           const controlScreen = document.getElementById("control-screen");
-          document.getElementById("landing-title").innerText = "Participation Opt-Out Acknowledged";
-          document.getElementById("landing-msg").innerText = "Thank you. You have chosen not to participate in this study. Opting out will have zero effect on your course standing or grade. You can access standard course materials below:";
+          document.getElementById("landing-title").innerText = "You're Ready to Start D426!";
+          document.getElementById("landing-msg").innerText = "Thank you! You chose not to join the research study, which has zero effect on your course grade or standing. Use the links below to jump right into your D426 course materials:";
           controlScreen.style.display = "block";
           return;
         }
@@ -924,7 +924,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
       const curriculum = {
         1: {
           title: "Module 1: Creating Tables (CREATE TABLE)",
-          instructions: "Write a statement to create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>. Run <code>DESCRIBE books;</code> to inspect your table structure.",
+          instructions: "Create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>. Run <code>DESCRIBE books;</code> to check your table layout.",
           videoId: "VRUb_-0MjKo",
           remediationVideoId: "obBNBGgIsYw",
           primaryTranscript: "Hi everyone! Welcome to Module 1 of your D426 SQL Foundations.\n\nBefore we dive into textbook theory, we are going to build real database tables from the ground up. In SQL, this is called Data Definition Language, or DDL.\n\nThink of a table as a strict grid. Before storing a single piece of information, you must define the columns and the exact type of data allowed in each.\n\nLook at the starter query on your right. We create the 'books' table:\nFirst: book_id INT PRIMARY KEY AUTO_INCREMENT. That generates a unique ID number for every row automatically.\nNext: title and author use VARCHAR text. The NOT NULL rule means they can never be left empty.\nThen: price DECIMAL(5,2) gives exact currency formatting, and published_year INT stores the release year.\n\nNotice the punctuation: every column is separated by a comma, but there is NO COMMA after that final column!\n\nReview the code in your editor, and click 'Run MySQL Code' to build your first table!",
@@ -936,7 +936,6 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
             const match = rawSql.match(/CREATE\s+TABLE\s+books\s*\(([\s\S]*?)\);/i);
             if (!match) throw new Error("Could not find a valid CREATE TABLE books (...); statement.");
             
-            // Split column definitions safely without breaking on DECIMAL(5,2)
             const colDefs = match[1].split(/,(?![^()]*\))/).map(function(s) { return s.trim(); });
             const validTypes = ["INT", "INTEGER", "VARCHAR", "DECIMAL", "NUMERIC", "DATE", "CHAR", "TEXT", "FLOAT", "DOUBLE"];
             
@@ -951,7 +950,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
             });
 
             if (upper.indexOf("DESCRIBE BOOKS") === -1 && upper.indexOf("DESC BOOKS") === -1) {
-              throw new Error("Please ensure you include 'DESCRIBE books;' to verify your table structure.");
+              throw new Error("Please make sure you include 'DESCRIBE books;' to view your table layout.");
             }
 
             const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
@@ -966,7 +965,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
         },
         2: {
           title: "Module 2: Adding Data (INSERT INTO)",
-          instructions: "Insert at least two records into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
+          instructions: "Add at least two book rows into the <code>books</code> table. Make sure text values have single quotes around them.",
           videoId: "dRBxT2oD1hk",
           remediationVideoId: "NpdCFRU3Vc8",
           primaryTranscript: "Welcome to Module 2: Data Manipulation Language, or DML!\n\nNow that our 'books' table exists, we need to populate it with rows using the INSERT INTO command.\n\nLook at the syntax in your editor. We state INSERT INTO books, list the columns we are supplying in parentheses, and follow with the keyword VALUES.\n\nNotice two critical rules:\nFirst: text and character strings must be surrounded by single quotation marks.\nSecond: numbers like prices or years do NOT take quotes.\nAlso notice we skipped book_id entirely! Because we configured book_id as AUTO_INCREMENT in Module 1, MySQL generates the primary keys automatically.\n\nClick 'Run MySQL Code' to insert these books into your database!",
@@ -976,14 +975,14 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
           validate: function() {
             const res = db.exec("SELECT COUNT(*) FROM books;");
             if (res.length === 0 || res[0].values[0][0] < 2) {
-              throw new Error("Please insert at least 2 rows into the 'books' table.");
+              throw new Error("Please add at least 2 book rows into the 'books' table.");
             }
             return true;
           }
         },
         3: {
           title: "Module 3: Updating Data (UPDATE with WHERE)",
-          instructions: "Update the price of <code>book_id = 2</code> to <strong>31.50</strong> using a <code>WHERE</code> clause. Inspect the updated table below!",
+          instructions: "Change the price of <code>book_id = 2</code> to <strong>31.50</strong> using a <code>WHERE</code> clause. Check the updated table below!",
           videoId: "4jQvokPNooQ",
           remediationVideoId: "G07Wd94Y8wg",
           primaryTranscript: "Welcome to Module 3. Today we are tackling one of the most critical safety operations in database administration: the UPDATE statement.\n\nWhen updating data, you specify the table, use SET to establish the new column values, and append a WHERE clause to pinpoint the target rows.\n\nRule Number 1 in database administration: NEVER run an UPDATE without a WHERE clause! If you omit the WHERE condition, SQL updates EVERY single row in your entire table.\n\nIn your editor, notice:\nLine 2: UPDATE books\nLine 3: SET price = 31.50\nLine 4: WHERE book_id = 2;\n\nRun your query to modify the price of book 2 with surgical precision!",
@@ -993,23 +992,23 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
           validate: function(rawSql) {
             const upper = rawSql.toUpperCase();
             if (upper.indexOf("UPDATE") !== -1 && upper.indexOf("WHERE") === -1) {
-              throw new Error("Safety Alert: You wrote an UPDATE statement without a WHERE clause! Always specify which row to update.");
+              throw new Error("Safety Tip: You wrote an UPDATE statement without a WHERE clause! Always specify which row to update.");
             }
             const res = db.exec("SELECT price FROM books WHERE book_id = 2;");
             if (res.length > 0 && res[0].values.length > 0) {
               const currentPrice = res[0].values[0][0];
               if (Math.abs(currentPrice - 31.50) > 0.01) {
-                throw new Error("Book ID 2 price is currently " + currentPrice + ", but the prompt asked for 31.50. Inspect the updated table below!");
+                throw new Error("Book ID 2 price is currently " + currentPrice + ", but the goal is 31.50. Check the updated table below!");
               }
             } else {
-              throw new Error("Book ID 2 was not found. Make sure your UPDATE statement targeted book_id = 2.");
+              throw new Error("Book ID 2 was not found. Make sure your UPDATE targeted book_id = 2.");
             }
             return true;
           }
         },
         4: {
           title: "Module 4: Querying Data (SELECT & Filtering)",
-          instructions: "Query the <code>title</code> and <code>price</code> of books published after 2018, sorted by price in descending order.",
+          instructions: "Show the <code>title</code> and <code>price</code> of books published after 2018, sorted from highest price to lowest.",
           videoId: "KF_xpU-O88s",
           remediationVideoId: "vjPaSfKatlA",
           primaryTranscript: "Welcome to Module 4: Data Query Language, or DQL!\n\nNow we transition to querying data. SELECT is the workhorse of relational databases.\n\nLook at the query on your right:\nSELECT title, price tells the database engine to return only those two specific columns.\nFROM books defines our source table.\nWHERE published_year > 2018 filters out older publications.\nORDER BY price DESC sorts the resulting records from most expensive to least expensive.\n\nReview the query structure and click 'Run MySQL Code' to view your filtered dataset!",
@@ -1019,17 +1018,17 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
           validate: function(rawSql) {
             const upper = rawSql.toUpperCase();
             if (upper.indexOf("SELECT") === -1 || upper.indexOf("WHERE") === -1 || upper.indexOf("ORDER BY") === -1 || upper.indexOf("DESC") === -1) {
-              throw new Error("Ensure your query uses SELECT, WHERE, and ORDER BY ... DESC clauses.");
+              throw new Error("Make sure your query includes SELECT, WHERE, and ORDER BY ... DESC.");
             }
             if (rawSql.indexOf(">= 2018") !== -1) {
-              throw new Error("Check your filter: the prompt asked for books published AFTER 2018 (> 2018), not >= 2018.");
+              throw new Error("Check your filter: we want books published AFTER 2018 (> 2018), not >= 2018.");
             }
             return true;
           }
         },
         5: {
           title: "Module 5: Joining Tables (INNER JOIN)",
-          instructions: "Create the <code>orders</code> table, insert a linked record, and execute an <code>INNER JOIN</code> connecting the tables.",
+          instructions: "Create the <code>orders</code> table, add a matching order row, and run an <code>INNER JOIN</code> to connect both tables.",
           videoId: "uxCW_EsjC60",
           remediationVideoId: "0iCXN5ZNW7Q",
           primaryTranscript: "Welcome to Module 5! This is the culmination of our hands-on launch: linking relational tables together.\n\nIn relational databases, information is stored in specialized tables connected by keys.\nOur 'books' table has a Primary Key: book_id.\nNow we create an 'orders' table. Notice the second column: book_id INT NOT NULL. That is our Foreign Key—it references the book that was purchased!\n\nLook at the final query:\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;\n\nNotice the dot-notation: because both tables have columns, prefixing with table.column avoids ambiguous column errors.\n\nClick 'Run MySQL Code' to execute your first relational join and complete the launch sandbox!",
@@ -1039,11 +1038,11 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
           validate: function(rawSql) {
             const upper = rawSql.toUpperCase();
             if (upper.indexOf("INNER JOIN") === -1 || upper.indexOf(" ON ") === -1) {
-              throw new Error("Module 5 requires executing an INNER JOIN between 'orders' and 'books' with an ON condition.");
+              throw new Error("Module 5 needs an INNER JOIN connecting 'orders' and 'books' with an ON condition.");
             }
             const res = db.exec("SELECT COUNT(*) FROM orders;");
             if (res.length === 0 || res[0].values[0][0] < 1) {
-              throw new Error("Please ensure the 'orders' table is populated with at least 1 record.");
+              throw new Error("Make sure at least 1 order row is added to the 'orders' table.");
             }
             return true;
           }
@@ -1136,7 +1135,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
 
         const out = document.getElementById("console-output");
         out.className = "output-ready";
-        out.innerText = "Module " + step + " loaded. Write or modify your SQL and click 'Run MySQL Code'.";
+        out.innerText = "Module " + step + " ready! Review or edit the SQL above and click 'Run MySQL Code'.";
         document.getElementById("table-output").innerHTML = "";
 
         document.querySelectorAll(".step-tab").forEach(function(t, i) {
@@ -1150,7 +1149,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
         saveCurrentEditorText();
         const out = document.getElementById("console-output");
         out.className = "output-ready";
-        out.innerText = "Template reset. Click 'Run MySQL Code' to execute.";
+        out.innerText = "Starter code restored. Click 'Run MySQL Code' to test it.";
         document.getElementById("table-output").innerHTML = "";
         document.getElementById("remediation-box").classList.remove("show");
         document.getElementById("next-btn").style.display = "none";
@@ -1163,7 +1162,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
         saveCurrentEditorText();
         const out = document.getElementById("console-output");
         out.className = "output-ready";
-        out.innerText = "Solution loaded into editor. Click 'Run MySQL Code' to execute.";
+        out.innerText = "Working solution loaded. Click 'Run MySQL Code' to run it.";
       });
 
       document.getElementById("run-btn").addEventListener("click", function() {
@@ -1237,7 +1236,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
           curriculum[currentStep].validate(rawSql);
 
           out.className = "output-success";
-          out.innerText = "Query executed successfully! (" + results.length + " result set returned). Criteria satisfied!";
+          out.innerText = "Awesome! Your SQL ran cleanly and passed all checks for Module " + currentStep + ".";
 
           handleStepSuccess();
         } catch (err) {
@@ -1245,7 +1244,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
           dismissExploreNudge();
 
           out.className = "output-error";
-          out.innerText = "Validation/Syntax Notice: " + err.message;
+          out.innerText = "Quick Tip / Syntax Check: " + err.message;
           diagnoseError(rawSql, err.message);
           
           document.getElementById("next-btn").style.display = "none";
@@ -1269,13 +1268,13 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
         const remText = document.getElementById("remediation-text");
         const upper = sql.toUpperCase();
         if (sql.indexOf(",\n)") !== -1 || sql.indexOf(", )") !== -1) {
-          remText.innerText = "Check your commas! You have a trailing comma after your last column before the closing parenthesis ')'.";
+          remText.innerText = "Check your commas! You have an extra comma after your last column right before the closing parenthesis ')'.";
         } else if (upper.indexOf("UPDATE") !== -1 && upper.indexOf("WHERE") === -1) {
-          remText.innerText = "Safety Alert: You wrote an UPDATE statement without a WHERE clause! Always specify which row to update.";
+          remText.innerText = "Safety Tip: You wrote an UPDATE statement without a WHERE clause! Always specify which row you want to change.";
         } else if (errMsg.indexOf("no such table") !== -1 || errMsg.indexOf("does not exist") !== -1) {
-          remText.innerText = "The database cannot find that table. Ensure you ran Module 1 and the table name is spelled correctly.";
+          remText.innerText = "The database cannot find that table. Make sure the table name is spelled right.";
         } else {
-          remText.innerText = "Error detail: " + errMsg + ". Check semicolons, spelling of keywords, and quotes around text strings.";
+          remText.innerText = "What to check: " + errMsg + ". Look for missing semicolons, misspelled keywords, or missing single quotes around text.";
         }
       }
 
@@ -1302,8 +1301,8 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
           
           const out = document.getElementById("console-output");
           out.className = "output-success";
-          out.innerHTML = '<strong><i class="fa-solid fa-circle-check"></i> Module 5 Validated — Hands-On SQL Launch Mastered!</strong><br>' +
-                          'Your queries and relational schema have met all research criteria. Click the button below to complete the sandbox and view your course next steps.';
+          out.innerHTML = '<strong><i class="fa-solid fa-circle-check"></i> Module 5 Complete — You Finished the SQL Sandbox!</strong><br>' +
+                          'Click the gold button below to collect your badge and see your next steps for D426.';
           
           document.getElementById("complete-sandbox-btn").style.display = "inline-flex";
         }
