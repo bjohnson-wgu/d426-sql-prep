@@ -336,7 +336,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
         <a href="https://my.wgu.edu/courses/course/30040017" class="btn btn-primary" target="_blank" rel="noopener">
           <i class="fa-solid fa-graduation-cap"></i> Return to D426 Course Page
         </a>
-        <a href="https://lrps.wgu.edu/provision/115160353" class="btn btn-secondary" target="_blank" rel="noopener">
+        <a href="https://lrps.wgu.edu/provision/487034335" class="btn btn-secondary" target="_blank" rel="noopener">
           <i class="fa-solid fa-book-open"></i> Launch Course Material (LRPS)
         </a>
       </div>
@@ -535,7 +535,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
                 Capitalize on the SQL momentum you just built! Skip straight to <strong>zyBooks Chapter 2 (Section 2.1: SQL Syntax)</strong> and master hands-on querying before circling back to theoretical models.
               </p>
             </div>
-            <a href="https://lrps.wgu.edu/provision/115160353" class="btn btn-primary" target="_blank" rel="noopener" style="font-size: 0.85rem;">
+            <a href="https://learn.zybooks.com/zybook/WGUD426Databasesv3/chapter/2/section/1" class="btn btn-primary" target="_blank" rel="noopener" style="font-size: 0.85rem;">
               <i class="fa-solid fa-terminal"></i> Launch zyBooks Chapter 2
             </a>
           </div>
@@ -551,7 +551,7 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
                 Begin from the traditional starting line. Now that you have context for what a database actually does, start with <strong>Chapter 1 (Data Systems & Architecture)</strong> to explore terminology and historical context.
               </p>
             </div>
-            <a href="https://lrps.wgu.edu/provision/115160353" class="btn btn-secondary" target="_blank" rel="noopener" style="font-size: 0.85rem;">
+            <a href="https://lrps.wgu.edu/provision/487034335" class="btn btn-secondary" target="_blank" rel="noopener" style="font-size: 0.85rem;">
               <i class="fa-solid fa-book-open"></i> Launch zyBooks Chapter 1
             </a>
           </div>
@@ -936,7 +936,8 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
             const match = rawSql.match(/CREATE\s+TABLE\s+books\s*\(([\s\S]*?)\);/i);
             if (!match) throw new Error("Could not find a valid CREATE TABLE books (...); statement.");
             
-            const colDefs = match[1].split(",").map(function(s) { return s.trim(); });
+            // Split column definitions safely without breaking on DECIMAL(5,2)
+            const colDefs = match[1].split(/,(?![^()]*\))/).map(function(s) { return s.trim(); });
             const validTypes = ["INT", "INTEGER", "VARCHAR", "DECIMAL", "NUMERIC", "DATE", "CHAR", "TEXT", "FLOAT", "DOUBLE"];
             
             colDefs.forEach(function(def) {
@@ -1053,6 +1054,9 @@ When you finish Module 5, you’ll earn your completion badge, get a little conf
       // 8. WASM DATABASE & EXECUTION ENGINE
       // ==========================================
       function enterSandbox(isFirstArrival) {
+        if (isFirstArrival) {
+          saveState({ currentStep: 1 });
+        }
         document.getElementById("sandbox-screen").style.display = "block";
         document.getElementById("open-tour-btn").style.display = "inline-flex";
         initWasmEngine();
