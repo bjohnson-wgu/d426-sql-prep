@@ -1163,7 +1163,7 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
       remediationTriggered: { 1: false, 2: false, 3: false, 4: false, 5: false },
       solutionRevealed: { 1: false, 2: false, 3: false, 4: false, 5: false },
       transcriptsOpened: {},
-      videos: {},
+      videos: {}, // e.g., { "TOUR": { p: 1, c: 1, s: 214 }, "1.1": { p: 2, c: 1, s: 96 } }
       nudgeShown: false,
       exitLogged: false
     };
@@ -1218,12 +1218,28 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
       }
     }, 1000);
 
-    // YouTube IFrame API Video Play & Active Watch-Time Tracker (All 11 Videos)
+    // =========================================================================
+    // YOUTUBE IFRAME API TRACKER: Starts (p), Completions (c), & Seconds (s)
+    // =========================================================================
     const ytPlayers = {};
+    const ytPlayerReady = {};
     const videoWatchTimers = {};
+    const activeSlotVideoKeys = {
+      "welcome-video-frame": "TOUR",
+      "primary-video-frame": "1.1",
+      "remediation-video-frame": "1.2"
+    };
+
+    function ensureVideoEntry(videoKey) {
+      if (!state.videos[videoKey]) {
+        state.videos[videoKey] = { p: 0, c: 0, s: 0 };
+      } else if (typeof state.videos[videoKey].c !== "number") {
+        state.videos[videoKey].c = 0;
+      }
+    }
 
     function recordVideoPlay(videoKey) {
-      if (!state.videos[videoKey]) state.videos[videoKey] = { p: 0, s: 0 };
+      ensureVideoEntry(videoKey);
       state.videos[videoKey].p += 1;
       saveState();
       if (!videoWatchTimers[videoKey]) {
@@ -1233,6 +1249,13 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
           }
         }, 1000);
       }
+    }
+
+    function recordVideoCompleted(videoKey) {
+      ensureVideoEntry(videoKey);
+      state.videos[videoKey].c += 1;
+      stopVideoTimer(videoKey);
+      saveState();
     }
 
     function stopVideoTimer(videoKey) {
@@ -1247,16 +1270,40 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
       Object.keys(videoWatchTimers).forEach(stopVideoTimer);
     }
 
-    function bindYouTubePlayer(iframeId, videoKey) {
-      if (typeof YT === "undefined" || !YT.Player) return;
+    function loadYouTubeSlot(iframeId, videoId, videoKey) {
+      activeSlotVideoKeys[iframeId] = videoKey;
+      const frame = document.getElementById(iframeId);
+      if (!frame) return;
+
+      if (ytPlayers[iframeId] && ytPlayerReady[iframeId] && typeof ytPlayers[iframeId].cueVideoById === "function") {
+        ytPlayers[iframeId].cueVideoById(videoId);
+        return;
+      }
+
+      const targetSrc = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&rel=0`;
+      if (frame.src !== targetSrc) {
+        frame.src = targetSrc;
+      }
+      bindYouTubePlayer(iframeId);
+    }
+
+    function bindYouTubePlayer(iframeId) {
+      if (typeof YT === "undefined" || !YT.Player || ytPlayers[iframeId]) return;
       try {
         ytPlayers[iframeId] = new YT.Player(iframeId, {
           events: {
+            onReady: function () {
+              ytPlayerReady[iframeId] = true;
+            },
             onStateChange: function (event) {
+              const currentKey = activeSlotVideoKeys[iframeId];
+              if (!currentKey) return;
               if (event.data === YT.PlayerState.PLAYING) {
-                recordVideoPlay(videoKey);
-              } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
-                stopVideoTimer(videoKey);
+                recordVideoPlay(currentKey);
+              } else if (event.data === YT.PlayerState.PAUSED) {
+                stopVideoTimer(currentKey);
+              } else if (event.data === YT.PlayerState.ENDED) {
+                recordVideoCompleted(currentKey);
               }
             }
           }
@@ -1265,9 +1312,12 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
     }
 
     window.onYouTubeIframeAPIReady = function () {
-      bindYouTubePlayer("welcome-video-frame", "TOUR");
-      bindYouTubePlayer("primary-video-frame", state.currentStep + ".1");
-      bindYouTubePlayer("remediation-video-frame", state.currentStep + ".2");
+      ["welcome-video-frame", "primary-video-frame", "remediation-video-frame"].forEach(id => {
+        const frame = document.getElementById(id);
+        if (frame && frame.src && frame.src.includes("youtube-nocookie.com/embed/")) {
+          bindYouTubePlayer(id);
+        }
+      });
     };
 
     function handleTranscriptToggle(slot, isOpen) {
@@ -1312,7 +1362,7 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
     function buildSandboxTelemetryMeta() {
       const activeVideos = {};
       Object.keys(state.videos).forEach(k => {
-        if (state.videos[k] && state.videos[k].p > 0) {
+        if (state.videos[k] && (state.videos[k].p > 0 || state.videos[k].c > 0)) {
           activeVideos[k] = state.videos[k];
         }
       });
@@ -1565,15 +1615,15 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
     }
 
     function openWelcomeModal() {
-      const frame = document.getElementById("welcome-video-frame");
-      frame.src = `https://www.youtube-nocookie.com/embed/${TOUR_VIDEO_ID}?enablejsapi=1&rel=0`;
       document.getElementById("welcome-modal").classList.remove("hidden");
-      setTimeout(() => bindYouTubePlayer("welcome-video-frame", "TOUR"), 500);
+      loadYouTubeSlot("welcome-video-frame", TOUR_VIDEO_ID, "TOUR");
     }
 
     function closeWelcomeModal() {
       stopVideoTimer("TOUR");
-      document.getElementById("welcome-video-frame").src = "";
+      if (ytPlayers["welcome-video-frame"] && ytPlayerReady["welcome-video-frame"] && typeof ytPlayers["welcome-video-frame"].stopVideo === "function") {
+        ytPlayers["welcome-video-frame"].stopVideo();
+      }
       document.getElementById("welcome-modal").classList.add("hidden");
       state.tourSeen = true;
       saveState();
@@ -1625,16 +1675,16 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
       document.getElementById("module-title").textContent = mod.title;
       document.getElementById("module-instructions").innerHTML = mod.instructions;
 
-      const pFrame = document.getElementById("primary-video-frame");
-      pFrame.src = `https://www.youtube-nocookie.com/embed/${mod.primaryVideoId}?enablejsapi=1&rel=0`;
-      setTimeout(() => bindYouTubePlayer("primary-video-frame", stepNum + ".1"), 500);
+      loadYouTubeSlot("primary-video-frame", mod.primaryVideoId, stepNum + ".1");
 
       document.getElementById("primary-transcript-text").textContent = mod.primaryTranscript;
       document.getElementById("primary-transcript-drawer").open = false;
 
       // Remediation drawer hidden by default until error
       document.getElementById("remediation-drawer").classList.add("hidden");
-      document.getElementById("remediation-video-frame").src = "";
+      if (ytPlayers["remediation-video-frame"] && ytPlayerReady["remediation-video-frame"] && typeof ytPlayers["remediation-video-frame"].stopVideo === "function") {
+        ytPlayers["remediation-video-frame"].stopVideo();
+      }
       document.getElementById("remediation-transcript-text").textContent = mod.remediationTranscript;
       document.getElementById("remediation-transcript-drawer").open = false;
 
@@ -1708,13 +1758,8 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
 
       const drawer = document.getElementById("remediation-drawer");
       document.getElementById("remediation-message").textContent = customReason;
-      const rFrame = document.getElementById("remediation-video-frame");
-      const targetSrc = `https://www.youtube-nocookie.com/embed/${MODULES[step].remediationVideoId}?enablejsapi=1&rel=0`;
-      if (!rFrame.src.includes(MODULES[step].remediationVideoId)) {
-        rFrame.src = targetSrc;
-        setTimeout(() => bindYouTubePlayer("remediation-video-frame", step + ".2"), 500);
-      }
       drawer.classList.remove("hidden");
+      loadYouTubeSlot("remediation-video-frame", MODULES[step].remediationVideoId, step + ".2");
     }
 
     // Seed Helper for Modules 2–5
