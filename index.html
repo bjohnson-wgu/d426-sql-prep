@@ -422,6 +422,22 @@
       white-space: pre-line;
     }
 
+    /* Remediation Drawer (Positioned in Left Video/Instruction Column) */
+    .remediation-box {
+      margin-top: 0.9rem;
+      border: 1px solid #F59E0B;
+      border-left: 5px solid #D97706;
+      background: #FFFBEB;
+      border-radius: 8px;
+      padding: 0.95rem;
+      animation: fadeSlideIn 0.25s ease-out;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     /* IDE Editor with Synchronized Line-Number Gutter */
     .editor-shell {
       display: flex;
@@ -504,16 +520,6 @@
       padding: 0.45rem 0.65rem;
       border: 1px solid #CBD5E1;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
-
-    /* Remediation Drawer */
-    .remediation-box {
-      margin-top: 1rem;
-      border: 1px solid #F59E0B;
-      border-left: 5px solid #D97706;
-      background: #FFFBEB;
-      border-radius: 8px;
-      padding: 1rem;
     }
 
     /* Resource Grid */
@@ -768,7 +774,7 @@
 
     <!-- Main Two-Column Workspace -->
     <div class="workspace-grid">
-      <!-- Left Column: Video Micro-Lesson & Prompt -->
+      <!-- Left Column: Video Micro-Lesson, Troubleshooting Remediation Drawer, & Prompt -->
       <div class="card" style="margin-bottom:0;">
         <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; margin-bottom:0.4rem;">
           <span style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--wgu-gold);" id="module-kicker">Module 1 of 5</span>
@@ -786,13 +792,26 @@
           <p id="primary-transcript-text"></p>
         </details>
 
+        <!-- Collapsible Troubleshooting / Remediation Drawer (Pops open right under Primary Video on any error) -->
+        <div class="remediation-box hidden" id="remediation-drawer">
+          <h4 style="color:#92400E; margin-bottom:0.35rem;"><i class="fa-solid fa-screwdriver-wrench"></i> Quick Tip / Syntax Check</h4>
+          <p id="remediation-message" style="font-size:0.86rem; color:#78350F; margin-bottom:0.6rem;"></p>
+          <div class="video-wrapper">
+            <iframe id="remediation-video-frame" src="" title="Troubleshooting Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <details class="transcript-drawer" id="remediation-transcript-drawer" ontoggle="handleTranscriptToggle('remediation', this.open)">
+            <summary><i class="fa-solid fa-closed-captioning"></i> Read Troubleshooting Video Transcript</summary>
+            <p id="remediation-transcript-text"></p>
+          </details>
+        </div>
+
         <hr style="border:none; border-top:1px solid #E2E8F0; margin:1rem 0;">
 
         <h3 style="font-size:1rem; margin-bottom:0.4rem;"><i class="fa-solid fa-bullseye"></i> Your Coding Goal</h3>
         <div id="module-instructions" style="font-size:0.91rem; color:#1E293B;"></div>
       </div>
 
-      <!-- Right Column: SQL Editor, Run Controls, Console, & Remediation -->
+      <!-- Right Column: SQL Editor, Run Controls, & Console Output -->
       <div class="card" style="margin-bottom:0;">
         <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:0.5rem;">
           <h3 style="font-size:1.05rem;"><i class="fa-solid fa-terminal"></i> Interactive MySQL Editor</h3>
@@ -839,19 +858,6 @@
           <div style="color:var(--text-muted); font-size:0.88rem;">
             <i class="fa-solid fa-circle-info"></i> Click <strong>Run MySQL Code</strong> to execute your query and inspect your table results here.
           </div>
-        </div>
-
-        <!-- Collapsible Troubleshooting / Remediation Drawer -->
-        <div class="remediation-box hidden" id="remediation-drawer">
-          <h4 style="color:#92400E; margin-bottom:0.35rem;"><i class="fa-solid fa-screwdriver-wrench"></i> Quick Tip / Syntax Check</h4>
-          <p id="remediation-message" style="font-size:0.88rem; color:#78350F; margin-bottom:0.65rem;"></p>
-          <div class="video-wrapper" style="max-width:480px;">
-            <iframe id="remediation-video-frame" src="" title="Troubleshooting Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          </div>
-          <details class="transcript-drawer" id="remediation-transcript-drawer" ontoggle="handleTranscriptToggle('remediation', this.open)">
-            <summary><i class="fa-solid fa-closed-captioning"></i> Read Troubleshooting Video Transcript</summary>
-            <p id="remediation-transcript-text"></p>
-          </details>
         </div>
       </div>
     </div>
@@ -1116,7 +1122,7 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
         instructions: `
           <p style="margin-bottom:0.5rem;">Create an <strong>orders</strong> table (with <code>order_id</code>, <code>book_id</code>, and <code>customer_name</code>), insert at least one order referencing an existing <code>book_id</code> (1 or 2), and run an <code>INNER JOIN</code> combining <strong>orders</strong> and <strong>books</strong> on <code>book_id</code>.</p>
         `,
-        starterCode: `-- Step 5: Create orders, insert an order, and join with books\nCREATE TABLE orders (\n  order_id INT PRIMARY KEY AUTO_INCREMENT,\n  book_id INT NOT NULL,\n  customer_name VARCHAR(100)\n);\n\nINSERT INTO orders (book_id, customer_name)\nVALUES (2, 'Jordan Taylor');\n\nSELECT orders.order_id, orders.customer_name, books.title, books.price\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`
+        starterCode: `-- Step 5: Create orders, insert an order, and join with books\nCREATE TABLE orders (\n  order_id INT PRIMARY KEY AUTO_INCREMENT,\n  book_id INT NOT NULL,\n  customer_name VARCHAR(100)\n);\n\nINSERT INTO orders (book_id, customer_name)\nVALUES (2, 'Jordan Taylor');\n\nSELECT\n  orders.order_id,\n  orders.customer_name,\n  books.title,\n  books.price\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`
       }
     };
 
@@ -1138,12 +1144,13 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
     ];
 
     // =========================================================================
-    // 4. PERSISTENT STATE & GRANULAR TELEMETRY ENGINE
+    // 4. PERSISTENT STATE & GRANULAR REAL-TIME TELEMETRY ENGINE
     // =========================================================================
     const defaultState = {
       linkOpenedLogged: false,
       consentDecision: null,
       diagnosticCompleted: false,
+      sandboxEnteredLogged: false,
       priorSql: null,
       ilsScore: null,
       ilsItems: {},
@@ -1153,6 +1160,7 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
       attempts: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
       moduleSeconds: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
       totalActiveSeconds: 0,
+      lastFlushedActiveSeconds: 0,
       savedCode: {
         1: MODULES[1].starterCode,
         2: MODULES[2].starterCode,
@@ -1163,7 +1171,9 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
       remediationTriggered: { 1: false, 2: false, 3: false, 4: false, 5: false },
       solutionRevealed: { 1: false, 2: false, 3: false, 4: false, 5: false },
       transcriptsOpened: {},
-      videos: {}, // e.g., { "TOUR": { p: 1, c: 1, s: 214 }, "1.1": { p: 2, c: 1, s: 96 } }
+      videos: {},
+      videoStartedPinged: {},
+      videoCompletedPinged: {},
       nudgeShown: false,
       exitLogged: false
     };
@@ -1180,7 +1190,9 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
             moduleSeconds: Object.assign({}, defaultState.moduleSeconds, parsed.moduleSeconds || {}),
             savedCode: Object.assign({}, defaultState.savedCode, parsed.savedCode || {}),
             remediationTriggered: Object.assign({}, defaultState.remediationTriggered, parsed.remediationTriggered || {}),
-            solutionRevealed: Object.assign({}, defaultState.solutionRevealed, parsed.solutionRevealed || {})
+            solutionRevealed: Object.assign({}, defaultState.solutionRevealed, parsed.solutionRevealed || {}),
+            videoStartedPinged: Object.assign({}, defaultState.videoStartedPinged, parsed.videoStartedPinged || {}),
+            videoCompletedPinged: Object.assign({}, defaultState.videoCompletedPinged, parsed.videoCompletedPinged || {})
           });
         }
       } catch (e) {}
@@ -1219,7 +1231,7 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
     }, 1000);
 
     // =========================================================================
-    // YOUTUBE IFRAME API TRACKER: Starts (p), Completions (c), & Seconds (s)
+    // YOUTUBE IFRAME API TRACKER: Real-Time Start/Complete Pings + Watch Seconds
     // =========================================================================
     const ytPlayers = {};
     const ytPlayerReady = {};
@@ -1241,7 +1253,7 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
     function recordVideoPlay(videoKey) {
       ensureVideoEntry(videoKey);
       state.videos[videoKey].p += 1;
-      saveState();
+
       if (!videoWatchTimers[videoKey]) {
         videoWatchTimers[videoKey] = setInterval(() => {
           if (document.visibilityState === "visible") {
@@ -1249,13 +1261,38 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
           }
         }, 1000);
       }
+
+      // Fire immediate VIDEO_STARTED ping the first time this video plays
+      if (!state.videoStartedPinged[videoKey]) {
+        state.videoStartedPinged[videoKey] = true;
+        saveState();
+        sendTelemetry(
+          "VIDEO_STARTED",
+          buildSandboxTelemetryMeta(),
+          `ARM:${ASSIGNED_ARM.toUpperCase()}|VIDEO:${videoKey}`
+        );
+      } else {
+        saveState();
+      }
     }
 
     function recordVideoCompleted(videoKey) {
       ensureVideoEntry(videoKey);
       state.videos[videoKey].c += 1;
       stopVideoTimer(videoKey);
-      saveState();
+
+      // Fire immediate VIDEO_COMPLETED ping the first time this video finishes
+      if (!state.videoCompletedPinged[videoKey]) {
+        state.videoCompletedPinged[videoKey] = true;
+        saveState();
+        sendTelemetry(
+          "VIDEO_COMPLETED",
+          buildSandboxTelemetryMeta(),
+          `ARM:${ASSIGNED_ARM.toUpperCase()}|VIDEO:${videoKey}|SEC:${state.videos[videoKey].s}`
+        );
+      } else {
+        saveState();
+      }
     }
 
     function stopVideoTimer(videoKey) {
@@ -1331,6 +1368,9 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
     function sendTelemetry(stepLabel, attemptsPayload, statusPayload, useBeacon = false) {
       if (!isValidToken || !WEBHOOK_URL) return;
 
+      state.lastFlushedActiveSeconds = state.totalActiveSeconds;
+      saveState();
+
       const payload = {
         student_id: STUDY_TOKEN,
         step: stepLabel,
@@ -1375,6 +1415,22 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
         videos: activeVideos
       };
     }
+
+    // Flush accumulated video watch seconds & module time whenever tab hides
+    document.addEventListener("visibilitychange", () => {
+      if (!isValidToken || document.visibilityState !== "hidden") return;
+      stopAllVideoTimers();
+      saveState();
+      const deltaSeconds = state.totalActiveSeconds - (state.lastFlushedActiveSeconds || 0);
+      if (deltaSeconds >= 10 && !state.exitLogged) {
+        sendTelemetry(
+          "SESSION_PAUSE",
+          buildSandboxTelemetryMeta(),
+          `ARM:${ASSIGNED_ARM.toUpperCase()}|STEP:${state.currentStep}`,
+          true
+        );
+      }
+    });
 
     // Screen 3 Pathway Click & Browser Exit Tracking
     function logExitPathway(pathwayStep) {
@@ -1609,6 +1665,16 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
       renderStepTabs();
       loadStep(state.currentStep);
 
+      if (!state.sandboxEnteredLogged) {
+        state.sandboxEnteredLogged = true;
+        saveState();
+        sendTelemetry(
+          "SANDBOX_ENTERED",
+          buildSandboxTelemetryMeta(),
+          "ARM:" + ASSIGNED_ARM.toUpperCase()
+        );
+      }
+
       if (!state.tourSeen && !ALLOW_SKIP_SCREENER) {
         openWelcomeModal();
       }
@@ -1740,6 +1806,7 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
       saveState();
       document.getElementById("sql-editor").value = state.savedCode[step];
       updateLineGutter();
+      document.getElementById("remediation-drawer").classList.add("hidden");
     }
 
     function revealWorkingSolution() {
@@ -1751,15 +1818,27 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
       updateLineGutter();
     }
 
+    function logFailedAttemptTelemetry(step, reason) {
+      const shortErr = String(reason || "Validation error").replace(/\|/g, " ").slice(0, 80);
+      sendTelemetry(
+        `STEP_${step}_ATTEMPT_FAIL`,
+        buildSandboxTelemetryMeta(),
+        `ARM:${ASSIGNED_ARM.toUpperCase()}|STEP_${step}_ATTEMPTS:${state.attempts[step]}|STEP_${step}_SEC:${state.moduleSeconds[step]}|ERR:${shortErr}`
+      );
+    }
+
     function triggerRemediation(customReason) {
       const step = state.currentStep;
       state.remediationTriggered[step] = true;
       saveState();
 
+      logFailedAttemptTelemetry(step, customReason);
+
       const drawer = document.getElementById("remediation-drawer");
       document.getElementById("remediation-message").textContent = customReason;
       drawer.classList.remove("hidden");
       loadYouTubeSlot("remediation-video-frame", MODULES[step].remediationVideoId, step + ".2");
+      drawer.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
     // Seed Helper for Modules 2–5
@@ -1952,6 +2031,9 @@ Across the top of the screen, you’ll see five modules: creating tables, adding
         } else if (step === 5) {
           if (!/INNER\s+JOIN/i.test(rawSql) || !/\bON\b/i.test(rawSql)) {
             throw new Error("Make sure your query uses INNER JOIN books ON orders.book_id = books.book_id.");
+          }
+          if (/ON\s+[^;]*(?:<=|>=|<>|!=|<|>)/i.test(rawSql)) {
+            throw new Error("Relational Join Notice: Primary and foreign keys must connect using equality (=). Using an inequality operator causes unrelated rows to match.");
           }
           const orderCheck = db.exec("SELECT COUNT(*) FROM orders;");
           if (!orderCheck.length || orderCheck[0].values[0][0] < 1) {
