@@ -12,7 +12,6 @@
   <title>D426 Curricular Sequencing Pilot — Live Operational Telemetry</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
   <style>
     :root {
       --wgu-blue: #002F6C;
@@ -30,12 +29,14 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html { scroll-behavior: smooth; }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: var(--bg-slate);
       color: var(--text-main);
       line-height: 1.5;
-      padding-bottom: 3rem;
+      padding-bottom: 3.5rem;
     }
 
     .container {
@@ -75,7 +76,7 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.65rem;
+      gap: 0.6rem;
     }
 
     .live-pill {
@@ -99,7 +100,7 @@
       display: inline-block;
     }
 
-    .refresh-btn {
+    .header-btn {
       background: rgba(255, 255, 255, 0.14);
       border: 1px solid rgba(255, 255, 255, 0.3);
       color: #FFFFFF;
@@ -111,12 +112,13 @@
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
+      text-decoration: none;
       transition: background 0.15s;
     }
 
-    .refresh-btn:hover { background: rgba(255, 255, 255, 0.25); }
+    .header-btn:hover { background: rgba(255, 255, 255, 0.25); }
 
-    /* Executive Summary Grid */
+    /* Cards & Pop-out Definition Drawers */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -126,6 +128,71 @@
       margin-bottom: 1.25rem;
     }
 
+    .card-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .def-toggle-btn {
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
+      color: var(--wgu-blue);
+      padding: 0.28rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .def-toggle-btn:hover {
+      background: #EFF6FF;
+      border-color: #93C5FD;
+    }
+
+    .def-popover {
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      border-left: 4px solid var(--wgu-gold);
+      border-radius: 7px;
+      padding: 0.8rem 1rem;
+      margin-bottom: 0.9rem;
+      font-size: 0.82rem;
+      color: #334155;
+      line-height: 1.5;
+    }
+
+    .def-popover.hidden { display: none; }
+
+    .def-popover dl {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 0.35rem 0.85rem;
+    }
+
+    @media (max-width: 680px) {
+      .def-popover dl { grid-template-columns: 1fr; }
+    }
+
+    .def-popover dt {
+      font-weight: 700;
+      color: var(--wgu-blue);
+    }
+
+    .def-popover dd {
+      margin: 0;
+      color: #334155;
+    }
+
+    /* Executive Summary Grid */
     .exec-summary-grid {
       display: grid;
       grid-template-columns: 1.05fr 1.95fr;
@@ -179,14 +246,14 @@
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
+      gap: 0.6rem;
     }
 
     .kpi-bullets li {
       background: #F8FAFC;
       border: 1px solid #E2E8F0;
       border-radius: 7px;
-      padding: 0.62rem 0.9rem;
+      padding: 0.6rem 0.9rem;
       font-size: 0.88rem;
       display: flex;
       flex-wrap: wrap;
@@ -203,6 +270,15 @@
     .kpi-val {
       color: #1E293B;
       font-weight: 500;
+    }
+
+    .exec-footnote {
+      font-size: 0.74rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-top: 0.85rem;
+      padding-top: 0.55rem;
+      border-top: 1px solid #E2E8F0;
     }
 
     /* 2x2 Visualization Grid */
@@ -229,18 +305,17 @@
       font-size: 0.95rem;
       font-weight: 700;
       color: var(--wgu-blue);
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.15rem;
     }
 
     .chart-subtitle {
       font-size: 0.78rem;
       color: var(--text-muted);
-      margin-bottom: 0.75rem;
     }
 
     .chart-canvas-wrap {
       position: relative;
-      height: 250px;
+      height: 245px;
       width: 100%;
     }
 
@@ -250,7 +325,7 @@
       flex-wrap: wrap;
       gap: 0.75rem;
       align-items: center;
-      margin: 0.85rem 0 1rem 0;
+      margin: 0.75rem 0 1rem 0;
       padding: 0.85rem;
       background: #F8FAFC;
       border: 1px solid #E2E8F0;
@@ -354,6 +429,70 @@
       font-size: 0.88rem;
     }
 
+    /* Bottom Comprehensive Data Dictionary Drawer */
+    details.master-dictionary {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+      overflow: hidden;
+    }
+
+    details.master-dictionary summary {
+      padding: 1.05rem 1.35rem;
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--wgu-blue);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #F8FAFC;
+    }
+
+    details.master-dictionary summary::-webkit-details-marker { display: none; }
+
+    details.master-dictionary summary:hover { background: #EFF6FF; }
+
+    .dictionary-body {
+      padding: 1.25rem 1.35rem 1.5rem 1.35rem;
+      border-top: 1px solid #E2E8F0;
+      font-size: 0.85rem;
+      color: #334155;
+    }
+
+    .dict-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.1rem;
+      margin-top: 0.75rem;
+    }
+
+    .dict-group {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 0.95rem 1.05rem;
+    }
+
+    .dict-group h4 {
+      color: var(--wgu-blue);
+      font-size: 0.88rem;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid #CBD5E1;
+      padding-bottom: 0.3rem;
+    }
+
+    .dict-group ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .dict-group li strong { color: #0F172A; }
+
     .footer-note {
       text-align: center;
       font-size: 0.78rem;
@@ -374,7 +513,10 @@
       </div>
       <div class="banner-actions">
         <span class="live-pill"><span class="live-dot"></span> LIVE READ-ONLY VIEW</span>
-        <button type="button" class="refresh-btn" onclick="loadDashboardData()">
+        <a href="#full-data-dictionary" class="header-btn" onclick="openMasterDictionary()">
+          <i class="fa-solid fa-book-open"></i> Metric Definitions
+        </a>
+        <button type="button" class="header-btn" onclick="loadDashboardData()">
           <i class="fa-solid fa-rotate"></i> Refresh Feed
         </button>
       </div>
@@ -382,17 +524,41 @@
 
     <!-- Top Executive Summary: Manual PI Status Update + Automated KPI Bullets -->
     <section class="card">
+      <div class="card-header-row">
+        <div class="section-kicker" style="margin-bottom:0;"><i class="fa-solid fa-clipboard-check"></i> Executive Summary &amp; Live Study Status</div>
+        <button type="button" class="def-toggle-btn" onclick="toggleDef('def-exec')">
+          <i class="fa-solid fa-circle-question"></i> Definitions
+        </button>
+      </div>
+
+      <div id="def-exec" class="def-popover hidden">
+        <dl>
+          <dt>PI Status Update:</dt>
+          <dd>Manual progress note posted by the Principal Investigator (Bruce Johnson) summarizing current recruitment pacing and operational status.</dd>
+          <dt>Invited (Control / Interv):</dt>
+          <dd>Unique students sent a study invitation email. Students are split 50/50 into the <strong>Control</strong> group (standard D426 course path) or <strong>Intervention</strong> group (optional 5-module SQL practice sandbox before standard coursework).</dd>
+          <dt>Agreed / Declined:</dt>
+          <dd>Students who clicked their link, confirmed they are 18+, and selected either "YES, I agree to participate" or "NO, I do not wish to participate" on the consent screen.</dd>
+          <dt>Sandbox Engagement:</dt>
+          <dd>Tracks Intervention participants who completed all 5 SQL exercises (Full), completed 1–4 exercises (Partial), or consented without starting an exercise yet.</dd>
+          <dt>Median Active Time:</dt>
+          <dd>The middle (median) number of minutes students actively spent working inside the SQL sandbox. Time pauses automatically if a browser tab is hidden or inactive for over 2 minutes.</dd>
+          <dt>Cohort Profile:</dt>
+          <dd>Self-reported baseline SQL experience (Levels 1–2 = Novice/None) and learning style preference (Sequential = step-by-step; Global = big-picture first) from the optional 3-minute check-in.</dd>
+        </dl>
+      </div>
+
       <div class="exec-summary-grid">
         <div class="pi-note-box">
           <div>
-            <div class="section-kicker"><i class="fa-solid fa-clipboard-check"></i> PI Status &amp; Ramp-Up Update</div>
+            <div class="section-kicker"><i class="fa-solid fa-pen-to-square"></i> PI Status &amp; Ramp-Up Update</div>
             <div class="pi-note-text" id="pi-status-note">Loading latest status update...</div>
           </div>
           <div class="pi-note-footer" id="last-updated-label">Synced with telemetry feed</div>
         </div>
 
         <div>
-          <div class="section-kicker"><i class="fa-solid fa-chart-line"></i> Automated Executive Telemetry Summary</div>
+          <div class="section-kicker"><i class="fa-solid fa-chart-line"></i> Automated Study Metrics</div>
           <ul class="kpi-bullets">
             <li>
               <span class="kpi-lead">&bull; Invitations &amp; Consent Funnel:</span>
@@ -403,55 +569,157 @@
               <span class="kpi-val" id="bullet-sandbox">0 Full 5-Module Completions &nbsp;|&nbsp; 0 Partial Activity (M1–M4) &nbsp;|&nbsp; 0 Consented / Not Started</span>
             </li>
             <li>
-              <span class="kpi-lead">&bull; Active Time-on-Task Guardrail:</span>
-              <span class="kpi-val" id="bullet-time">0.0 min median active sandbox time (30.0 min safety ceiling; excludes idle/hidden tabs)</span>
+              <span class="kpi-lead">&bull; Active Time in Sandbox:</span>
+              <span class="kpi-val" id="bullet-time">0.0 min median active time across sandbox participants</span>
             </li>
             <li>
               <span class="kpi-lead">&bull; Cohort Learning &amp; SQL Profile:</span>
-              <span class="kpi-val" id="bullet-cohort">0% Sequential vs. 0% Global (ILS) &nbsp;|&nbsp; 0% Novice / No-Prior-SQL (Levels 1–2)</span>
+              <span class="kpi-val" id="bullet-cohort">0% Sequential vs. 0% Global &nbsp;|&nbsp; 0% Novice / No-Prior-SQL (Levels 1–2)</span>
             </li>
           </ul>
         </div>
       </div>
+
+      <p class="exec-footnote">
+        Note: The SQL practice sandbox is 100% voluntary and self-paced—no time limit or cutoff is ever enforced on students. Active time measurements exclude periods when the browser tab is hidden or inactive for more than 2 minutes.
+      </p>
     </section>
 
     <!-- 2x2 Data Visualizations -->
     <section class="charts-grid">
       <div class="chart-card">
-        <div class="chart-title">Cumulative Recruitment &amp; Sandbox Completion Over Time</div>
-        <div class="chart-subtitle">Tracks phased invitation ramp-up, consent opt-ins, and sandbox completions by date</div>
+        <div class="card-header-row">
+          <div>
+            <div class="chart-title">Cumulative Recruitment &amp; Sandbox Completion Over Time</div>
+            <div class="chart-subtitle">Running totals of invitations sent, consent opt-ins, and sandbox completions by date</div>
+          </div>
+          <button type="button" class="def-toggle-btn" onclick="toggleDef('def-chart-1')">
+            <i class="fa-solid fa-circle-question"></i> Definitions
+          </button>
+        </div>
+        <div id="def-chart-1" class="def-popover hidden">
+          <dl>
+            <dt>Total Invited:</dt>
+            <dd>Cumulative count of unique study invitations dispatched across both Control and Intervention groups.</dd>
+            <dt>Consented (Yes):</dt>
+            <dd>Cumulative count of invited students (18+) who voluntarily agreed to participate.</dd>
+            <dt>Sandbox Active / Completed:</dt>
+            <dd>Cumulative count of Intervention participants who passed at least Module 1 (Active) or finished all 5 modules (Completed).</dd>
+          </dl>
+        </div>
         <div class="chart-canvas-wrap"><canvas id="chart-funnel-time"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <div class="chart-title">Intervention Sandbox Engagement Breakdown</div>
-        <div class="chart-subtitle">Completed all 5 modules vs. partial activity (M1–M4) vs. not started</div>
+        <div class="card-header-row">
+          <div>
+            <div class="chart-title">Intervention Sandbox Engagement Breakdown</div>
+            <div class="chart-subtitle">Comparison of full completions, partial progress, and consented non-starters</div>
+          </div>
+          <button type="button" class="def-toggle-btn" onclick="toggleDef('def-chart-2')">
+            <i class="fa-solid fa-circle-question"></i> Definitions
+          </button>
+        </div>
+        <div id="def-chart-2" class="def-popover hidden">
+          <dl>
+            <dt>Completed All 5 Modules:</dt>
+            <dd>Intervention participants who successfully ran valid SQL solutions for all five exercises (CREATE, INSERT, UPDATE, SELECT, JOIN).</dd>
+            <dt>Partial Activity (M1–M4):</dt>
+            <dd>Intervention participants who completed between 1 and 4 modules (or attempted code) without finishing Module 5 yet.</dd>
+            <dt>Consented / Not Started:</dt>
+            <dd>Intervention participants who completed the check-in survey but have not yet completed a sandbox exercise.</dd>
+          </dl>
+        </div>
         <div class="chart-canvas-wrap"><canvas id="chart-engagement"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <div class="chart-title">Active Sandbox Time-on-Task vs. 30-Min Guardrail</div>
-        <div class="chart-subtitle">Daily median active minutes compared against the 30-minute student pacing ceiling</div>
+        <div class="card-header-row">
+          <div>
+            <div class="chart-title">Median Active Sandbox Time by Date</div>
+            <div class="chart-subtitle">Typical active minutes spent working in the SQL practice tool (excludes idle/hidden tabs)</div>
+          </div>
+          <button type="button" class="def-toggle-btn" onclick="toggleDef('def-chart-3')">
+            <i class="fa-solid fa-circle-question"></i> Definitions
+          </button>
+        </div>
+        <div id="def-chart-3" class="def-popover hidden">
+          <dl>
+            <dt>Median Active Minutes:</dt>
+            <dd>The middle value of active time-on-task recorded across sandbox module completions on each date. Using the median prevents a single student leaving their browser open from skewing the average.</dd>
+            <dt>Idle Pause Rule:</dt>
+            <dd>The timer stops counting whenever a student switches browser tabs or stops typing/clicking for more than 2 minutes.</dd>
+          </dl>
+        </div>
         <div class="chart-canvas-wrap"><canvas id="chart-time-guardrail"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <div class="chart-title">Module-by-Module Completion Funnel (Modules 1–5)</div>
-        <div class="chart-subtitle">Unique intervention participants passing each SQL module</div>
+        <div class="card-header-row">
+          <div>
+            <div class="chart-title">Module-by-Module Completion Funnel (Modules 1–5)</div>
+            <div class="chart-subtitle">Unique intervention participants passing each hands-on SQL exercise</div>
+          </div>
+          <button type="button" class="def-toggle-btn" onclick="toggleDef('def-chart-4')">
+            <i class="fa-solid fa-circle-question"></i> Definitions
+          </button>
+        </div>
+        <div id="def-chart-4" class="def-popover hidden">
+          <dl>
+            <dt>M1 (CREATE):</dt>
+            <dd>Creating a relational table with specified columns and data types.</dd>
+            <dt>M2 (INSERT):</dt>
+            <dd>Populating the table with multi-row book records.</dd>
+            <dt>M3 (UPDATE):</dt>
+            <dd>Safely modifying a specific row using a <code>WHERE</code> clause.</dd>
+            <dt>M4 (SELECT):</dt>
+            <dd>Filtering records with <code>WHERE</code> and sorting with <code>ORDER BY DESC</code>.</dd>
+            <dt>M5 (JOIN):</dt>
+            <dd>Creating a second table and combining both tables via <code>INNER JOIN</code>.</dd>
+          </dl>
+        </div>
         <div class="chart-canvas-wrap"><canvas id="chart-modules"></canvas></div>
       </div>
     </section>
 
     <!-- Student-Level Drill-Down & Chronological Event Audit -->
     <section class="card">
-      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:0.5rem;">
+      <div class="card-header-row">
         <div>
-          <div class="section-kicker" style="margin-bottom:0.15rem;"><i class="fa-solid fa-magnifying-glass-chart"></i> Participant Drill-Down &amp; Event Audit</div>
-          <p style="font-size:0.83rem; color:var(--text-muted);">Filter or click any anonymous <code>S26_</code> token row below to inspect that participant's complete chronological interaction log.</p>
+          <div class="section-kicker" style="margin-bottom:0.15rem;"><i class="fa-solid fa-magnifying-glass-chart"></i> Participant Drill-Down &amp; Activity Log</div>
+          <p style="font-size:0.83rem; color:var(--text-muted);">Filter or click any anonymous <code>S26_</code> token row below to inspect that participant's complete chronological interaction history.</p>
         </div>
-        <div style="font-size:0.82rem; font-weight:700; color:var(--wgu-blue);" id="selected-student-banner">
-          Showing All Participants
+        <div style="display:flex; align-items:center; gap:0.65rem; flex-wrap:wrap;">
+          <span style="font-size:0.82rem; font-weight:700; color:var(--wgu-blue);" id="selected-student-banner">
+            Showing All Participants
+          </span>
+          <button type="button" class="def-toggle-btn" onclick="toggleDef('def-drilldown')">
+            <i class="fa-solid fa-circle-question"></i> Table Column Definitions
+          </button>
         </div>
+      </div>
+
+      <div id="def-drilldown" class="def-popover hidden">
+        <dl>
+          <dt>Study Token:</dt>
+          <dd>Randomly generated, non-identifying research code (<code>S26_XXXXXX</code>). Contains zero student names, emails, or institutional IDs.</dd>
+          <dt>Arm:</dt>
+          <dd><code>INTERV</code> = Intervention Group (SQL sandbox before course text); <code>CTRL</code> = Control Group (standard course sequence).</dd>
+          <dt>Consent &amp; Screener:</dt>
+          <dd>Whether the student agreed to participate (18+) and submitted the 3-minute prior SQL and learning style check-in.</dd>
+          <dt>Prior SQL (1–5):</dt>
+          <dd>Self-rated SQL experience before D426: 1 = None, 2 = Very little, 3 = Moderate, 4 = Comfortable, 5 = Professional.</dd>
+          <dt>ILS Style:</dt>
+          <dd>Index of Learning Styles preference: <strong>Sequential</strong> (prefers step-by-step progression) or <strong>Global</strong> (prefers big-picture overview first).</dd>
+          <dt>Highest Mod &amp; Active Min:</dt>
+          <dd>Highest SQL exercise completed (0 to 5) and total active minutes spent in the tool.</dd>
+          <dt>Videos Started / Done:</dt>
+          <dd>Count of unique walkthrough or troubleshooting videos started vs. watched to completion (out of 11 total videos).</dd>
+          <dt>Exit Pathway:</dt>
+          <dd>Which course link the student clicked upon finishing Module 5: <strong>Pathway A</strong> (jump straight to zyBooks Chapter 2 SQL) or <strong>Pathway B</strong> (start at Chapter 1 theory).</dd>
+          <dt>Sessions:</dt>
+          <dd>Count of distinct browser sessions recorded for that token (helps verify whether a student resumed their work later).</dd>
+        </dl>
       </div>
 
       <div class="filter-bar">
@@ -482,7 +750,7 @@
       </div>
 
       <!-- Table 1: Participant Roll-Up -->
-      <h3 style="font-size:0.92rem; color:var(--wgu-blue); margin-bottom:0.45rem;">1. Participant Summary Table (Click a Row to Drill Down)</h3>
+      <h3 style="font-size:0.92rem; color:var(--wgu-blue); margin-bottom:0.45rem;">1. Participant Summary Table (Click Any Row to Drill Down)</h3>
       <div class="table-wrap" style="margin-bottom:1.35rem;">
         <table class="data-table">
           <thead>
@@ -531,6 +799,62 @@
       </div>
     </section>
 
+    <!-- Comprehensive Bottom Data Dictionary Drawer -->
+    <details class="master-dictionary" id="full-data-dictionary">
+      <summary>
+        <span><i class="fa-solid fa-book-open"></i> Complete Study Guide &amp; Metric Data Dictionary (Click to Expand)</span>
+        <span style="font-size:0.8rem; font-weight:600; color:var(--text-muted);">Plain-Language Reference for All Stakeholders</span>
+      </summary>
+      <div class="dictionary-body">
+        <p style="margin-bottom:0.75rem;">
+          This dashboard monitors operational health and student engagement for the independent D426 Curricular Sequencing Pilot. All records are keyed strictly to randomly generated <code>S26_</code> tokens—no student names, email addresses, grades, or institutional IDs are stored in this system.
+        </p>
+
+        <div class="dict-grid">
+          <div class="dict-group">
+            <h4>1. Study Groups &amp; Recruitment Funnel</h4>
+            <ul>
+              <li><strong>Control Group (CTRL):</strong> Students assigned to the standard D426 course sequence. After the brief check-in, they go directly to their regular D426 course shell and textbook.</li>
+              <li><strong>Intervention Group (INTERV):</strong> Students offered optional access to the 5-module interactive SQL practice sandbox before starting their standard D426 textbook chapters.</li>
+              <li><strong>Invited:</strong> Total unique students sent a study invitation email (tracked via <code>INVITED</code>).</li>
+              <li><strong>Links Opened:</strong> Unique students who clicked their personalized link and loaded the consent page (<code>LINK_OPENED</code>).</li>
+              <li><strong>Consented (Agreed vs. Declined):</strong> Voluntary participation decision on Screen 1A. Students under 18 or preferring not to join select "NO" (<code>CONSENT_DECLINED</code>) and proceed straight to standard course resources.</li>
+              <li><strong>Screener Completed:</strong> Consented students who submitted the 12-question baseline SQL &amp; study preference check-in (<code>DIAGNOSTIC_COMPLETED</code>).</li>
+            </ul>
+          </div>
+
+          <div class="dict-group">
+            <h4>2. Sandbox Progress &amp; Time Metrics</h4>
+            <ul>
+              <li><strong>Self-Paced Design (No Time Limit):</strong> Students may pause, close their browser, or return anytime using their personal link. No cutoff or timer restriction is ever imposed.</li>
+              <li><strong>Active Time (Minutes):</strong> Measured only while the browser tab is visible and the user has interacted within the past 2 minutes. Idle or background tabs are automatically excluded.</li>
+              <li><strong>Full vs. Partial Completion:</strong> <em>Full Completion</em> means passing all 5 SQL exercises (<code>STEP_5_COMPLETED</code>). <em>Partial Activity</em> means starting or passing 1–4 exercises without finishing Module 5 yet.</li>
+              <li><strong>Attempt &amp; Tip Events:</strong> Each module logs code runs, syntax/validation checks (<code>STEP_X_ATTEMPT_FAIL</code>), and whether the student opened the troubleshooting drawer or revealed the starter solution after 3 tries.</li>
+            </ul>
+          </div>
+
+          <div class="dict-group">
+            <h4>3. Video Engagement &amp; Exit Pathways</h4>
+            <ul>
+              <li><strong>11 Embedded Micro-Videos:</strong> Includes 1 Welcome Tour video (<code>TOUR</code>), 5 primary module walkthroughs (<code>1.1</code>–<code>5.1</code>), and 5 troubleshooting tip videos (<code>1.2</code>–<code>5.2</code>).</li>
+              <li><strong>Videos Started vs. Completed:</strong> <code>VIDEO_STARTED</code> fires when playback begins; <code>VIDEO_COMPLETED</code> fires when a video reaches its end (counted accurately even if watched at 1.5x or 2x speed).</li>
+              <li><strong>Pathway A vs. Pathway B:</strong> Upon finishing Module 5, students choose either <strong>Pathway A</strong> (<code>EXIT_PATHWAY_A</code>: jump straight into zyBooks Chapter 2 SQL coding) or <strong>Pathway B</strong> (<code>EXIT_PATHWAY_B</code>: start at Chapter 1 database theory).</li>
+              <li><strong>Session Exit / Pause:</strong> <code>SESSION_PAUSE</code> and <code>SESSION_EXIT</code> record where a student leaves off if they switch tabs or close the browser before clicking a pathway link.</li>
+            </ul>
+          </div>
+
+          <div class="dict-group">
+            <h4>4. Baseline Survey &amp; Privacy Identifiers</h4>
+            <ul>
+              <li><strong>Prior SQL Familiarity (1–5):</strong> Self-reported experience before starting D426 (1 = None, 2 = Very little, 3 = Moderate, 4 = Comfortable, 5 = Professional). Levels 1–2 are grouped as "Novice / No Prior SQL" in the executive summary.</li>
+              <li><strong>ILS Learning Preference:</strong> Based on the 11-item Felder-Soloman Sequential/Global scale (scored from &minus;11 to +11). Positive scores (+1 to +11) indicate a <strong>Sequential</strong> preference (step-by-step); negative scores (&minus;1 to &minus;11) indicate a <strong>Global</strong> preference (big-picture first).</li>
+              <li><strong>Study Token &amp; Session Hash:</strong> <code>S26_XXXXXX</code> links events for the same participant anonymously; <code>sess_...</code> is a temporary browser-tab ID used only to detect multi-session returns.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </details>
+
     <footer class="footer-note">
       &copy; 2026 Bruce C. Johnson III. All Rights Reserved. | Independent Faculty Research Pilot &bull; Read-Only Operational Telemetry
     </footer>
@@ -545,6 +869,16 @@
     let rawDashboardData = { kpis: {}, events: [], students: [] };
     let selectedToken = null;
     let charts = {};
+
+    function toggleDef(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle("hidden");
+    }
+
+    function openMasterDictionary() {
+      const dict = document.getElementById("full-data-dictionary");
+      if (dict) dict.open = true;
+    }
 
     async function loadDashboardData() {
       try {
@@ -595,13 +929,13 @@
 
       const medMin = Number(k.Median_Sandbox_Minutes || 0).toFixed(1);
       document.getElementById("bullet-time").textContent =
-        `${medMin} min median active sandbox time (30.0 min safety ceiling; excludes idle/hidden tabs)`;
+        `${medMin} min median active time across sandbox participants`;
 
       const pctSeq = Math.round(Number(k.Pct_Sequential || 0) * 100);
       const pctGlo = Math.round(Number(k.Pct_Global || 0) * 100);
       const pctNov = Math.round(Number(k.Pct_Novice_SQL || 0) * 100);
       document.getElementById("bullet-cohort").textContent =
-        `${pctSeq}% Sequential vs. ${pctGlo}% Global (ILS)  |  ${pctNov}% Novice / No-Prior-SQL (Levels 1–2)`;
+        `${pctSeq}% Sequential vs. ${pctGlo}% Global  |  ${pctNov}% Novice / No-Prior-SQL (Levels 1–2)`;
     }
 
     function destroyChartIfExists(id) {
@@ -615,7 +949,6 @@
       const events = rawDashboardData.events || [];
       const students = rawDashboardData.students || [];
 
-      // Collect sorted unique dates (or Day 0 placeholder)
       const dateSet = new Set(events.map(e => e.date).filter(Boolean));
       const dates = Array.from(dateSet).sort();
       const labels = dates.length ? dates : ["Day 0 (Launch)"];
@@ -686,7 +1019,7 @@
         }
       });
 
-      // 3. Median Active Sandbox Time vs 30-Min Guardrail
+      // 3. Median Active Sandbox Time by Date (No artificial ceiling line)
       const medSeries = dates.length === 0 ? [0] : dates.map(d => {
         const vals = events
           .filter(e => e.date === d && e.step.startsWith("STEP_") && e.activeMinutes > 0)
@@ -710,21 +1043,20 @@
               backgroundColor: "rgba(0, 86, 179, 0.12)",
               fill: true,
               tension: 0.25
-            },
-            {
-              label: "30.0 Min Guardrail Ceiling",
-              data: labels.map(() => 30),
-              borderColor: "#DC2626",
-              borderDash: [6, 5],
-              pointRadius: 0,
-              fill: false
             }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          scales: { y: { beginAtZero: true, suggestedMax: 36 } }
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              suggestedMax: 30,
+              title: { display: true, text: "Active Minutes" }
+            }
+          }
         }
       });
 
