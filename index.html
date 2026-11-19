@@ -1,277 +1,370 @@
 <!DOCTYPE html>
 <!--
-  D426: Data Management Foundations — Interactive SQL Practice & Study Prep
-  Independent Faculty Instructional Research Pilot
-  Principal Investigator: Bruce C. Johnson III (School of Technology)
+  =============================================================================
+  D426 Interactive SQL Launch Sandbox & Curricular Sequencing Research Platform
+  Copyright (c) 2026 Bruce C. Johnson III. All Rights Reserved.
+  Unauthorized copying, redistribution, reverse engineering, or commercial use
+  of this software, curriculum structure, or validation logic is prohibited.
+  =============================================================================
 -->
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="author" content="Bruce C. Johnson III" />
-  <title>D426: Data Management Foundations</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Bruce C. Johnson III">
+  <meta name="copyright" content="Copyright (c) 2026 Bruce C. Johnson III. All Rights Reserved.">
+  <title>D426: Data Management Foundations — Interactive SQL Practice &amp; Study Prep</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
   <style>
     :root {
-      --wgu-blue: #002f6c;
-      --wgu-gold: #ffc220;
-      --primary: #1e3a8a;
-      --primary-light: #2563eb;
-      --primary-bg: #eff6ff;
-      --accent: #0f766e;
-      --accent-bg: #f0fdfa;
-      --success: #15803d;
-      --success-bg: #f0fdf4;
-      --warn: #b45309;
-      --warn-bg: #fffbeb;
-      --danger: #b91c1c;
-      --danger-bg: #fef2f2;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #475569;
-      --border: #cbd5e1;
-      --editor-bg: #0f172a;
+      --wgu-blue: #002F6C;
+      --wgu-blue-light: #004B8D;
+      --wgu-gold: #BA8E23;
+      --bg-slate: #F1F5F9;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --text-muted: #475569;
+      --border-color: #CBD5E1;
+      --success-bg: #F0FDF4;
+      --success-border: #16A34A;
+      --error-bg: #FEF2F2;
+      --error-border: #DC2626;
+      --warn-bg: #FFFBEB;
+      --warn-border: #D97706;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      background-color: var(--bg-slate);
+      color: var(--text-main);
       line-height: 1.55;
-      padding-bottom: 3.5rem;
+      padding-bottom: 3rem;
     }
 
-    header {
-      background: linear-gradient(135deg, #0f172a 0%, var(--wgu-blue) 100%);
-      color: #ffffff;
-      padding: 1rem 1.75rem;
+    /* Top Header */
+    .app-header {
+      background: linear-gradient(135deg, var(--wgu-blue) 0%, #001E46 100%);
+      color: #FFFFFF;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 0.75rem;
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.16);
     }
 
-    header h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
-    header .subtitle { font-size: 0.8rem; color: #cbd5e1; }
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
 
-    .header-actions {
+    .brand-subtitle {
+      font-size: 0.82rem;
+      color: #CBD5E1;
+    }
+
+    .header-controls {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: 0.5rem;
     }
 
-    .badge-pill {
+    .token-pill {
       background: rgba(255, 255, 255, 0.14);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      padding: 0.32rem 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      padding: 0.3rem 0.7rem;
       border-radius: 999px;
       font-size: 0.8rem;
-      font-weight: 600;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: #F8FAFC;
     }
 
     .header-btn {
-      background: rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.32);
-      padding: 0.35rem 0.75rem;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #FFFFFF;
+      padding: 0.32rem 0.65rem;
       border-radius: 6px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
       text-decoration: none;
-      transition: background 0.15s;
+      transition: background 0.15s ease;
     }
-    .header-btn:hover { background: rgba(255, 255, 255, 0.26); }
 
+    .header-btn:hover {
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    /* Main Container */
     .container {
       max-width: 1280px;
       margin: 1.5rem auto;
       padding: 0 1rem;
-      position: relative;
+    }
+
+    .narrow-container {
+      max-width: 860px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
     }
 
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
       border-radius: 10px;
-      padding: 1.5rem;
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+      padding: 1.75rem;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
       margin-bottom: 1.25rem;
     }
 
-    .card h2 {
-      font-size: 1.22rem;
+    .hidden {
+      display: none !important;
+    }
+
+    h1, h2, h3 {
       color: var(--wgu-blue);
-      margin-bottom: 0.45rem;
     }
 
-    .consent-notice {
-      background: #eff6ff;
-      border-left: 4px solid var(--wgu-blue);
-      padding: 0.85rem 1rem;
-      border-radius: 0 6px 6px 0;
-      margin: 0.85rem 0 1.1rem;
-      font-size: 0.91rem;
-    }
-
-    .consent-section {
-      margin-bottom: 0.85rem;
-      font-size: 0.92rem;
-      color: #1e293b;
-    }
-    .consent-section strong { color: #0f172a; }
-
-    .question-box {
-      background: #f8fafc;
-      border: 1px solid var(--border);
+    /* Alert & Notice Banners */
+    .notice-box {
       border-radius: 8px;
-      padding: 1rem 1.1rem;
-      margin-bottom: 1rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      padding: 0.9rem 1.1rem;
+      margin-bottom: 1.1rem;
+      font-size: 0.9rem;
     }
-    .question-box.unanswered-error {
-      border: 2px solid var(--danger);
-      background: var(--danger-bg);
+
+    .notice-amber {
+      background: var(--warn-bg);
+      border: 1px solid #F59E0B;
+      border-left: 5px solid var(--warn-border);
+      color: #78350F;
     }
+
+    .notice-blue {
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-left: 5px solid var(--wgu-blue);
+      color: #1E3A8A;
+    }
+
+    .notice-green {
+      background: var(--success-bg);
+      border: 1px solid #86EFAC;
+      border-left: 5px solid var(--success-border);
+      color: #14532D;
+    }
+
+    /* Consent Document Styling (Unscrolled Vertical Inline) */
+    .consent-body {
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 1.25rem 1.4rem;
+      margin: 1rem 0 1.25rem 0;
+      font-size: 0.92rem;
+      color: #1E293B;
+    }
+
+    .consent-body p {
+      margin-bottom: 0.75rem;
+    }
+
+    .consent-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Radio Option Cards */
+    .question-block {
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 1rem 1.15rem;
+      margin-bottom: 0.9rem;
+      background: #FFFFFF;
+      transition: border-color 0.2s;
+    }
+
+    .question-block.invalid-highlight {
+      border: 2px solid var(--error-border);
+      background: #FEF2F2;
+    }
+
     .question-title {
-      font-weight: 600;
-      margin-bottom: 0.6rem;
+      font-weight: 700;
       font-size: 0.95rem;
+      margin-bottom: 0.55rem;
+      color: #0F172A;
     }
+
     .radio-option {
       display: flex;
       align-items: flex-start;
       gap: 0.6rem;
-      padding: 0.55rem 0.7rem;
-      margin-bottom: 0.4rem;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
+      padding: 0.42rem 0.65rem;
+      margin-bottom: 0.28rem;
+      border: 1px solid #E2E8F0;
       border-radius: 6px;
       cursor: pointer;
-      min-height: 44px;
-      font-size: 0.91rem;
+      font-size: 0.9rem;
+      background: #F8FAFC;
+      transition: background 0.15s, border-color 0.15s;
     }
-    .radio-option:hover { border-color: var(--primary-light); background: #f8fafc; }
-    .radio-option input[type="radio"] { margin-top: 0.25rem; accent-color: var(--wgu-blue); }
 
+    .radio-option:hover {
+      background: #EFF6FF;
+      border-color: #93C5FD;
+    }
+
+    .radio-option input[type="radio"] {
+      margin-top: 0.25rem;
+      accent-color: var(--wgu-blue);
+      transform: scale(1.1);
+      cursor: pointer;
+    }
+
+    /* Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 0.45rem;
       padding: 0.65rem 1.25rem;
-      border-radius: 6px;
+      border-radius: 7px;
+      font-size: 0.94rem;
       font-weight: 600;
-      font-size: 0.91rem;
       border: none;
       cursor: pointer;
-      min-height: 44px;
       text-decoration: none;
-      transition: background 0.15s, opacity 0.15s;
+      transition: background 0.15s, opacity 0.15s, transform 0.05s;
     }
-    .btn:disabled { opacity: 0.48; cursor: not-allowed; }
-    .btn-primary { background: var(--wgu-blue); color: #ffffff; }
-    .btn-primary:hover:not(:disabled) { background: #00224f; }
-    .btn-success { background: var(--success); color: #ffffff; }
-    .btn-success:hover:not(:disabled) { background: #166534; }
-    .btn-secondary { background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; }
-    .btn-secondary:hover:not(:disabled) { background: #e2e8f0; }
-    .btn-gold { background: var(--wgu-gold); color: #0f172a; font-weight: 700; }
-    .btn-gold:hover:not(:disabled) { background: #eab308; }
 
-    .alert-banner {
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      font-size: 0.87rem;
-      margin-bottom: 0.9rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.65rem;
+    .btn:active {
+      transform: translateY(1px);
     }
-    .alert-info { background: var(--primary-bg); border: 1px solid #bfdbfe; color: #1e3a8a; }
-    .alert-teal { background: var(--accent-bg); border: 1px solid #99f6e4; color: #115e59; }
-    .alert-danger { background: var(--danger-bg); border: 1px solid #fecaca; color: #991b1b; }
 
+    .btn-primary {
+      background: var(--wgu-blue);
+      color: #FFFFFF;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--wgu-blue-light);
+    }
+
+    .btn-secondary {
+      background: #475569;
+      color: #FFFFFF;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: #334155;
+    }
+
+    .btn-outline {
+      background: #FFFFFF;
+      color: var(--wgu-blue);
+      border: 1px solid var(--wgu-blue);
+    }
+
+    .btn-outline:hover:not(:disabled) {
+      background: #EFF6FF;
+    }
+
+    .btn-success {
+      background: #15803D;
+      color: #FFFFFF;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      background: #166534;
+    }
+
+    .btn:disabled {
+      background: #CBD5E1;
+      color: #64748B;
+      cursor: not-allowed;
+    }
+
+    /* Sandbox Workspace Layout */
     .stepper-bar {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 0.5rem;
+      gap: 0.75rem;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
       margin-bottom: 1rem;
     }
-    .stepper {
+
+    .step-tabs {
       display: flex;
       flex-wrap: wrap;
       gap: 0.45rem;
-      flex: 1;
     }
+
     .step-tab {
-      flex: 1 1 160px;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.55rem 0.7rem;
+      padding: 0.48rem 0.85rem;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: #F8FAFC;
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      font-weight: 600;
       cursor: pointer;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
+      display: inline-flex;
       align-items: center;
-      gap: 0.2rem;
-      transition: all 0.15s;
+      gap: 0.35rem;
     }
-    .step-tab:hover { border-color: var(--wgu-blue); }
-    .step-tab .tab-title { font-size: 0.84rem; font-weight: 700; color: var(--text); line-height: 1.2; }
-    .step-tab .tab-kw {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      background: #f1f5f9;
-      color: #475569;
-      padding: 0.1rem 0.45rem;
-      border-radius: 3px;
-    }
+
     .step-tab.active {
       background: var(--wgu-blue);
-      color: #ffffff;
+      color: #FFFFFF;
       border-color: var(--wgu-blue);
     }
-    .step-tab.active .tab-title { color: #ffffff; }
-    .step-tab.active .tab-kw { background: rgba(255, 255, 255, 0.18); color: var(--wgu-gold); }
-    .step-tab.completed { border-bottom: 3px solid var(--success); }
-    .step-tab.completed .tab-title::after {
-      content: " ✓";
-      color: var(--success);
-      font-weight: 800;
+
+    .step-tab.completed {
+      background: #F0FDF4;
+      color: #166534;
+      border-color: #86EFAC;
     }
-    .step-tab.active.completed .tab-title::after { color: var(--wgu-gold); }
+
+    .step-tab.completed.active {
+      background: #15803D;
+      color: #FFFFFF;
+      border-color: #15803D;
+    }
 
     .save-status {
       font-size: 0.8rem;
-      color: var(--success);
+      color: #15803D;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      background: var(--success-bg);
-      border: 1px solid #bbf7d0;
-      padding: 0.35rem 0.75rem;
-      border-radius: 999px;
     }
 
     .workspace-grid {
@@ -280,1543 +373,1670 @@
       gap: 1.25rem;
       align-items: start;
     }
+
     @media (max-width: 960px) {
-      .workspace-grid { grid-template-columns: 1fr; }
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
-    .video-wrap {
+    /* Video Player & Transcripts */
+    .video-wrapper {
       position: relative;
-      width: 100%;
-      padding-top: 56.25%;
-      background: #0f172a;
-      border-radius: 8px;
+      padding-bottom: 56.25%;
+      height: 0;
       overflow: hidden;
+      border-radius: 8px;
+      background: #0F172A;
       margin: 0.75rem 0;
     }
-    .video-wrap iframe {
+
+    .video-wrapper iframe {
       position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       border: 0;
     }
 
-    details.drawer {
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 7px;
+    details.transcript-drawer {
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
       padding: 0.55rem 0.8rem;
-      margin-top: 0.65rem;
+      margin-top: 0.5rem;
       font-size: 0.85rem;
     }
-    details.drawer summary {
+
+    details.transcript-drawer summary {
       font-weight: 600;
-      cursor: pointer;
       color: var(--wgu-blue);
-    }
-    details.drawer .drawer-body {
-      margin-top: 0.55rem;
-      color: #334155;
-      white-space: pre-line;
-      line-height: 1.48;
+      cursor: pointer;
     }
 
+    details.transcript-drawer p {
+      margin-top: 0.55rem;
+      color: #334155;
+      line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    /* IDE Editor with Synchronized Line-Number Gutter */
     .editor-shell {
       display: flex;
       border: 1px solid #334155;
       border-radius: 8px;
       overflow: hidden;
-      background: var(--editor-bg);
+      background: #0F172A;
       height: 390px;
+      margin-top: 0.65rem;
     }
+
     .line-gutter {
       width: 44px;
-      background: #0b1120;
-      color: #64748b;
+      background: #1E293B;
+      color: #94A3B8;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 0.9rem;
-      line-height: 1.45;
-      padding: 0.75rem 0.35rem 0.75rem 0.5rem;
+      font-size: 13.5px;
+      line-height: 1.55;
+      padding: 12px 6px;
       text-align: right;
       user-select: none;
       overflow: hidden;
-      border-right: 1px solid #1e293b;
+      border-right: 1px solid #334155;
     }
-    #sql-editor {
+
+    .sql-textarea {
       flex: 1;
-      height: 100%;
-      background: transparent;
-      color: #38bdf8;
+      background: #0F172A;
+      color: #F8FAFC;
       border: none;
       outline: none;
       resize: none;
-      padding: 0.75rem;
+      padding: 12px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 0.9rem;
-      line-height: 1.45;
+      font-size: 13.5px;
+      line-height: 1.55;
+      tab-size: 2;
       white-space: pre;
-      overflow-y: scroll;
+      overflow: auto;
     }
 
     .editor-toolbar {
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
       justify-content: space-between;
-      gap: 0.5rem;
-      margin-top: 0.65rem;
-    }
-    .toolbar-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 0.85rem;
     }
 
+    /* Console & Live Result Table */
     .console-box {
-      margin-top: 0.75rem;
-      border: 1px solid var(--border);
+      margin-top: 1rem;
+      border: 1px solid var(--border-color);
       border-radius: 8px;
-      background: #ffffff;
-      padding: 0.85rem;
-      min-height: 210px;
-      max-height: 340px;
-      overflow-y: auto;
+      background: #F8FAFC;
+      padding: 1rem;
+      min-height: 330px;
+      max-height: 440px;
+      overflow: auto;
     }
-    .output-ready { color: #334155; font-size: 0.88rem; font-weight: 500; }
-    .output-success { color: var(--success); font-size: 0.91rem; font-weight: 700; }
-    .output-error { color: var(--danger); font-size: 0.91rem; font-weight: 700; }
 
-    table.sql-grid {
+    .result-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 0.7rem;
-      font-size: 0.83rem;
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      background: #FFFFFF;
     }
-    table.sql-grid th {
-      background: #f1f5f9;
-      color: #0f172a;
+
+    .result-table th {
+      background: var(--wgu-blue);
+      color: #FFFFFF;
       text-align: left;
-      padding: 0.45rem 0.6rem;
-      border: 1px solid #cbd5e1;
+      padding: 0.5rem 0.65rem;
+      border: 1px solid #CBD5E1;
     }
-    table.sql-grid td {
-      padding: 0.4rem 0.6rem;
-      border: 1px solid #e2e8f0;
+
+    .result-table td {
+      padding: 0.45rem 0.65rem;
+      border: 1px solid #CBD5E1;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
-    #remediation-box {
-      display: none;
-      margin-top: 0.85rem;
-      background: #fffbeb;
-      border-left: 4px solid var(--wgu-gold);
-      border-top: 1px solid #fde68a;
-      border-right: 1px solid #fde68a;
-      border-bottom: 1px solid #fde68a;
-      border-radius: 0 8px 8px 0;
-      padding: 0.9rem;
-    }
-    #remediation-box.show { display: block; }
-
-    .badge-card {
-      background: linear-gradient(135deg, var(--wgu-blue) 0%, #001a3d 100%);
-      color: #ffffff;
-      text-align: center;
-      padding: 2.1rem 1.5rem;
-      border-radius: 10px;
-      margin-bottom: 1.25rem;
-      box-shadow: 0 4px 12px rgba(0, 47, 108, 0.16);
-    }
-    .badge-crest {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 72px;
-      height: 72px;
-      background: rgba(255, 194, 32, 0.2);
-      border: 2px solid var(--wgu-gold);
-      border-radius: 50%;
-      color: var(--wgu-gold);
-      font-size: 2.2rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .resource-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 0.9rem;
-      margin-top: 0.9rem;
-    }
-    .resource-card {
-      border: 1px solid var(--border);
+    /* Remediation Drawer */
+    .remediation-box {
+      margin-top: 1rem;
+      border: 1px solid #F59E0B;
+      border-left: 5px solid #D97706;
+      background: #FFFBEB;
       border-radius: 8px;
       padding: 1rem;
-      background: #f8fafc;
+    }
+
+    /* Resource Grid */
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 0.85rem;
+      margin-top: 0.85rem;
+    }
+
+    .resource-card {
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 0.95rem;
+      background: #F8FAFC;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 0.65rem;
+      gap: 0.6rem;
     }
-    .resource-card h4 { font-size: 0.98rem; color: var(--wgu-blue); }
-    .resource-card p { font-size: 0.85rem; color: var(--muted); }
 
+    .resource-card h4 {
+      color: var(--wgu-blue);
+      font-size: 0.95rem;
+    }
+
+    .resource-card p {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+    }
+
+    /* Welcome Modal */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.76);
-      backdrop-filter: blur(3px);
-      display: none;
+      background: rgba(15, 23, 42, 0.72);
+      display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 1000;
       padding: 1rem;
-      z-index: 9999;
-      overflow-y: auto;
     }
-    .modal-backdrop.open { display: flex; }
+
     .modal-card {
-      background: #ffffff;
-      border-radius: 10px;
-      max-width: 760px;
+      background: #FFFFFF;
+      border-radius: 12px;
+      max-width: 720px;
       width: 100%;
-      overflow: hidden;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
-      border: 1px solid #cbd5e1;
-      margin: auto;
-    }
-    .modal-header {
-      background: var(--wgu-blue);
-      color: #ffffff;
-      padding: 1rem 1.4rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .modal-header h3 { font-size: 1.12rem; font-weight: 700; }
-    .modal-body { padding: 1.35rem 1.4rem; }
-    .modal-footer {
-      padding: 0.95rem 1.4rem;
-      background: #f8fafc;
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-    .modal-close {
-      background: rgba(255, 255, 255, 0.14);
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      color: #ffffff;
-      border-radius: 5px;
-      padding: 0.25rem 0.6rem;
-      font-size: 1.1rem;
-      cursor: pointer;
+      max-height: 92vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.25);
     }
 
-    .corner-nudge {
+    /* Mid-Point Nudge Toast */
+    .nudge-toast {
       position: fixed;
-      top: 80px;
-      right: 20px;
-      max-width: 340px;
-      background: #fffbeb;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      max-width: 360px;
+      background: #FFFFFF;
       border: 2px solid var(--wgu-gold);
-      border-left: 6px solid var(--wgu-blue);
-      border-radius: 8px;
-      padding: 1rem 1.1rem;
-      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.22);
-      z-index: 8500;
-      display: none;
-    }
-    .corner-nudge.show { display: block; }
-    .corner-nudge h4 { font-size: 0.92rem; color: var(--wgu-blue); margin-bottom: 0.35rem; }
-    .corner-nudge p { font-size: 0.83rem; color: #334155; margin-bottom: 0.65rem; }
-
-    footer.site-footer {
-      max-width: 1280px;
-      margin: 1.75rem auto 0;
+      border-radius: 10px;
       padding: 1rem;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2);
+      z-index: 900;
+      font-size: 0.86rem;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1500;
+    }
+
+    .app-footer {
       text-align: center;
-      font-size: 0.79rem;
-      color: var(--muted);
-      border-top: 1px solid #e2e8f0;
+      font-size: 0.78rem;
+      color: #64748B;
+      margin-top: 2.5rem;
+      padding: 0 1rem;
     }
   </style>
 </head>
 <body>
+  <canvas id="confetti-canvas"></canvas>
 
-  <header>
-    <div>
-      <h1>D426: Data Management Foundations</h1>
-      <div class="subtitle">Interactive SQL Practice &amp; Study Prep</div>
-    </div>
-    <div class="header-actions">
-      <button type="button" class="header-btn" id="open-tour-btn" style="display:none;">
-        <i class="fa-solid fa-circle-play"></i> Sandbox Tour &amp; Help
-      </button>
-      <button type="button" class="header-btn" id="copy-link-btn" style="display:none;">
-        <i class="fa-solid fa-copy"></i> Copy My Link
-      </button>
-      <a class="header-btn" id="email-link-btn" href="#" style="display:none;">
-        <i class="fa-solid fa-envelope"></i> Email Link to Myself
-      </a>
-      <div class="badge-pill">Study Token: <span id="display-sid">Loading...</span></div>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div>
+        <div class="brand-title">D426: Data Management Foundations</div>
+        <div class="brand-subtitle">Interactive SQL Practice &amp; Study Prep</div>
+      </div>
+      <div class="header-controls" id="header-controls">
+        <span class="token-pill" id="token-badge">Study Token: --</span>
+        <button type="button" class="header-btn hidden" id="btn-open-tour" onclick="openWelcomeModal()">
+          <i class="fa-solid fa-circle-play"></i> Sandbox Tour / Help
+        </button>
+        <button type="button" class="header-btn hidden" id="btn-copy-link" onclick="copyPersonalLink()">
+          <i class="fa-solid fa-link"></i> Copy My Link
+        </button>
+        <a class="header-btn hidden" id="btn-email-link" href="#">
+          <i class="fa-solid fa-envelope"></i> Email Link to Myself
+        </a>
+      </div>
     </div>
   </header>
 
-  <main class="container" id="app-root">
+  <!-- Access Restricted Screen (Blocks Raw WGU Student IDs or Missing Tokens) -->
+  <main class="narrow-container hidden" id="screen-restricted">
+    <div class="card">
+      <div class="notice-box notice-amber" style="margin-bottom:0;">
+        <h2 style="color:#92400E; margin-bottom:0.4rem;"><i class="fa-solid fa-lock"></i> Personalized Study Link Required</h2>
+        <p style="margin-bottom:0.5rem;">This practice environment requires a valid, pre-masked study token link from your course invitation email. Direct access or raw institutional student IDs are not accepted.</p>
+        <p style="font-size:0.86rem;">Please open the personalized link sent to your WGU email address, or proceed directly to your standard D426 course resources at <a href="https://my.wgu.edu/courses/course/30040017" target="_blank" rel="noopener">my.wgu.edu</a>.</p>
+      </div>
+    </div>
+  </main>
 
-    <!-- INVALID LINK LOCKOUT SCREEN -->
-    <section class="card" id="invalid-screen" style="display:none; text-align:center; padding:2.75rem 1.5rem;">
-      <i class="fa-solid fa-lock" style="font-size:2.5rem; color:var(--wgu-blue); margin-bottom:0.85rem;"></i>
-      <h2>Personal Study Link Required</h2>
-      <p style="max-width:560px; margin:0.65rem auto 1.25rem; color:var(--muted);">
-        This practice tool can only be opened using the personal study token link sent in your invitation email. Raw student IDs and unauthenticated direct links are not permitted.
-      </p>
-      <a class="btn btn-primary" href="https://my.wgu.edu/courses/course/30040017" target="_blank" rel="noopener noreferrer">
-        <i class="fa-solid fa-graduation-cap"></i> Return to D426 Course Page
-      </a>
-    </section>
+  <!-- SCREEN 1A: Standalone Informed Consent & Age Eligibility Gate -->
+  <main class="narrow-container hidden" id="screen-1a">
+    <div class="card">
+      <h1 style="font-size:1.45rem; margin-bottom:0.35rem;">Informed Consent &amp; Research Participation Agreement</h1>
+      <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:1rem;">Please review the study details below and confirm your choice to continue.</p>
 
-    <!-- SCREEN 1A: STANDALONE INFORMED CONSENT & AGE GATE -->
-    <section class="card" id="screen-1a" style="display:none;">
-      <h2>Informed Consent &amp; Research Participation Agreement</h2>
-      <p style="font-size:0.88rem; color:var(--muted);">
-        Please review the following study information carefully before deciding whether to participate.
-      </p>
-
-      <div class="consent-notice">
-        <strong>Institutional Non-Sponsorship Disclosure:</strong><br />
-        This study is an independent academic research project conducted by Bruce Johnson, Instructor, Faculty Lead, School of Technology (b.johnson1@wgu.edu). It is <strong>NOT sponsored, funded, or required by Western Governors University (WGU)</strong>.
+      <div class="notice-box notice-amber">
+        <strong>Notice Regarding WGU Sponsorship:</strong> This research study is being conducted independently by instructor Bruce C. Johnson III. This study is NOT sponsored, funded, or required by Western Governors University (WGU).
       </div>
 
-      <div class="consent-section">
-        <strong>1. Purpose of the Study:</strong><br />
-        You are invited to take part in an educational research study examining whether starting with hands-on SQL query mechanics before reading abstract database theory influences study velocity and objective assessment outcomes in D426.
+      <div class="consent-body">
+        <p><strong>1. Purpose &amp; Researcher:</strong> You are invited to take part in an educational research study conducted by Bruce C. Johnson III, Course Instructor, Faculty Lead, School of Technology (b.johnson1@wgu.edu). The goal of this study is to evaluate whether an optional, hands-on SQL practice sequence helps incoming D426 students master database concepts more efficiently.</p>
+        <p><strong>2. Age Requirement:</strong> You must be at least 18 years old to take part. If you are under 18, please select "NO" below to go straight to your standard course materials.</p>
+        <p><strong>3. Your Choice (Voluntary):</strong> Taking part is 100% voluntary. Choosing not to participate will have no effect on your course grade, academic progress, tuition, or your access to instructors, cohorts, and study resources. You may stop at any time.</p>
+        <p><strong>4. What You Will Do &amp; Time Commitment:</strong> If you agree to participate, you will complete a brief study style check-in (~3 minutes). Depending on your random study group assignment, you will either proceed directly to your D426 course resources or gain access to a self-paced, 5-module interactive SQL practice sandbox (~25–30 minutes total). The optional SQL practice activities are designed for standard laptop and desktop web browsers.</p>
+        <p><strong>5. Privacy &amp; Data Protection:</strong> Your privacy is protected. Your link uses a randomly generated study token rather than your WGU Student ID. No names, email addresses, passwords, or grades are collected by this web tool. Study records are stored securely for research analysis and reported only in de-identified summary form.</p>
+        <p><strong>6. Questions &amp; Contact:</strong> For questions about this study, contact Bruce C. Johnson III at b.johnson1@wgu.edu. For questions about your rights as a research participant, contact the WGU Institutional Review Board at irb@wgu.edu.</p>
       </div>
 
-      <div class="consent-section">
-        <strong>2. Age &amp; Eligibility Requirement:</strong><br />
-        You must be at least 18 years of age to participate in this study. If you are under 18 years of age, you are not eligible to take part.
-      </div>
-
-      <div class="consent-section">
-        <strong>3. Completely Voluntary Participation &amp; Zero Grade Impact:</strong><br />
-        Your participation is 100% voluntary. You may choose not to participate, or discontinue at any time. Opting out will have no effect on your course grade, academic standing, tuition, progress pacing, or access to course materials and faculty coaching.
-      </div>
-
-      <div class="consent-section">
-        <strong>4. Study Procedures &amp; Time Commitment:</strong><br />
-        If you consent to participate, you will complete a quick study preference check-in (~3 minutes). Depending on random group assignment, you may also receive optional access to a 5-module interactive SQL practice sandbox (~25 to 30 minutes). The optional SQL practice activities are designed for standard laptop and desktop web browsers.
-      </div>
-
-      <div class="consent-section">
-        <strong>5. Privacy &amp; Data Handling:</strong><br />
-        Your invitation link uses a pre-masked random study token instead of your WGU student ID, so your name, email, and institutional student ID never enter this website. Completion timestamps and survey responses are linked offline only to match course milestones, and all results are reported strictly in group summaries.
-      </div>
-
-      <div class="consent-section">
-        <strong>6. Contact Information:</strong><br />
-        If you have questions about the study, contact Bruce Johnson at b.johnson1@wgu.edu. For questions regarding your rights as a participant, contact the WGU Institutional Review Board at irb@wgu.edu.
-      </div>
-
-      <div class="question-box" id="q1-box">
-        <div class="question-title">Question 1: Eligibility Certification &amp; Participation Decision</div>
+      <div class="question-block">
+        <div class="question-title">Question 1: Age Certification &amp; Participation Decision</div>
         <label class="radio-option">
-          <input type="radio" name="consent-radio" value="yes" />
-          <span><strong>YES, I agree to participate.</strong> I certify that I am at least 18 years of age, I have read and understood the information above, and I voluntarily choose to take part.</span>
+          <input type="radio" name="consent-radio" value="YES">
+          <span><strong>YES, I agree to participate:</strong> I certify that I am at least 18 years old, have read the information above, and voluntarily agree to participate.</span>
         </label>
         <label class="radio-option">
-          <input type="radio" name="consent-radio" value="no" />
-          <span><strong>NO, I do NOT want to participate</strong> (or I am under 18 years old). Take me directly to my standard D426 course materials.</span>
+          <input type="radio" name="consent-radio" value="NO">
+          <span><strong>NO, I do NOT wish to participate:</strong> I am under 18 or prefer not to participate. Take me directly to my standard D426 course materials.</span>
         </label>
       </div>
 
-      <button type="button" class="btn btn-primary" id="consent-continue-btn" disabled style="width:100%;">
+      <button type="button" class="btn" id="consent-continue-btn" disabled onclick="handleConsentContinue()" style="width:100%; padding:0.8rem;">
         Select an Option Above to Continue
       </button>
 
-      <div style="font-size: 0.76rem; color: #64748b; margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.55rem;">
+      <div style="font-size: 0.75rem; color: #64748B; margin-top: 1rem; border-top: 1px solid #E2E8F0; padding-top: 0.5rem;">
         Index of Learning Styles &copy; Richard M. Felder and Barbara A. Soloman, North Carolina State University.
       </div>
-    </section>
+    </div>
+  </main>
 
-    <!-- SCREEN 1B: QUICK STUDY STYLE CHECK-IN -->
-    <section class="card" id="screen-1b" style="display:none;">
-      <h2>Quick Study Style Check-In</h2>
-      <p style="font-size:0.88rem; color:var(--muted); margin-bottom:1rem;">
-        Answer these quick questions (~2 minutes) to help us understand your starting point and how you like to learn new material.
-      </p>
+  <!-- SCREEN 1B: Quick Study Style Check-In -->
+  <main class="narrow-container hidden" id="screen-1b">
+    <div class="card">
+      <h1 style="font-size:1.4rem; margin-bottom:0.3rem;">Quick Study Style Check-In</h1>
+      <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:1rem;">Answer these quick questions (~2–3 minutes) so we can tailor your starting path and understand how different learners approach database topics.</p>
 
-      <div id="validation-banner" class="alert-banner alert-danger" style="display:none;">
-        <div><i class="fa-solid fa-circle-exclamation"></i> Please answer every highlighted question before continuing.</div>
+      <div id="diagnostic-error-banner" class="notice-box notice-amber hidden" style="border-color:#DC2626; background:#FEF2F2; color:#991B1B;">
+        <i class="fa-solid fa-circle-exclamation"></i> Please answer all highlighted questions before continuing.
       </div>
 
-      <div class="question-box" id="prior-sql-box">
-        <div class="question-title">Question 2: Prior to starting D426, how would you rate your experience with SQL and relational databases?</div>
-        <label class="radio-option"><input type="radio" name="prior_sql" value="1" /> <span>1 &mdash; None (Never seen or written SQL code)</span></label>
-        <label class="radio-option"><input type="radio" name="prior_sql" value="2" /> <span>2 &mdash; Novice (Familiar with the concept, but little to no query experience)</span></label>
-        <label class="radio-option"><input type="radio" name="prior_sql" value="3" /> <span>3 &mdash; Intermediate (Have written basic SELECT, INSERT, or UPDATE queries)</span></label>
-        <label class="radio-option"><input type="radio" name="prior_sql" value="4" /> <span>4 &mdash; Advanced (Regularly write multi-table JOINs, aggregations, or subqueries)</span></label>
-        <label class="radio-option"><input type="radio" name="prior_sql" value="5" /> <span>5 &mdash; Professional (Work or have worked managing databases professionally)</span></label>
+      <div class="question-block" id="q-prior-sql-block">
+        <div class="question-title">1. Before starting D426, how much hands-on experience do you have writing SQL queries (such as SELECT, INSERT, or CREATE TABLE)?</div>
+        <label class="radio-option"><input type="radio" name="prior_sql" value="1"> <span>1 — None at all (brand new to SQL)</span></label>
+        <label class="radio-option"><input type="radio" name="prior_sql" value="2"> <span>2 — Very little (seen examples, rarely written queries)</span></label>
+        <label class="radio-option"><input type="radio" name="prior_sql" value="3"> <span>3 — Moderate (written basic queries in a class or tutorial)</span></label>
+        <label class="radio-option"><input type="radio" name="prior_sql" value="4"> <span>4 — Comfortable (use SQL regularly for coursework or projects)</span></label>
+        <label class="radio-option"><input type="radio" name="prior_sql" value="5"> <span>5 — Advanced (use SQL professionally on the job)</span></label>
       </div>
 
-      <h3 style="font-size:1.05rem; color:var(--wgu-blue); margin:1.2rem 0 0.65rem; border-bottom:2px solid #e2e8f0; padding-bottom:0.3rem;">
-        Study &amp; Problem Solving Preferences
-      </h3>
-      <div id="ils-container"></div>
+      <h2 style="font-size:1.1rem; margin:1.1rem 0 0.65rem 0;">Study &amp; Problem Solving Preferences</h2>
+      <div id="ils-questions-container"></div>
 
-      <button type="button" class="btn btn-primary" id="submit-diagnostic-btn" style="width:100%;">
-        Submit &amp; Continue
+      <button type="button" class="btn btn-primary" onclick="submitDiagnostic()" style="width:100%; padding:0.85rem; margin-top:0.5rem;">
+        Submit &amp; Continue to Study Path <i class="fa-solid fa-arrow-right"></i>
       </button>
-    </section>
+    </div>
+  </main>
 
-    <!-- SCREEN 2A: CONTROL ARM / OPT-OUT COURSE HUB -->
-    <section class="card" id="control-screen" style="display:none;">
-      <div style="text-align:center; margin-bottom:1.25rem;">
-        <i class="fa-solid fa-circle-check" style="font-size:2.75rem; color:var(--success); margin-bottom:0.6rem;"></i>
-        <h2 id="control-heading">You Are Ready to Begin D426!</h2>
-        <p id="control-subtext" style="max-width:640px; margin:0.4rem auto 0; color:var(--muted);">
-          Thank you! Use the official WGU course links below to jump right into your D426 study plan and live instructor support. We recommend bookmarking these pages now.
-        </p>
+  <!-- SCREEN 2A: Control Group / Opt-Out Course Resource Hub -->
+  <main class="narrow-container hidden" id="screen-2a">
+    <div class="card">
+      <div class="notice-box notice-green">
+        <h2 style="color:#14532D; margin-bottom:0.35rem;"><i class="fa-solid fa-circle-check"></i> You're Ready to Dive Into D426!</h2>
+        <p id="screen-2a-msg">Thank you for completing the check-in! Your standard D426 course materials are ready below. Bookmark these links so you can access your pacing guides, supplemental practice, and live instructor cohorts anytime.</p>
       </div>
 
-      <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap; margin-bottom:1.25rem;">
-        <a class="btn btn-primary" href="https://my.wgu.edu/courses/course/30040017" target="_blank" rel="noopener noreferrer">
-          <i class="fa-solid fa-graduation-cap"></i> Return to D426 Course Homepage
-        </a>
-        <a class="btn btn-secondary" href="https://lrps.wgu.edu/provision/115160353" target="_blank" rel="noopener noreferrer">
-          <i class="fa-solid fa-book-open"></i> Launch Course Material (LRPS)
-        </a>
-      </div>
-
+      <h3 style="margin-bottom:0.5rem;">Your Official D426 Course Resource Hub</h3>
       <div class="resource-grid">
         <div class="resource-card">
           <div>
+            <h4><i class="fa-solid fa-graduation-cap"></i> D426 Course Shell</h4>
+            <p>Launch your official D426 course homepage, pacing guide, and assessment center.</p>
+          </div>
+          <a class="btn btn-primary" href="https://my.wgu.edu/courses/course/30040017" target="_blank" rel="noopener">Open Course Shell</a>
+        </div>
+        <div class="resource-card">
+          <div>
+            <h4><i class="fa-solid fa-book-open"></i> Open Course Book (Section 1)</h4>
+            <p>Start directly in Section 1 of your official zyBooks text.</p>
+          </div>
+          <a class="btn btn-outline" href="https://lrps.wgu.edu/provision/487034335" target="_blank" rel="noopener">Open Course Book</a>
+        </div>
+        <div class="resource-card">
+          <div>
             <h4><i class="fa-solid fa-compass"></i> D426 Course Hub</h4>
-            <p>Your central roadmap, pacing guides, and instructor contact links.</p>
+            <p>Instructor contact info, study roadmaps, and getting-started steps.</p>
           </div>
-          <a class="btn btn-primary" href="https://westerngovernorsuniversity.sharepoint.com/sites/CSH-WST-D426-DataMa-30040017/?web=1" target="_blank" rel="noopener noreferrer">Open Course Hub</a>
+          <a class="btn btn-outline" href="https://westerngovernorsuniversity.sharepoint.com/sites/CSH-WST-D426-DataMa-30040017/?web=1" target="_blank" rel="noopener">Visit Course Hub</a>
         </div>
         <div class="resource-card">
           <div>
-            <h4><i class="fa-solid fa-book"></i> Course Guide &amp; Supplemental Resources</h4>
-            <p>Topic deep-dives, study sheets, and extra practice questions.</p>
+            <h4><i class="fa-solid fa-users"></i> Supplemental Index &amp; Live Events</h4>
+            <p>Topic deep-dives, practice exercises, and live instructor cohorts.</p>
           </div>
-          <a class="btn btn-primary" href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Supplemental-Resource-Index.aspx" target="_blank" rel="noopener noreferrer">Open Resource Index</a>
-        </div>
-        <div class="resource-card">
-          <div>
-            <h4><i class="fa-solid fa-calendar-days"></i> Upcoming Live Events &amp; Cohorts</h4>
-            <p>Join live faculty workshops, concept reviews, and Q&amp;A sessions.</p>
-          </div>
-          <a class="btn btn-primary" href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Upcoming-Live-Events.aspx" target="_blank" rel="noopener noreferrer">View Live Cohorts</a>
+          <a class="btn btn-outline" href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Supplemental-Resource-Index.aspx" target="_blank" rel="noopener">Browse Resources</a>
         </div>
       </div>
-    </section>
-
-    <!-- SCREEN 2B: INTERVENTION SQL SANDBOX -->
-    <section id="sandbox-screen" style="display:none;">
-      <div class="alert-banner alert-info">
-        <div>
-          <i class="fa-solid fa-desktop" style="margin-right:0.4rem;"></i>
-          <strong>Recommended Environment:</strong> Complete this interactive SQL sandbox (~25&ndash;30 minutes) on a desktop or laptop computer with a physical keyboard for the smoothest experience.
-        </div>
-      </div>
-
-      <div class="alert-banner alert-teal">
-        <div>
-          <i class="fa-solid fa-clock" style="margin-right:0.4rem;"></i>
-          <strong>Work at Your Own Pace &amp; Resume Anytime:</strong> You do not need to finish all 5 modules in one sitting. Close this tab whenever you need a break and reopen your personal link anytime to pick up right where you left off.
-        </div>
-      </div>
-
-      <div class="stepper-bar">
-        <div class="stepper" id="stepper-tabs">
-          <button type="button" class="step-tab active" id="tab-1" data-step="1">
-            <span class="tab-title">1. Creating Tables</span>
-            <span class="tab-kw">CREATE</span>
-          </button>
-          <button type="button" class="step-tab" id="tab-2" data-step="2">
-            <span class="tab-title">2. Adding Data</span>
-            <span class="tab-kw">INSERT</span>
-          </button>
-          <button type="button" class="step-tab" id="tab-3" data-step="3">
-            <span class="tab-title">3. Updating Data</span>
-            <span class="tab-kw">UPDATE</span>
-          </button>
-          <button type="button" class="step-tab" id="tab-4" data-step="4">
-            <span class="tab-title">4. Querying Data</span>
-            <span class="tab-kw">SELECT</span>
-          </button>
-          <button type="button" class="step-tab" id="tab-5" data-step="5">
-            <span class="tab-title">5. Joining Tables</span>
-            <span class="tab-kw">JOIN</span>
-          </button>
-        </div>
-        <div class="save-status"><i class="fa-solid fa-cloud-arrow-up"></i> Progress saved to browser</div>
-      </div>
-
-      <div class="workspace-grid">
-        <!-- LEFT COLUMN: LESSON VIDEO, TASK, TRANSCRIPT & REMEDIATION -->
-        <div class="card" style="margin-bottom:0;">
-          <h2 id="step-title" style="font-size:1.08rem;">Module 1: Creating Tables (CREATE TABLE)</h2>
-          <p id="step-instructions" style="font-size:0.89rem; color:#334155;"></p>
-
-          <div class="video-wrap">
-            <iframe id="video-frame" title="Module Micro-Lesson Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          </div>
-
-          <details class="drawer" id="primary-transcript-drawer">
-            <summary><i class="fa-solid fa-closed-captioning"></i> Read Video Transcript</summary>
-            <div class="drawer-body" id="primary-transcript-body"></div>
-          </details>
-
-          <details class="drawer" style="margin-top:0.65rem;">
-            <summary><i class="fa-solid fa-circle-info"></i> Why Start With the SQL Sandbox?</summary>
-            <div class="drawer-body">
-              Seeing how real tables store and return data makes database vocabulary and theory much easier to understand later. These 5 short modules take about 25 to 30 minutes total and give you a hands-on foundation before you dive into the D426 reading.
-            </div>
-          </details>
-
-          <div id="remediation-box">
-            <strong style="color:#92400e; display:block; margin-bottom:0.3rem;">
-              <i class="fa-solid fa-wrench"></i> Quick Tip &amp; Troubleshooting Walkthrough
-            </strong>
-            <p id="remediation-hint" style="font-size:0.85rem; color:#78350f; margin-bottom:0.55rem;"></p>
-            <div class="video-wrap">
-              <iframe id="remediation-video-frame" title="Troubleshooting Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            <details class="drawer" id="remedy-transcript-drawer">
-              <summary><i class="fa-solid fa-closed-captioning"></i> Read Troubleshooting Transcript</summary>
-              <div class="drawer-body" id="remedy-transcript-body"></div>
-            </details>
-            <button type="button" class="btn btn-gold" id="show-solution-btn" style="display:none; margin-top:0.65rem; font-size:0.82rem; padding:0.45rem 0.9rem; min-height:38px;">
-              <i class="fa-solid fa-lightbulb"></i> Need a Hint? Reveal Working Solution
-            </button>
-          </div>
-        </div>
-
-        <!-- RIGHT COLUMN: CODE EDITOR & LIVE OUTPUT -->
-        <div class="card" style="margin-bottom:0;">
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
-            <strong style="font-size:0.95rem; color:var(--wgu-blue);"><i class="fa-solid fa-terminal"></i> Live MySQL Practice Editor</strong>
-            <button type="button" class="btn btn-secondary" id="reset-btn" style="padding:0.25rem 0.65rem; min-height:32px; font-size:0.78rem;">
-              <i class="fa-solid fa-rotate-left"></i> Reset Template
-            </button>
-          </div>
-
-          <div class="editor-shell">
-            <div class="line-gutter" id="line-gutter">1</div>
-            <textarea id="sql-editor" spellcheck="false" autocapitalize="none" autocorrect="off" autocomplete="off" aria-label="SQL Code Editor"></textarea>
-          </div>
-
-          <div class="editor-toolbar">
-            <div class="toolbar-group">
-              <button type="button" class="btn btn-secondary" id="prev-btn" style="display:none;">
-                <i class="fa-solid fa-arrow-left"></i> Previous Module
-              </button>
-              <button type="button" class="btn btn-primary" id="run-btn">
-                <i class="fa-solid fa-play"></i> Run MySQL Code
-              </button>
-            </div>
-            <div class="toolbar-group">
-              <button type="button" class="btn btn-success" id="next-btn" style="display:none;">
-                Proceed to Next Module <i class="fa-solid fa-arrow-right"></i>
-              </button>
-              <button type="button" class="btn btn-gold" id="complete-sandbox-btn" style="display:none;">
-                <i class="fa-solid fa-award"></i> Complete Sandbox &amp; View Next Steps <i class="fa-solid fa-arrow-right"></i>
-              </button>
-            </div>
-          </div>
-
-          <div class="console-box">
-            <div id="console-output" class="output-ready" aria-live="polite" role="status">Loading SQL engine...</div>
-            <div id="table-output" style="overflow-x:auto;"></div>
-          </div>
-
-          <details class="drawer" style="margin-top:0.8rem;">
-            <summary><i class="fa-solid fa-sliders"></i> About This Practice Sandbox &amp; Exploratory Capabilities</summary>
-            <div class="drawer-body">
-              This interactive practice environment is designed specifically for the foundational SQL commands in D426 (creating tables, basic constraints, adding rows, updating records, filtering queries, and joining tables). Advanced server features such as stored procedures, triggers, and custom server variables are not needed here. If you ever want to experiment with larger multi-table databases on your own, you can also explore <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener noreferrer" style="color:var(--wgu-blue); font-weight:600;">DB Fiddle</a>.
-            </div>
-          </details>
-        </div>
-      </div>
-    </section>
-
-    <!-- SCREEN 3: STUDENT-CENTRIC GRADUATION & NEXT STEPS HUB -->
-    <section id="graduation-screen" style="display:none;">
-      <div class="badge-card">
-        <div class="badge-crest">
-          <i class="fa-solid fa-award"></i>
-        </div>
-        <h2 style="font-size:1.55rem; font-weight:700; margin-bottom:0.45rem; color:#ffffff;">Hands-On SQL Launch: Mastery Verified!</h2>
-        <p style="max-width:680px; margin:0 auto; font-size:0.95rem; opacity:0.95;">
-          Outstanding work! You created tables, added records, performed precision updates, filtered queries, and connected relational tables with <code>INNER JOIN</code>.
-        </p>
-      </div>
-
-      <div class="card" style="border-left:4px solid var(--success);">
-        <div style="display:flex; gap:0.75rem; align-items:flex-start;">
-          <i class="fa-solid fa-circle-check" style="font-size:1.35rem; color:var(--success); margin-top:0.15rem;"></i>
-          <div>
-            <strong style="color:#14532d; font-size:0.96rem;">You're All Set &mdash; Progress Saved!</strong>
-            <p style="font-size:0.89rem; color:#334155; margin-top:0.25rem;">
-              You can close this browser tab anytime you are ready for a break, or jump right into your D426 course below. Want to come back and practice later? Just reopen your personal link anytime.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 style="font-size:1.1rem; color:var(--wgu-blue); margin-bottom:0.35rem;">
-          <i class="fa-solid fa-compass"></i> Everyone learns differently. Pick the starting path that feels best to you:
-        </h3>
-        <div class="resource-grid">
-          <div class="resource-card" style="background:#eff6ff; border-color:#bfdbfe;">
-            <div>
-              <span style="display:inline-block; background:#dbeafe; color:#1e40af; padding:0.18rem 0.55rem; border-radius:4px; font-size:0.73rem; font-weight:700; margin-bottom:0.45rem;">CODER-FIRST MOMENTUM</span>
-              <h4>Pathway A: Jump Right Into SQL Coding</h4>
-              <p>Keep your SQL momentum going! Open <strong>zyBooks Chapter 2 (Section 2.1: SQL Syntax)</strong> and master hands-on querying before circling back to abstract database theory.</p>
-            </div>
-            <a class="btn btn-primary" href="https://lrps.wgu.edu/provision/115160353" target="_blank" rel="noopener noreferrer">
-              <i class="fa-solid fa-terminal"></i> Launch zyBooks Chapter 2
-            </a>
-          </div>
-          <div class="resource-card" style="background:#f0fdfa; border-color:#99f6e4;">
-            <div>
-              <span style="display:inline-block; background:#ccfbf1; color:#115e59; padding:0.18rem 0.55rem; border-radius:4px; font-size:0.73rem; font-weight:700; margin-bottom:0.45rem;">BIG-PICTURE FOUNDATIONS</span>
-              <h4>Pathway B: Start With the Big Picture</h4>
-              <p>Now that you have seen how a real database works, start at <strong>zyBooks Chapter 1 (Data Systems &amp; Architecture)</strong> to explore terminology, models, and diagrams.</p>
-            </div>
-            <a class="btn btn-secondary" href="https://lrps.wgu.edu/provision/115160353" target="_blank" rel="noopener noreferrer">
-              <i class="fa-solid fa-book-open"></i> Launch zyBooks Chapter 1
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 style="font-size:1.05rem; color:var(--wgu-blue); margin-bottom:0.25rem;">
-          <i class="fa-solid fa-folder-open"></i> Bookmark Your Key D426 Links
-        </h3>
-        <p style="font-size:0.86rem; color:var(--muted);">Keep these official D426 course links handy throughout your term:</p>
-
-        <div class="resource-grid">
-          <div class="resource-card">
-            <div>
-              <h4><i class="fa-solid fa-house"></i> D426 Course Homepage</h4>
-              <p>Your main D426 course shell, assessments, and progress tracker.</p>
-            </div>
-            <a class="btn btn-primary" href="https://my.wgu.edu/courses/course/30040017" target="_blank" rel="noopener noreferrer">Open Course Homepage</a>
-          </div>
-          <div class="resource-card">
-            <div>
-              <h4><i class="fa-solid fa-compass"></i> D426 Course Hub</h4>
-              <p>Pacing guides, study roadmaps, and instructor contact options.</p>
-            </div>
-            <a class="btn btn-secondary" href="https://westerngovernorsuniversity.sharepoint.com/sites/CSH-WST-D426-DataMa-30040017/?web=1" target="_blank" rel="noopener noreferrer">Open Course Hub</a>
-          </div>
-          <div class="resource-card">
-            <div>
-              <h4><i class="fa-solid fa-book"></i> Course Guide &amp; Supplemental Resources</h4>
-              <p>Topic deep-dives and extra practice exercises.</p>
-            </div>
-            <a class="btn btn-secondary" href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Supplemental-Resource-Index.aspx" target="_blank" rel="noopener noreferrer">Open Resource Index</a>
-          </div>
-          <div class="resource-card">
-            <div>
-              <h4><i class="fa-solid fa-calendar-days"></i> Upcoming Live Events &amp; Cohorts</h4>
-              <p>Live instructor-led workshops and Q&amp;A sessions.</p>
-            </div>
-            <a class="btn btn-secondary" href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Upcoming-Live-Events.aspx" target="_blank" rel="noopener noreferrer">View Live Cohorts</a>
-          </div>
-        </div>
-
-        <div style="text-align:center; margin-top:1.25rem;">
-          <button type="button" class="btn btn-secondary" id="back-to-sandbox-btn">
-            <i class="fa-solid fa-arrow-left"></i> Return to Interactive SQL Sandbox
-          </button>
-        </div>
-      </div>
-    </section>
-
+    </div>
   </main>
 
-  <!-- WELCOME & 4-MINUTE SANDBOX TOUR MODAL -->
-  <div class="modal-backdrop" id="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-modal-title">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 id="welcome-modal-title">
-          <i class="fa-solid fa-circle-play" style="color:var(--wgu-gold); margin-right:0.4rem;"></i> Welcome &amp; 4-Minute SQL Sandbox Tour
-        </h3>
-        <button type="button" class="modal-close" id="close-modal-x" aria-label="Close Tour">&times;</button>
+  <!-- SCREEN 2B: Intervention 5-Module SQL Sandbox -->
+  <main class="container hidden" id="screen-2b">
+    <div class="notice-box notice-blue" style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:0.75rem;">
+      <div>
+        <strong><i class="fa-solid fa-laptop-code"></i> Workstation Tip:</strong> Interactive SQL coding (~25–30 minutes) is best experienced on a laptop or desktop computer with a physical keyboard.
       </div>
-      <div class="modal-body">
-        <p style="font-size:0.9rem; color:#334155; margin-bottom:0.75rem;">
-          Watch this 4-minute walkthrough to see how the 5 short practice modules work and how your progress is saved automatically (~25&ndash;30 minutes total).
-        </p>
-        <div class="video-wrap">
-          <iframe id="welcome-video-frame" title="Welcome to the SQL Sandbox" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <div style="font-size:0.85rem;">
+        <strong>Work at Your Own Pace:</strong> Take breaks whenever you need. Close or refresh your browser without losing unlocked modules!
+      </div>
+    </div>
+
+    <!-- Stepper Navigation -->
+    <div class="stepper-bar">
+      <div class="step-tabs" id="step-tabs"></div>
+      <div class="save-status"><i class="fa-solid fa-cloud-arrow-up"></i> Progress autosaved to browser</div>
+    </div>
+    <p style="font-size:0.8rem; color:var(--text-muted); margin:-0.5rem 0 0.9rem 0.25rem;">
+      Unlocked module tabs remain open so you can review earlier exercises or return later using your personal link.
+    </p>
+
+    <!-- Main Two-Column Workspace -->
+    <div class="workspace-grid">
+      <!-- Left Column: Video Micro-Lesson & Prompt -->
+      <div class="card" style="margin-bottom:0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; margin-bottom:0.4rem;">
+          <span style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--wgu-gold);" id="module-kicker">Module 1 of 5</span>
+          <span style="font-size:0.78rem; color:var(--text-muted);" id="module-badge">DDL Fundamentals</span>
         </div>
-        <details class="drawer">
-          <summary><i class="fa-solid fa-closed-captioning"></i> Read Welcome Orientation Transcript</summary>
-          <div class="drawer-body" style="max-height:170px; overflow-y:auto;">Hey there, and welcome to the D426 SQL Sandbox! First off, thank you so much for jumping in and participating in this research study—I’m genuinely excited you’re here.
+        <h2 id="module-title" style="font-size:1.25rem; margin-bottom:0.5rem;">1. Creating Tables (CREATE)</h2>
 
-So, what is this all about? Well, when you’re starting out in Data Management Foundations, diving straight into dense textbook theory can feel a little overwhelming. We think that spending just about 30 minutes getting your hands dirty with a few of the most common, high-impact SQL commands right up front will help you hit the ground running—and potentially boost your Objective Assessment score and help you pass the course faster, too.
+        <!-- Primary Micro-Video -->
+        <div class="video-wrapper">
+          <iframe id="primary-video-frame" src="" title="Module Micro-Lesson" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
 
-Before we look at the screen, one quick tip: if you happen to be watching this on your phone or a tablet, you’ll have a much easier time completing these exercises on a laptop or desktop computer with a physical keyboard.
-
-Now, let’s take a quick tour of how this sandbox works. Across the top of the screen, you’ll see five modules that walk through the core building blocks of SQL: creating tables, adding data, updating data, querying data, and joining tables together.
-
-Each module follows the same simple rhythm: on the left side, you’ll see a short video from me explaining the big idea in plain English. On the right side is your live SQL editor—and here’s the best part: the starter code is already written for you!
-
-You have two ways you can use this, and both are great: first, if you want to move quickly, you can simply read through the code to see how it’s structured, click 'Run MySQL Code,' inspect the results table that pops up underneath, and click 'Proceed to Next Module.' You can cruise through all five modules in around 25 or 30 minutes. Second—and I really encourage this—you can treat this like a true sandbox and play around! Try changing values, adding your own rows, or even making a mistake on purpose—like deleting a semicolon or leaving off a WHERE clause. When an error happens, a troubleshooting drawer will pop up on the left with extra tips—and even bonus videos from me—walking through the most common mistakes students run into. And don't worry about breaking anything: you can hit 'Reset Template' anytime to snap right back to the original code.
-
-Your progress saves automatically in this browser, and you can use the link buttons at the top to copy or email yourself your personal link so you can step away and come back anytime. You can jump forward or backward between modules anytime using the tabs at the top or the 'Previous' and 'Next' buttons.
-
-When you finish Module 5, you’ll earn your completion badge, get a little confetti celebration, and unlock a next-steps guide for tackling the rest of D426. Ready to dive in? Click 'Let’s Get Started' below and I’ll see you in Module 1!</div>
+        <details class="transcript-drawer" id="primary-transcript-drawer" ontoggle="handleTranscriptToggle('primary', this.open)">
+          <summary><i class="fa-solid fa-closed-captioning"></i> Read Video Transcript</summary>
+          <p id="primary-transcript-text"></p>
         </details>
+
+        <hr style="border:none; border-top:1px solid #E2E8F0; margin:1rem 0;">
+
+        <h3 style="font-size:1rem; margin-bottom:0.4rem;"><i class="fa-solid fa-bullseye"></i> Your Coding Goal</h3>
+        <div id="module-instructions" style="font-size:0.91rem; color:#1E293B;"></div>
       </div>
-      <div class="modal-footer">
-        <span style="font-size:0.8rem; color:#64748b;"><i class="fa-solid fa-circle-info"></i> Reopen anytime via <strong>Sandbox Tour &amp; Help</strong> in the top bar.</span>
-        <button type="button" class="btn btn-gold" id="start-sandbox-btn">
+
+      <!-- Right Column: SQL Editor, Run Controls, Console, & Remediation -->
+      <div class="card" style="margin-bottom:0;">
+        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:0.5rem;">
+          <h3 style="font-size:1.05rem;"><i class="fa-solid fa-terminal"></i> Interactive MySQL Editor</h3>
+          <details style="font-size:0.8rem; color:var(--text-muted); cursor:pointer;">
+            <summary style="font-weight:600; color:var(--wgu-blue);">About This Practice Sandbox</summary>
+            <div style="margin-top:0.4rem; padding:0.65rem; background:#F8FAFC; border:1px solid #CBD5E1; border-radius:6px; max-width:440px;">
+              This practice sandbox runs directly in your web browser and is built specifically for core D426 table creation, data updates, queries, and joins. Advanced database server features (such as stored procedures or triggers) are not included here. Want to experiment with a full multi-table playground? Try <a href="https://www.db-fiddle.com/" target="_blank" rel="noopener">DB Fiddle</a>.
+            </div>
+          </details>
+        </div>
+
+        <!-- Code Editor with Line-Number Gutter -->
+        <div class="editor-shell">
+          <div class="line-gutter" id="line-gutter">1</div>
+          <textarea id="sql-editor" class="sql-textarea" spellcheck="false" autocapitalize="none" autocomplete="off" autocorrect="off" oninput="handleEditorInput()" onscroll="syncEditorScroll()"></textarea>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="editor-toolbar">
+          <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+            <button type="button" class="btn btn-primary" onclick="runStudentQuery()">
+              <i class="fa-solid fa-play"></i> Run MySQL Code
+            </button>
+            <button type="button" class="btn btn-outline" onclick="resetCurrentTemplate()">
+              <i class="fa-solid fa-rotate-left"></i> Reset to Template
+            </button>
+            <button type="button" class="btn btn-secondary hidden" id="btn-reveal-solution" onclick="revealWorkingSolution()">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Reveal Working Solution
+            </button>
+          </div>
+
+          <div style="display:flex; gap:0.5rem;">
+            <button type="button" class="btn btn-outline hidden" id="btn-prev-step" onclick="navigateStep(state.currentStep - 1)">
+              <i class="fa-solid fa-arrow-left"></i> Previous Module
+            </button>
+            <button type="button" class="btn btn-success hidden" id="btn-next-step" onclick="handleNextStep()">
+              Next Module <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Console & Query Output -->
+        <div class="console-box" id="console-output" aria-live="polite" role="status">
+          <div style="color:var(--text-muted); font-size:0.88rem;">
+            <i class="fa-solid fa-circle-info"></i> Click <strong>Run MySQL Code</strong> to execute your query and inspect your table results here.
+          </div>
+        </div>
+
+        <!-- Collapsible Troubleshooting / Remediation Drawer -->
+        <div class="remediation-box hidden" id="remediation-drawer">
+          <h4 style="color:#92400E; margin-bottom:0.35rem;"><i class="fa-solid fa-screwdriver-wrench"></i> Quick Tip / Syntax Check</h4>
+          <p id="remediation-message" style="font-size:0.88rem; color:#78350F; margin-bottom:0.65rem;"></p>
+          <div class="video-wrapper" style="max-width:480px;">
+            <iframe id="remediation-video-frame" src="" title="Troubleshooting Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <details class="transcript-drawer" id="remediation-transcript-drawer" ontoggle="handleTranscriptToggle('remediation', this.open)">
+            <summary><i class="fa-solid fa-closed-captioning"></i> Read Troubleshooting Video Transcript</summary>
+            <p id="remediation-transcript-text"></p>
+          </details>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- SCREEN 3: Completion & Two-Pathway Graduation Hub -->
+  <main class="narrow-container hidden" id="screen-3">
+    <div class="card" style="text-align:center;">
+      <div style="display:inline-flex; align-items:center; gap:0.5rem; background:#FEF3C7; border:2px solid var(--wgu-gold); color:#92400E; padding:0.45rem 1rem; border-radius:999px; font-weight:700; font-size:0.9rem; margin-bottom:0.85rem;">
+        <i class="fa-solid fa-award" style="color:var(--wgu-gold); font-size:1.1rem;"></i> Mastery Verified — All 5 SQL Modules Complete!
+      </div>
+      <h1 style="font-size:1.6rem; margin-bottom:0.4rem;">You're All Set — Progress Saved!</h1>
+      <p style="color:var(--text-muted); max-width:640px; margin:0 auto 1.25rem auto;">
+        Great work! You just built a table, inserted records, updated rows safely, filtered results, and joined two relational tables in MySQL.
+      </p>
+
+      <!-- Exit Guidance & Assurance Card -->
+      <div style="background:#F8FAFC; border-left:4px solid var(--wgu-blue); border-radius:6px; padding:1rem 1.15rem; margin-bottom:1.4rem; font-size:0.9rem; color:#334155; text-align:left;">
+        <div style="font-weight:700; color:var(--wgu-blue); margin-bottom:0.4rem;">
+          <i class="fa-solid fa-circle-info"></i> What Would You Like to Do Next?
+        </div>
+        <p style="margin-bottom:0.45rem;"><strong>Ready to keep studying?</strong> Pick whichever starting path below feels best to jump straight into your D426 course materials.</p>
+        <p style="margin-bottom:0.45rem;"><strong>Done for today?</strong> You can safely close this browser tab right now—your completion and badge are saved!</p>
+        <p style="margin-bottom:0; font-size:0.84rem; color:#475569;"><i class="fa-solid fa-envelope"></i> <em>Want to practice again later?</em> Just reopen your personal study link anytime before your exam, or use the buttons in the top bar to save or email your link to yourself.</p>
+      </div>
+
+      <h2 style="font-size:1.15rem; margin-bottom:0.35rem;">Everyone learns differently. Pick the starting path that feels best to you:</h2>
+      <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:1rem;">Both pathways cover the exact same D426 course material—choose the order that matches your momentum today.</p>
+
+      <div class="resource-grid" style="text-align:left; margin-bottom:1.5rem;">
+        <div class="resource-card" style="border:2px solid var(--wgu-blue); background:#EFF6FF;">
+          <div>
+            <span style="font-size:0.74rem; font-weight:700; color:var(--wgu-blue); text-transform:uppercase;">Hands-On Momentum</span>
+            <h4 style="margin-top:0.2rem;">Pathway A: Jump Right Into SQL Coding</h4>
+            <p>Keep building on the SQL commands you just practiced by starting in zyBooks Chapter 2 (Section 2.1: SQL Syntax) before reading Chapter 1 theory.</p>
+          </div>
+          <a class="btn btn-primary" href="https://learn.zybooks.com/zybook/WGUD426Databasesv3/chapter/2/section/1" target="_blank" rel="noopener" onclick="logExitPathway('EXIT_PATHWAY_A')">
+            Start With SQL (Chapter 2) <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+
+        <div class="resource-card">
+          <div>
+            <span style="font-size:0.74rem; font-weight:700; color:#475569; text-transform:uppercase;">Traditional Sequence</span>
+            <h4 style="margin-top:0.2rem;">Pathway B: Start With the Big Picture</h4>
+            <p>Begin at Chapter 1 of your D426 learning resources to review database architecture and relational models from the ground up.</p>
+          </div>
+          <a class="btn btn-outline" href="https://lrps.wgu.edu/provision/487034335" target="_blank" rel="noopener" onclick="logExitPathway('EXIT_PATHWAY_B')">
+            Start at Chapter 1 <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
+
+      <hr style="border:none; border-top:1px solid #E2E8F0; margin:1.25rem 0;">
+      <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:0.6rem;">
+        <button type="button" class="btn btn-outline" onclick="returnToSandboxReview()">
+          <i class="fa-solid fa-code"></i> Review Practice Modules
+        </button>
+        <a class="btn btn-outline" href="https://my.wgu.edu/courses/course/30040017" target="_blank" rel="noopener">
+          D426 Course Homepage
+        </a>
+        <a class="btn btn-outline" href="https://westerngovernorsuniversity.sharepoint.com/sites/CSH-WST-D426-DataMa-30040017/?web=1" target="_blank" rel="noopener">
+          D426 Course Hub
+        </a>
+        <a class="btn btn-outline" href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Supplemental-Resource-Index.aspx" target="_blank" rel="noopener">
+          Supplemental Resource Index
+        </a>
+        <a class="btn btn-outline" href="https://westerngovernorsuniversity.sharepoint.com/sites/CR-WST-D426-DataManagementFoundations-v1/SitePages/Upcoming-Live-Events.aspx" target="_blank" rel="noopener">
+          Upcoming Live Events
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Welcome & How-To Tour Modal -->
+  <div class="modal-backdrop hidden" id="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-modal-title">
+    <div class="modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.65rem;">
+        <h2 id="welcome-modal-title" style="font-size:1.25rem;"><i class="fa-solid fa-circle-play"></i> Quick Sandbox Welcome &amp; Tour</h2>
+        <button type="button" class="btn btn-outline" style="padding:0.3rem 0.65rem;" aria-label="Close Tour" onclick="closeWelcomeModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:0.65rem;">
+        Take 4 minutes to see how the 5 interactive SQL modules work, or close this window anytime to jump right in.
+      </p>
+      <div class="video-wrapper">
+        <iframe id="welcome-video-frame" src="" title="Sandbox Welcome Tour" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <details class="transcript-drawer" id="tour-transcript-drawer" ontoggle="handleTranscriptToggle('TOUR', this.open)">
+        <summary><i class="fa-solid fa-closed-captioning"></i> Read Welcome Tour Transcript</summary>
+        <p>Hey there, and welcome to the D426 SQL Sandbox! First off, thank you so much for jumping in and participating in this research study—I’m genuinely excited you’re here.
+
+When you’re starting out in Data Management Foundations, diving straight into dense textbook theory can feel a little overwhelming. Spending just about 25 to 30 minutes getting your hands dirty with a few of the most common, high-impact SQL commands right up front helps you hit the ground running.
+
+Across the top of the screen, you’ll see five modules: creating tables, adding data, updating data, querying data, and joining tables together. Each module includes a short walkthrough video on the left and a live MySQL editor on the right with starter code ready to run. Feel free to experiment or even make a mistake on purpose to unlock the troubleshooting drawer and bonus tip videos—and click 'Reset to Template' anytime to restore the original code. Click 'Let's Get Started' whenever you're ready!</p>
+      </details>
+      <div style="text-align:right; margin-top:1rem;">
+        <button type="button" class="btn btn-primary" onclick="closeWelcomeModal()">
           Let's Get Started <i class="fa-solid fa-arrow-right"></i>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- MID-POINT EXPLORATION NUDGE (AFTER MODULE 3 IF ZERO ERRORS SEEN) -->
-  <div class="corner-nudge" id="explore-nudge" role="status" aria-live="polite">
+  <!-- Mid-Point "Play & Explore" Nudge -->
+  <div class="nudge-toast hidden" id="explore-nudge" role="status" aria-live="polite">
     <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
-      <h4><i class="fa-solid fa-flask"></i> You're Cruising! Want a Bonus Tip?</h4>
-      <button type="button" id="nudge-close-x" style="background:none; border:none; color:#64748b; font-size:1.1rem; cursor:pointer;" aria-label="Dismiss tip">&times;</button>
+      <strong style="color:var(--wgu-blue);"><i class="fa-solid fa-lightbulb" style="color:var(--wgu-gold);"></i> Smooth Sailing So Far!</strong>
+      <button type="button" style="border:none; background:none; cursor:pointer; color:#64748B; font-size:1rem;" aria-label="Dismiss Tip" onclick="dismissExploreNudge()">&times;</button>
     </div>
-    <p>
-      Don't forget—you can play around in the editor and make a mistake on purpose (like removing a semicolon or <code>WHERE</code> clause) to unlock extra troubleshooting videos! Hit <strong>Reset Template</strong> anytime.
-    </p>
-    <button type="button" class="btn btn-primary" id="nudge-got-it-btn" style="width:100%; padding:0.4rem 0.85rem; min-height:36px; font-size:0.82rem;">
-      Got It, Thanks!
-    </button>
+    <p style="margin-top:0.35rem; color:#334155;">You cleared the first three modules without a single syntax error! Feel free to experiment or even break a query on purpose in Modules 4–5 to check out our quick troubleshooting tips.</p>
   </div>
 
-  <footer class="site-footer">
-    Independent Faculty Instructional Research Pilot &bull; Principal Investigator: Bruce C. Johnson III (School of Technology)
+  <footer class="app-footer">
+    &copy; 2026 Bruce C. Johnson III. All Rights Reserved. | Independent Faculty Research Pilot &bull; Client-Side WebAssembly Execution
   </footer>
 
+  <!-- YouTube IFrame Player API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
   <script>
-    (function () {
-      "use strict";
+    // =========================================================================
+    // CONFIGURATION: Live Google Apps Script Web App URL
+    // =========================================================================
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxsw1AJtmsn9rwmqc5AIh15owBo909L0NchTVAJw7tX4offSpxDloWKS2wJ1Mf31LdOKQ/exec";
 
-      const TELEMETRY_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxsw1AJtmsn9rwmqc5AIh15owBo909L0NchTVAJw7tX4offSpxDloWKS2wJ1Mf31LdOKQ/exec";
-      const WELCOME_VIDEO_ID = "rbgI9KKihbs";
+    // =========================================================================
+    // 0. CONSOLE & DEVTOOLS DETERRENT LAYER
+    // =========================================================================
+    try {
+      console.log(
+        "%cSTOP! D426 Research Sandbox",
+        "color: #BA8E23; background: #002F6C; font-size: 16px; font-weight: bold; padding: 6px 12px; border-radius: 4px;"
+      );
+      console.log(
+        "%cProtected by copyright (c) 2026 Bruce C. Johnson III. Console tampering is disabled.",
+        "color: #334155; font-size: 12px;"
+      );
+    } catch (e) {}
 
-      // Block casual right-click inspection outside the SQL editor
-      document.addEventListener("contextmenu", function (e) {
-        if (e.target && e.target.id === "sql-editor") return;
+    document.addEventListener("contextmenu", function (e) {
+      if (e.target && e.target.id === "sql-editor") return;
+      e.preventDefault();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      const key = (e.key || "").toUpperCase();
+      if (
+        e.key === "F12" ||
+        ((e.ctrlKey || e.metaKey) && e.shiftKey && (key === "I" || key === "J" || key === "C")) ||
+        ((e.ctrlKey || e.metaKey) && key === "U")
+      ) {
         e.preventDefault();
-      });
+        return false;
+      }
+    });
 
-      // Deter common DevTools keyboard shortcuts
-      document.addEventListener("keydown", function (e) {
-        const key = (e.key || "").toUpperCase();
-        if (key === "F12") { e.preventDefault(); return; }
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (key === "I" || key === "J" || key === "C")) {
-          e.preventDefault();
+    // =========================================================================
+    // 1. TOKEN VALIDATION & SESSION INITIALIZATION
+    // =========================================================================
+    const urlParams = new URLSearchParams(window.location.search);
+    const rawSid = (urlParams.get("sid") || "").trim();
+    const rawArm = (urlParams.get("arm") || "").trim().toLowerCase();
+    const skipScreenerParam = urlParams.get("skip_screener") === "1";
+
+    // Strict pre-masked token whitelist; blocks raw 7-9 digit institutional IDs
+    const isPreMaskedToken = /^S26_[A-Z0-9]{4,12}$/i.test(rawSid);
+    const isReviewerToken = /^(DEMO_|IRB_|TEST_)[A-Z0-9_]{1,20}$/i.test(rawSid);
+    const isValidToken = isPreMaskedToken || isReviewerToken;
+
+    const STUDY_TOKEN = isValidToken ? rawSid : "INVALID";
+    const ASSIGNED_ARM = rawArm === "ctrl" ? "ctrl" : "interv";
+    const ALLOW_SKIP_SCREENER = isReviewerToken && skipScreenerParam;
+
+    // Ephemeral session hash in sessionStorage to detect multi-browser link sharing
+    let SESSION_TOKEN = sessionStorage.getItem("d426_session_token");
+    if (!SESSION_TOKEN) {
+      SESSION_TOKEN = "sess_" + Math.random().toString(36).substring(2, 10) + Date.now().toString(36).slice(-4);
+      sessionStorage.setItem("d426_session_token", SESSION_TOKEN);
+    }
+
+    const STORAGE_KEY = "d426_state_" + STUDY_TOKEN;
+
+    // =========================================================================
+    // 2. CURRICULUM MODULES, VIDEOS, TRANSCRIPTS, & STARTER CODE
+    // =========================================================================
+    const TOUR_VIDEO_ID = "rbgI9KKihbs";
+
+    const MODULES = {
+      1: {
+        shortLabel: "1. Creating Tables",
+        badge: "DDL • CREATE TABLE",
+        title: "1. Creating Tables (CREATE)",
+        primaryVideoId: "VRUb_-0MjKo",
+        remediationVideoId: "obBNBGgIsYw",
+        primaryTranscript: "Hi everyone! Welcome to Module 1 of your D426 SQL Foundations. Before we dive into textbook theory, we are going to build real database tables from the ground up using CREATE TABLE books. Define book_id as an auto-incrementing integer primary key, title and author as VARCHAR text strings, price as DECIMAL(5,2), and published_year as INT. Make sure there is no trailing comma after the last column, then run DESCRIBE books; to inspect your table structure.",
+        remediationTranscript: "Troubleshooting CREATE TABLE: Make sure every column name is followed by a valid MySQL data type (INT, VARCHAR, DECIMAL), verify there is NO trailing comma after published_year INT right before the closing parenthesis, and end both statements with semicolons.",
+        instructions: `
+          <p style="margin-bottom:0.5rem;">Create a table named <strong>books</strong> with these exact five columns:</p>
+          <ul style="margin-left:1.25rem; margin-bottom:0.5rem;">
+            <li><code>book_id</code> — <code>INT PRIMARY KEY AUTO_INCREMENT</code></li>
+            <li><code>title</code> — <code>VARCHAR(100)</code></li>
+            <li><code>author</code> — <code>VARCHAR(100)</code></li>
+            <li><code>price</code> — <code>DECIMAL(5,2)</code></li>
+            <li><code>published_year</code> — <code>INT</code></li>
+          </ul>
+          <p>Then run <code>DESCRIBE books;</code> on the next line to inspect your table schema.</p>
+        `,
+        starterCode: `-- Step 1: Complete the CREATE TABLE statement below\nCREATE TABLE books (\n  book_id INT PRIMARY KEY AUTO_INCREMENT,\n  title VARCHAR(100) NOT NULL,\n  author VARCHAR(100) NOT NULL,\n  price DECIMAL(5,2),\n  published_year INT\n);\n\nDESCRIBE books;`
+      },
+      2: {
+        shortLabel: "2. Adding Data",
+        badge: "DML • INSERT INTO",
+        title: "2. Adding Data (INSERT)",
+        primaryVideoId: "dRBxT2oD1hk",
+        remediationVideoId: "NpdCFRU3Vc8",
+        primaryTranscript: "Welcome to Module 2: Adding Data with INSERT INTO! Notice how text values like book titles and author names are enclosed in single quotes, while numeric values like price and published_year are written without quotes. Because book_id auto-increments, MySQL generates it automatically. Add at least two book records and run SELECT * FROM books; to verify your rows.",
+        remediationTranscript: "Troubleshooting INSERT INTO: Ensure the number of values in your VALUES list matches the columns listed in parentheses, wrap all text strings in single quotes, and separate multiple rows with commas.",
+        instructions: `
+          <p style="margin-bottom:0.5rem;">Insert at least <strong>2 books</strong> into the pre-created <strong>books</strong> table (<code>title</code>, <code>author</code>, <code>price</code>, <code>published_year</code>).</p>
+          <p>Finish with <code>SELECT * FROM books;</code> so you can verify your inserted rows in the output grid.</p>
+        `,
+        starterCode: `-- Step 2: Add at least two books and display the table\nINSERT INTO books (title, author, price, published_year)\nVALUES\n  ('The Pragmatic Programmer', 'Andrew Hunt', 42.50, 2019),\n  ('Learning SQL', 'Alan Beaulieu', 34.99, 2020);\n\nSELECT * FROM books;`
+      },
+      3: {
+        shortLabel: "3. Updating Data",
+        badge: "DML • UPDATE ... WHERE",
+        title: "3. Updating Data (UPDATE)",
+        primaryVideoId: "4jQvokPNooQ",
+        remediationVideoId: "G07Wd94Y8wg",
+        primaryTranscript: "Welcome to Module 3: Updating Data safely! Rule Number 1 in database administration: NEVER run an UPDATE without a WHERE clause, or you will overwrite every row in the entire table. Update the price of book_id = 2 to 31.50, then run SELECT * FROM books; to confirm only that book changed.",
+        remediationTranscript: "Troubleshooting UPDATE: Always pair UPDATE books SET price = 31.50 with WHERE book_id = 2 so only row 2 is modified.",
+        instructions: `
+          <p style="margin-bottom:0.5rem;">We have seeded <strong>books</strong> with four titles. Update the <code>price</code> of <strong>book_id = 2</strong> (<em>Learning SQL</em>) to <strong>31.50</strong>.</p>
+          <p>Always include a <code>WHERE</code> clause, then run <code>SELECT * FROM books;</code> to verify the updated price.</p>
+        `,
+        starterCode: `-- Step 3: Update the price of book_id = 2 to 31.50\nUPDATE books\nSET price = 31.50\nWHERE book_id = 2;\n\nSELECT * FROM books;`
+      },
+      4: {
+        shortLabel: "4. Querying Data",
+        badge: "DQL • SELECT & ORDER BY",
+        title: "4. Querying Data (SELECT)",
+        primaryVideoId: "KF_xpU-O88s",
+        remediationVideoId: "vjPaSfKatlA",
+        primaryTranscript: "Welcome to Module 4: Querying and Sorting Data! Here we combine SELECT, WHERE, and ORDER BY DESC to retrieve books published strictly after 2018 (published_year > 2018), sorted from highest price to lowest price.",
+        remediationTranscript: "Troubleshooting SELECT & Filtering: Use strict inequality (published_year > 2018, not >= 2018) and include ORDER BY price DESC to sort highest price first.",
+        instructions: `
+          <p style="margin-bottom:0.5rem;">Query the <strong>books</strong> table to retrieve books published <strong>strictly after 2018</strong> (<code>published_year &gt; 2018</code>).</p>
+          <p>Sort the results by <code>price</code> from highest to lowest (<code>ORDER BY price DESC</code>).</p>
+        `,
+        starterCode: `-- Step 4: Filter books published after 2018, sorted highest price first\nSELECT *\nFROM books\nWHERE published_year > 2018\nORDER BY price DESC;`
+      },
+      5: {
+        shortLabel: "5. Joining Tables",
+        badge: "Relational • INNER JOIN",
+        title: "5. Joining Tables (JOIN)",
+        primaryVideoId: "uxCW_EsjC60",
+        remediationVideoId: "0iCXN5ZNW7Q",
+        primaryTranscript: "Welcome to Module 5: Joining Tables with INNER JOIN! Relational databases connect specialized tables via primary and foreign keys. Create an orders table linked to books via book_id, insert at least one order record, and run an INNER JOIN using dot-notation (orders.book_id = books.book_id) to display joined results.",
+        remediationTranscript: "Troubleshooting INNER JOIN: Make sure your orders table is created and has at least one row inserted whose book_id matches an existing book_id in books (1 or 2), then join them using INNER JOIN books ON orders.book_id = books.book_id.",
+        instructions: `
+          <p style="margin-bottom:0.5rem;">Create an <strong>orders</strong> table (with <code>order_id</code>, <code>book_id</code>, and <code>customer_name</code>), insert at least one order referencing an existing <code>book_id</code> (1 or 2), and run an <code>INNER JOIN</code> combining <strong>orders</strong> and <strong>books</strong> on <code>book_id</code>.</p>
+        `,
+        starterCode: `-- Step 5: Create orders, insert an order, and join with books\nCREATE TABLE orders (\n  order_id INT PRIMARY KEY AUTO_INCREMENT,\n  book_id INT NOT NULL,\n  customer_name VARCHAR(100)\n);\n\nINSERT INTO orders (book_id, customer_name)\nVALUES (2, 'Jordan Taylor');\n\nSELECT orders.order_id, orders.customer_name, books.title, books.price\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;`
+      }
+    };
+
+    // =========================================================================
+    // 3. FELDER-SOLOMAN SEQUENTIAL / GLOBAL ILS ITEMS (DOUBLE RANDOMIZED)
+    // =========================================================================
+    const ILS_ITEMS = [
+      { id: "q1", text: "I understand something better after I:", seq: "Work through it step by step.", glo: "See the big picture and how it fits together first." },
+      { id: "q2", text: "When I am learning a new subject, I prefer to:", seq: "Follow a logical sequence from basic building blocks upward.", glo: "Jump around and connect ideas across different topics." },
+      { id: "q3", text: "Once I understand:", seq: "All the individual parts, I understand the whole thing.", glo: "The whole thing, I see how the individual parts fit." },
+      { id: "q4", text: "When solving a technical problem, I am more likely to:", seq: "Work my way through the steps one at a time.", glo: "See the solution first and then figure out the steps needed." },
+      { id: "q5", text: "In a technical textbook or guide, I prefer material that:", seq: "Builds steadily in clear, incremental lessons.", glo: "Gives an overarching framework and real-world context early." },
+      { id: "q6", text: "I learn best when:", seq: "I master one concept completely before moving to the next.", glo: "I get an overview of the entire system before diving into details." },
+      { id: "q7", text: "When explaining how something works, I tend to:", seq: "Walk through the process in chronological or logical order.", glo: "Start with the main takeaway and fill in details afterward." },
+      { id: "q8", text: "When tackling a coding task, I prefer to:", seq: "Write and test small pieces of syntax right away.", glo: "Read about the full architecture before writing code." },
+      { id: "q9", text: "If an instructor skips steps during an explanation, I:", seq: "Feel lost until I fill in the missing steps.", glo: "Usually follow the main point anyway." },
+      { id: "q10", text: "When studying for an exam, I am more likely to:", seq: "Review my notes in order from Chapter 1 onward.", glo: "Focus on broad themes and concept maps across chapters." },
+      { id: "q11", text: "I find it easier to remember:", seq: "Specific procedures and step-by-step rules.", glo: "General concepts and overall patterns." }
+    ];
+
+    // =========================================================================
+    // 4. PERSISTENT STATE & GRANULAR TELEMETRY ENGINE
+    // =========================================================================
+    const defaultState = {
+      linkOpenedLogged: false,
+      consentDecision: null,
+      diagnosticCompleted: false,
+      priorSql: null,
+      ilsScore: null,
+      ilsItems: {},
+      tourSeen: false,
+      currentStep: 1,
+      completedSteps: [],
+      attempts: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+      moduleSeconds: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+      totalActiveSeconds: 0,
+      savedCode: {
+        1: MODULES[1].starterCode,
+        2: MODULES[2].starterCode,
+        3: MODULES[3].starterCode,
+        4: MODULES[4].starterCode,
+        5: MODULES[5].starterCode
+      },
+      remediationTriggered: { 1: false, 2: false, 3: false, 4: false, 5: false },
+      solutionRevealed: { 1: false, 2: false, 3: false, 4: false, 5: false },
+      transcriptsOpened: {},
+      videos: {},
+      nudgeShown: false,
+      exitLogged: false
+    };
+
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return Object.assign({}, defaultState, parsed, {
+            attempts: Object.assign({}, defaultState.attempts, parsed.attempts || {}),
+            moduleSeconds: Object.assign({}, defaultState.moduleSeconds, parsed.moduleSeconds || {}),
+            savedCode: Object.assign({}, defaultState.savedCode, parsed.savedCode || {}),
+            remediationTriggered: Object.assign({}, defaultState.remediationTriggered, parsed.remediationTriggered || {}),
+            solutionRevealed: Object.assign({}, defaultState.solutionRevealed, parsed.solutionRevealed || {})
+          });
+        }
+      } catch (e) {}
+      return JSON.parse(JSON.stringify(defaultState));
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
+    }
+
+    // Idle-Aware Active Timer (Pauses if tab hidden or idle > 120s)
+    let lastInteractionTime = Date.now();
+    const IDLE_THRESHOLD_MS = 120000;
+
+    ["mousemove", "keydown", "click", "scroll", "touchstart"].forEach(evt => {
+      document.addEventListener(evt, () => { lastInteractionTime = Date.now(); }, { passive: true });
+    });
+
+    setInterval(() => {
+      if (!isValidToken) return;
+      const isVisible = document.visibilityState === "visible";
+      const isActive = (Date.now() - lastInteractionTime) < IDLE_THRESHOLD_MS;
+      if (isVisible && isActive) {
+        state.totalActiveSeconds += 1;
+        const sandboxScreen = document.getElementById("screen-2b");
+        if (sandboxScreen && !sandboxScreen.classList.contains("hidden")) {
+          const step = state.currentStep || 1;
+          state.moduleSeconds[step] = (state.moduleSeconds[step] || 0) + 1;
+        }
+        if (state.totalActiveSeconds % 10 === 0) {
+          saveState();
+        }
+      }
+    }, 1000);
+
+    // YouTube IFrame API Video Play & Active Watch-Time Tracker (All 11 Videos)
+    const ytPlayers = {};
+    const videoWatchTimers = {};
+
+    function recordVideoPlay(videoKey) {
+      if (!state.videos[videoKey]) state.videos[videoKey] = { p: 0, s: 0 };
+      state.videos[videoKey].p += 1;
+      saveState();
+      if (!videoWatchTimers[videoKey]) {
+        videoWatchTimers[videoKey] = setInterval(() => {
+          if (document.visibilityState === "visible") {
+            state.videos[videoKey].s += 1;
+          }
+        }, 1000);
+      }
+    }
+
+    function stopVideoTimer(videoKey) {
+      if (videoWatchTimers[videoKey]) {
+        clearInterval(videoWatchTimers[videoKey]);
+        delete videoWatchTimers[videoKey];
+        saveState();
+      }
+    }
+
+    function stopAllVideoTimers() {
+      Object.keys(videoWatchTimers).forEach(stopVideoTimer);
+    }
+
+    function bindYouTubePlayer(iframeId, videoKey) {
+      if (typeof YT === "undefined" || !YT.Player) return;
+      try {
+        ytPlayers[iframeId] = new YT.Player(iframeId, {
+          events: {
+            onStateChange: function (event) {
+              if (event.data === YT.PlayerState.PLAYING) {
+                recordVideoPlay(videoKey);
+              } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+                stopVideoTimer(videoKey);
+              }
+            }
+          }
+        });
+      } catch (e) {}
+    }
+
+    window.onYouTubeIframeAPIReady = function () {
+      bindYouTubePlayer("welcome-video-frame", "TOUR");
+      bindYouTubePlayer("primary-video-frame", state.currentStep + ".1");
+      bindYouTubePlayer("remediation-video-frame", state.currentStep + ".2");
+    };
+
+    function handleTranscriptToggle(slot, isOpen) {
+      if (!isOpen) return;
+      const key = slot === "TOUR" ? "TOUR" : (slot === "primary" ? state.currentStep + ".1" : state.currentStep + ".2");
+      state.transcriptsOpened[key] = (state.transcriptsOpened[key] || 0) + 1;
+      saveState();
+    }
+
+    // Telemetry Webhook Dispatcher (Maps cleanly to existing 7-column sheet)
+    function sendTelemetry(stepLabel, attemptsPayload, statusPayload, useBeacon = false) {
+      if (!isValidToken || !WEBHOOK_URL) return;
+
+      const payload = {
+        student_id: STUDY_TOKEN,
+        step: stepLabel,
+        attempts: typeof attemptsPayload === "string" ? attemptsPayload : JSON.stringify(attemptsPayload),
+        time_spent_seconds: state.totalActiveSeconds,
+        status: statusPayload + "|SESS:" + SESSION_TOKEN,
+        user_agent: navigator.userAgent
+      };
+
+      const bodyStr = JSON.stringify(payload);
+
+      if (useBeacon && navigator.sendBeacon) {
+        try {
+          const blob = new Blob([bodyStr], { type: "text/plain;charset=utf-8" });
+          navigator.sendBeacon(WEBHOOK_URL, blob);
           return;
-        }
-        if ((e.ctrlKey || e.metaKey) && key === "U") {
-          e.preventDefault();
+        } catch (e) {}
+      }
+
+      fetch(WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        keepalive: useBeacon,
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: bodyStr
+      }).catch(() => {});
+    }
+
+    function buildSandboxTelemetryMeta() {
+      const activeVideos = {};
+      Object.keys(state.videos).forEach(k => {
+        if (state.videos[k] && state.videos[k].p > 0) {
+          activeVideos[k] = state.videos[k];
         }
       });
+      return {
+        attempts: state.attempts,
+        mod_sec: state.moduleSeconds,
+        rem_opened: state.remediationTriggered,
+        sol_revealed: state.solutionRevealed,
+        trans_opened: state.transcriptsOpened,
+        videos: activeVideos
+      };
+    }
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const rawSid = (urlParams.get("sid") || "").trim();
-      const rawArm = (urlParams.get("arm") || "").trim().toLowerCase();
-      const skipScreenerParam = urlParams.get("skip_screener") === "1";
+    // Screen 3 Pathway Click & Browser Exit Tracking
+    function logExitPathway(pathwayStep) {
+      state.exitLogged = true;
+      saveState();
+      sendTelemetry(
+        pathwayStep,
+        buildSandboxTelemetryMeta(),
+        "ARM:" + ASSIGNED_ARM.toUpperCase() + "|LAST_STEP:" + state.currentStep,
+        true
+      );
+    }
 
-      // Accept ONLY pre-masked student tokens (S26_XXXXXX) or reviewer/test prefixes (DEMO_, IRB_, TEST_)
-      // Raw 7-9 digit institutional Student IDs are explicitly rejected so PII never enters the web layer.
-      const isReviewerToken = /^(DEMO_|IRB_|TEST_)[A-Z0-9_-]+$/i.test(rawSid);
-      const isMaskedStudentToken = /^S26_[A-Z0-9]{4,12}$/i.test(rawSid);
-      const isValidSid = Boolean(rawSid) && (isMaskedStudentToken || isReviewerToken);
+    window.addEventListener("pagehide", () => {
+      if (!isValidToken || state.exitLogged) return;
+      stopAllVideoTimers();
+      saveState();
+      const currentStage = !document.getElementById("screen-3").classList.contains("hidden")
+        ? "SCREEN_3_CLOSED"
+        : (!document.getElementById("screen-2b").classList.contains("hidden")
+          ? "SANDBOX_EXIT_M" + state.currentStep
+          : (!document.getElementById("screen-1b").classList.contains("hidden")
+            ? "DIAGNOSTIC_EXIT"
+            : "CONSENT_EXIT"));
 
-      const sid = isValidSid ? rawSid.toUpperCase() : "INVALID";
-      document.getElementById("display-sid").innerText = sid;
+      sendTelemetry(
+        "SESSION_EXIT",
+        buildSandboxTelemetryMeta(),
+        "STAGE:" + currentStage + "|ARM:" + ASSIGNED_ARM.toUpperCase(),
+        true
+      );
+    });
 
-      if (!isValidSid) {
-        document.getElementById("invalid-screen").style.display = "block";
+    // =========================================================================
+    // 5. ROUTING & SCREEN RENDERING
+    // =========================================================================
+    function showOnlyScreen(screenId) {
+      ["screen-restricted", "screen-1a", "screen-1b", "screen-2a", "screen-2b", "screen-3"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle("hidden", id !== screenId);
+      });
+
+      const inSandboxOrComplete = (screenId === "screen-2b" || screenId === "screen-3");
+      document.getElementById("btn-open-tour").classList.toggle("hidden", !inSandboxOrComplete);
+      document.getElementById("btn-copy-link").classList.toggle("hidden", !inSandboxOrComplete);
+      document.getElementById("btn-email-link").classList.toggle("hidden", !inSandboxOrComplete);
+    }
+
+    function initApp() {
+      document.getElementById("token-badge").textContent = "Study Token: " + STUDY_TOKEN;
+
+      if (!isValidToken) {
+        showOnlyScreen("screen-restricted");
         return;
       }
 
-      // Determine study arm (explicit URL parameter or deterministic parity from final character)
-      let arm = "interv";
-      if (rawArm === "ctrl" || rawArm === "control") {
-        arm = "ctrl";
-      } else if (rawArm === "interv" || rawArm === "intervention") {
-        arm = "interv";
-      } else {
-        const lastChar = sid.slice(-1);
-        const code = lastChar.charCodeAt(0);
-        arm = (code % 2 === 1) ? "interv" : "ctrl";
-      }
-
-      // Ephemeral browser session token for multi-device/duplicate audit detection (zero IP capture)
-      const sessionToken = sessionStorage.getItem("d426_session_token") ||
-        ("sess_" + Math.random().toString(36).substring(2, 10) + Date.now().toString(36));
-      sessionStorage.setItem("d426_session_token", sessionToken);
-
-      const STORAGE_KEY = "d426_state_" + sid;
-      function getStoredState() {
-        try {
-          return JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-        } catch (e) {
-          return null;
-        }
-      }
-      function saveState(patch) {
-        const prev = getStoredState() || {};
-        const next = Object.assign({}, prev, patch);
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-        } catch (e) {}
-        return next;
-      }
-
-      function sendTelemetry(payload) {
-        if (!TELEMETRY_WEBHOOK_URL) return;
-        const body = Object.assign({
-          student_id: sid,
-          user_agent: navigator.userAgent
-        }, payload);
-        fetch(TELEMETRY_WEBHOOK_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(body)
-        }).catch(function () {});
-      }
-
-      // Personal Link Utilities (Privacy-Safe Client-Side Only)
-      const personalUrl = window.location.origin + window.location.pathname +
-        "?sid=" + encodeURIComponent(sid) + "&arm=" + encodeURIComponent(arm);
-      const copyBtn = document.getElementById("copy-link-btn");
-      const emailBtn = document.getElementById("email-link-btn");
-      copyBtn.style.display = "inline-flex";
-      emailBtn.style.display = "inline-flex";
-
-      copyBtn.addEventListener("click", function () {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(personalUrl).then(function () {
-            copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Link Copied!';
-            setTimeout(function () {
-              copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy My Link';
-            }, 2200);
-          });
-        } else {
-          window.prompt("Copy your personal D426 SQL Sandbox link:", personalUrl);
-        }
-      });
-
-      emailBtn.href = "mailto:?subject=" + encodeURIComponent("My Personal D426 SQL Practice Sandbox Link") +
+      // Wire personal link buttons
+      const personalUrl = window.location.origin + window.location.pathname + "?sid=" + encodeURIComponent(STUDY_TOKEN) + "&arm=" + encodeURIComponent(ASSIGNED_ARM);
+      const emailHref = "mailto:?subject=" + encodeURIComponent("My D426 Interactive SQL Practice Link") +
         "&body=" + encodeURIComponent("Here is my personal link to return to the D426 SQL Practice Sandbox anytime:\n\n" + personalUrl);
+      document.getElementById("btn-email-link").setAttribute("href", emailHref);
 
-      // 11-Item Sequential vs. Global Index of Learning Styles (Double-Randomized)
-      const ilsItems = [
-        { id: "ils_1", q: "When I solve math or logic problems, I usually:",
-          opts: [{ text: "Work one step at a time.", val: 1 }, { text: "Just see solutions, then have to figure out the steps to get to them.", val: -1 }] },
-        { id: "ils_2", q: "I tend to:",
-          opts: [{ text: "Understand details of a subject but may be fuzzy about its overall structure.", val: 1 }, { text: "Understand overall structure but may be fuzzy about the details.", val: -1 }] },
-        { id: "ils_3", q: "When I am learning a new subject, I prefer to:",
-          opts: [{ text: "Stay focused on that subject, learning as much about it as I can.", val: 1 }, { text: "Try to make connections between that subject and related subjects.", val: -1 }] },
-        { id: "ils_4", q: "When I consider what I did yesterday, I am most likely to recall:",
-          opts: [{ text: "A series of specific events in the order they happened.", val: 1 }, { text: "A general master plan or overall picture.", val: -1 }] },
-        { id: "ils_5", q: "Once I understand:",
-          opts: [{ text: "All the individual parts, I understand the whole thing.", val: 1 }, { text: "The whole thing, I see how the individual parts fit together.", val: -1 }] },
-        { id: "ils_6", q: "When writing a paper or report, I am more likely to:",
-          opts: [{ text: "Work on the beginning and write straight through sequentially.", val: 1 }, { text: "Write different parts in any order and assemble them later.", val: -1 }] },
-        { id: "ils_7", q: "When learning complex topics, I prefer to progress:",
-          opts: [{ text: "At a steady pace, building incrementally step-by-step.", val: 1 }, { text: "In fits and starts; feeling confused until the whole picture suddenly 'clicks.'", val: -1 }] },
-        { id: "ils_8", q: "When reading technical texts, I prefer writers to:",
-          opts: [{ text: "Lay out the instructions and facts directly and in clear order.", val: 1 }, { text: "Explain the broad conceptual context and analogies before the details.", val: -1 }] },
-        { id: "ils_9", q: "It is more important to me that an instructor:",
-          opts: [{ text: "Lay out the material in clear, sequential stages.", val: 1 }, { text: "Give me an overall big picture and relate the material to other subjects.", val: -1 }] },
-        { id: "ils_10", q: "When analyzing data or technical scenarios:",
-          opts: [{ text: "I examine individual records/data points to deduce patterns.", val: 1 }, { text: "I form a general impression first, then drill down for evidence.", val: -1 }] },
-        { id: "ils_11", q: "When someone walks through a solution:",
-          opts: [{ text: "I prefer seeing each intermediate step written out completely.", val: 1 }, { text: "I prefer seeing the final outcome first, then how it was reached.", val: -1 }] }
-      ];
-
-      function shuffleArray(arr) {
-        const copy = arr.slice();
-        for (let i = copy.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          const tmp = copy[i];
-          copy[i] = copy[j];
-          copy[j] = tmp;
-        }
-        return copy;
+      // Fire LINK_OPENED once per token/session
+      if (!state.linkOpenedLogged) {
+        state.linkOpenedLogged = true;
+        saveState();
+        sendTelemetry("LINK_OPENED", 0, "ARM:" + ASSIGNED_ARM.toUpperCase());
       }
 
-      function renderILSQuestions() {
-        const container = document.getElementById("ils-container");
-        container.innerHTML = "";
-        const shuffledQuestions = shuffleArray(ilsItems);
-        shuffledQuestions.forEach(function (item, idx) {
-          const shuffledOpts = shuffleArray(item.opts);
-          const box = document.createElement("div");
-          box.className = "question-box";
-          box.id = "box-" + item.id;
-          box.innerHTML =
-            '<div class="question-title">Question ' + (idx + 3) + ': ' + item.q + '</div>' +
-            shuffledOpts.map(function (opt) {
-              return (
-                '<label class="radio-option">' +
-                '<input type="radio" name="' + item.id + '" value="' + opt.val + '" />' +
-                '<span>' + opt.text + '</span>' +
-                '</label>'
-              );
-            }).join("");
-          container.appendChild(box);
-        });
-      }
-
-      // Screen 1A Consent Listeners
-      const consentRadios = document.querySelectorAll('input[name="consent-radio"]');
-      const consentBtn = document.getElementById("consent-continue-btn");
-
-      consentRadios.forEach(function (radio) {
-        radio.addEventListener("change", function () {
-          consentBtn.disabled = false;
-          if (this.value === "yes") {
-            consentBtn.className = "btn btn-primary";
-            consentBtn.innerHTML = 'Confirm &amp; Continue to Check-In <i class="fa-solid fa-arrow-right"></i>';
-          } else {
-            consentBtn.className = "btn btn-secondary";
-            consentBtn.innerHTML = 'Confirm &amp; Exit to Course Materials <i class="fa-solid fa-arrow-right"></i>';
-          }
-        });
-      });
-
-      consentBtn.addEventListener("click", function () {
-        const selected = document.querySelector('input[name="consent-radio"]:checked');
-        if (!selected) return;
-        if (selected.value === "no") {
-          saveState({ consented: false, diagnosticCompleted: true });
-          document.getElementById("screen-1a").style.display = "none";
-          document.getElementById("control-heading").innerText = "Participation Opt-Out Acknowledged";
-          document.getElementById("control-subtext").innerText = "Thank you. You have chosen not to participate in this study, and no research data has been recorded. Opting out has zero effect on your course standing or grade. Access your official D426 materials below:";
-          document.getElementById("control-screen").style.display = "block";
-          window.scrollTo({ top: 0, behavior: "smooth" });
-          return;
-        }
-        saveState({ consented: true });
-        document.getElementById("screen-1a").style.display = "none";
-        renderILSQuestions();
-        document.getElementById("screen-1b").style.display = "block";
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-
-      // Screen 1B Validation & Submission
-      document.getElementById("submit-diagnostic-btn").addEventListener("click", function () {
-        let firstInvalidEl = null;
-        const priorChecked = document.querySelector('input[name="prior_sql"]:checked');
-        const priorBox = document.getElementById("prior-sql-box");
-        if (!priorChecked) {
-          priorBox.classList.add("unanswered-error");
-          firstInvalidEl = priorBox;
-        } else {
-          priorBox.classList.remove("unanswered-error");
-        }
-
-        let ilsScore = 0;
-        for (let i = 0; i < ilsItems.length; i++) {
-          const item = ilsItems[i];
-          const checked = document.querySelector('input[name="' + item.id + '"]:checked');
-          const box = document.getElementById("box-" + item.id);
-          if (!checked) {
-            box.classList.add("unanswered-error");
-            if (!firstInvalidEl) firstInvalidEl = box;
-          } else {
-            box.classList.remove("unanswered-error");
-            ilsScore += parseInt(checked.value, 10);
-          }
-        }
-
-        if (firstInvalidEl) {
-          document.getElementById("validation-banner").style.display = "flex";
-          firstInvalidEl.scrollIntoView({ behavior: "smooth", block: "center" });
-          return;
-        }
-
-        document.getElementById("validation-banner").style.display = "none";
-        const priorVal = parseInt(priorChecked.value, 10);
-
-        saveState({
-          diagnosticCompleted: true,
-          arm: arm,
-          priorSql: priorVal,
-          ilsScore: ilsScore
-        });
-
-        sendTelemetry({
-          step: "DIAGNOSTIC_COMPLETED",
-          attempts: "ILS_SCORE:" + ilsScore + "|SESS:" + sessionToken,
-          time_spent_seconds: priorVal,
-          status: "ARM:" + arm.toUpperCase() + "|PRIOR_SQL:" + priorVal + "|ILS:" + ilsScore
-        });
-
-        document.getElementById("screen-1b").style.display = "none";
-        if (arm === "ctrl") {
-          document.getElementById("control-screen").style.display = "block";
-        } else {
-          enterSandbox(true);
-        }
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-
-      // 5-Module SQL Curriculum, Verified Videos, Transcripts & Semantic Validators
-      const curriculum = {
-        1: {
-          title: "Module 1: Creating Tables (CREATE TABLE)",
-          instructions: "Write a statement to create a table named <code>books</code> with columns: <code>book_id</code> (Primary Key), <code>title</code>, <code>author</code>, <code>price</code>, and <code>published_year</code>. Run <code>DESCRIBE books;</code> to inspect your table structure.",
-          videoId: "VRUb_-0MjKo",
-          remediationVideoId: "obBNBGgIsYw",
-          primaryTranscript: "Hi everyone! Welcome to Module 1 of your D426 SQL Foundations.\n\nBefore we dive into textbook theory, we are going to build real database tables from the ground up. In SQL, this is called Data Definition Language, or DDL.\n\nThink of a table as a strict grid. Before storing a single piece of information, you must define the columns and the exact type of data allowed in each.\n\nLook at the starter query on your right. We create the 'books' table:\nFirst: book_id INT PRIMARY KEY AUTO_INCREMENT. That generates a unique ID number for every row automatically.\nNext: title and author use VARCHAR text. The NOT NULL rule means they can never be left empty.\nThen: price DECIMAL(5,2) gives exact currency formatting, and published_year INT stores the release year.\n\nNotice the punctuation: every column is separated by a comma, but there is NO COMMA after that final column!\n\nReview the code in your editor, and click 'Run MySQL Code' to build your first table!",
-          remedyTranscript: "Troubleshooting CREATE TABLE:\nThe two most common errors in table creation are trailing commas and misspelled data types.\n1. Make sure you do NOT have a comma after published_year INT. In SQL, the last column in your parentheses must not have a trailing comma.\n2. Ensure you have terminating semicolons after your CREATE TABLE statement and after DESCRIBE books;.\n3. Verify that all column definitions are wrapped in parentheses.",
-          template: "-- MODULE 1: Create the 'books' table\nCREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\n\nDESCRIBE books;",
-          solution: "CREATE TABLE books (\n    book_id INT PRIMARY KEY AUTO_INCREMENT,\n    title VARCHAR(100) NOT NULL,\n    author VARCHAR(50) NOT NULL,\n    price DECIMAL(5,2),\n    published_year INT\n);\n\nDESCRIBE books;",
-          validate: function (rawSql, hasDescribe) {
-            const match = rawSql.match(/CREATE\s+TABLE\s+books\s*\(([\s\S]*?)\)\s*;/i);
-            if (!match) throw new Error("Could not find a valid CREATE TABLE books (...); statement.");
-
-            const colsInfo = db.exec("PRAGMA table_info(books);");
-            if (!colsInfo.length || !colsInfo[0].values.length) {
-              throw new Error("Table 'books' was not created. Check your CREATE TABLE statement.");
-            }
-            const colMap = {};
-            colsInfo[0].values.forEach(function (c) {
-              colMap[c[1].toLowerCase()] = (c[2] || "").toUpperCase();
-            });
-
-            const requiredCols = ["book_id", "title", "author", "price", "published_year"];
-            for (let i = 0; i < requiredCols.length; i++) {
-              if (!colMap[requiredCols[i]]) {
-                throw new Error("Table 'books' is missing required column '" + requiredCols[i] + "'.");
-              }
-            }
-
-            const validMySqlType = /^(INT|INTEGER|VARCHAR\(\d+\)|CHAR\(\d+\)|DECIMAL\(\d+,\s*\d+\)|NUMERIC\(\d+,\s*\d+\)|TEXT|DATE|DATETIME|FLOAT|DOUBLE)$/i;
-            Object.keys(colMap).forEach(function (cName) {
-              if (!validMySqlType.test(colMap[cName])) {
-                throw new Error("Invalid or misspelled MySQL data type '" + colMap[cName] + "' for column '" + cName + "'.");
-              }
-            });
-
-            if (!hasDescribe) {
-              throw new Error("Please ensure you include 'DESCRIBE books;' to verify your table structure.");
-            }
-            return true;
-          }
-        },
-        2: {
-          title: "Module 2: Adding Data (INSERT INTO)",
-          instructions: "Insert at least two records into the <code>books</code> table. Ensure text values are enclosed in single quotes.",
-          videoId: "dRBxT2oD1hk",
-          remediationVideoId: "NpdCFRU3Vc8",
-          primaryTranscript: "Welcome to Module 2: Data Manipulation Language, or DML!\n\nNow that our 'books' table exists, we need to populate it with rows using the INSERT INTO command.\n\nLook at the syntax in your editor. We state INSERT INTO books, list the columns we are supplying in parentheses, and follow with the keyword VALUES.\n\nNotice two critical rules:\nFirst: text and character strings must be surrounded by single quotation marks.\nSecond: numbers like prices or years do NOT take quotes.\nAlso notice we skipped book_id entirely! Because we configured book_id as AUTO_INCREMENT in Module 1, MySQL generates the primary keys automatically.\n\nClick 'Run MySQL Code' to insert these books into your database!",
-          remedyTranscript: "Troubleshooting INSERT INTO:\n1. Column Count Mismatch: Ensure the number of values in your VALUES list exactly matches the number of columns listed in parentheses.\n2. String Quotes: Check that all text strings (like book titles and author names) are enclosed in single quotes ('...').\n3. Multiple Rows: Each row must be enclosed in its own set of parentheses, separated by a comma.",
-          template: "INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;",
-          solution: "INSERT INTO books (title, author, price, published_year)\nVALUES \n    ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019),\n    ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);\n\nSELECT * FROM books;",
-          validate: function () {
-            const res = db.exec("SELECT COUNT(*) FROM books;");
-            if (res.length === 0 || res[0].values[0][0] < 2) {
-              throw new Error("Please insert at least 2 rows into the 'books' table.");
-            }
-            return true;
-          }
-        },
-        3: {
-          title: "Module 3: Updating Data (UPDATE with WHERE)",
-          instructions: "Update the price of <code>book_id = 2</code> to <strong>31.50</strong> using a <code>WHERE</code> clause. Inspect the updated table below!",
-          videoId: "4jQvokPNooQ",
-          remediationVideoId: "G07Wd94Y8wg",
-          primaryTranscript: "Welcome to Module 3. Today we are tackling one of the most critical safety operations in database administration: the UPDATE statement.\n\nWhen updating data, you specify the table, use SET to establish the new column values, and append a WHERE clause to pinpoint the target rows.\n\nRule Number 1 in database administration: NEVER run an UPDATE without a WHERE clause! If you omit the WHERE condition, SQL updates EVERY single row in your entire table.\n\nIn your editor, notice:\nLine 2: UPDATE books\nLine 3: SET price = 31.50\nLine 4: WHERE book_id = 2;\n\nRun your query to modify the price of book 2 with surgical precision!",
-          remedyTranscript: "Troubleshooting UPDATE:\n1. Did you include line 4? If you omitted 'WHERE book_id = 2;', you will overwrite every row in the table!\n2. Inspect the table rendered below: if row 2 shows an unexpected value, check for numerical typos.\n3. Terminate your UPDATE statement with a semicolon before running SELECT.",
-          template: "-- Update the price for book_id 2\nUPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\nSELECT * FROM books;",
-          solution: "UPDATE books \nSET price = 31.50 \nWHERE book_id = 2;\n\nSELECT * FROM books;",
-          validate: function (rawSql) {
-            const upper = rawSql.toUpperCase();
-            if (upper.indexOf("UPDATE") !== -1 && upper.indexOf("WHERE") === -1) {
-              throw new Error("Safety Alert: You wrote an UPDATE statement without a WHERE clause! Always specify which row to update.");
-            }
-            const res = db.exec("SELECT price FROM books WHERE book_id = 2;");
-            if (res.length > 0 && res[0].values.length > 0) {
-              const currentPrice = res[0].values[0][0];
-              if (Math.abs(currentPrice - 31.50) > 0.01) {
-                throw new Error("Book ID 2 price is currently " + currentPrice + ", but the prompt asked for 31.50. Inspect the updated table below!");
-              }
-            } else {
-              throw new Error("Book ID 2 was not found. Make sure your UPDATE statement targeted book_id = 2.");
-            }
-            return true;
-          }
-        },
-        4: {
-          title: "Module 4: Querying Data (SELECT & Filtering)",
-          instructions: "Query the <code>title</code> and <code>price</code> of books published after 2018, sorted by price in descending order.",
-          videoId: "KF_xpU-O88s",
-          remediationVideoId: "vjPaSfKatlA",
-          primaryTranscript: "Welcome to Module 4: Data Query Language, or DQL!\n\nNow we transition to querying data. SELECT is the workhorse of relational databases.\n\nLook at the query on your right:\nSELECT title, price tells the database engine to return only those two specific columns.\nFROM books defines our source table.\nWHERE published_year > 2018 filters out older publications.\nORDER BY price DESC sorts the resulting records from most expensive to least expensive.\n\nReview the query structure and click 'Run MySQL Code' to view your filtered dataset!",
-          remedyTranscript: "Troubleshooting SELECT & Filtering:\n1. Ensure your SELECT clause queries 'title, price' (do not use SELECT *).\n2. Check your comparison operator: use > 2018 (strictly greater than), not >= 2018.\n3. Verify 'ORDER BY price DESC' includes the DESC keyword at the end to sort descending.",
-          template: "SELECT title, price \nFROM books \nWHERE published_year > 2018 \nORDER BY price DESC;",
-          solution: "SELECT title, price \nFROM books \nWHERE published_year > 2018 \nORDER BY price DESC;",
-          validate: function (rawSql) {
-            const upper = rawSql.toUpperCase();
-            if (upper.indexOf("SELECT") === -1 || upper.indexOf("WHERE") === -1 || upper.indexOf("ORDER BY") === -1 || upper.indexOf("DESC") === -1) {
-              throw new Error("Ensure your query uses SELECT, WHERE, and ORDER BY ... DESC clauses.");
-            }
-            if (rawSql.indexOf(">= 2018") !== -1) {
-              throw new Error("Check your filter: the prompt asked for books published AFTER 2018 (> 2018), not >= 2018.");
-            }
-            return true;
-          }
-        },
-        5: {
-          title: "Module 5: Joining Tables (INNER JOIN)",
-          instructions: "Create the <code>orders</code> table, insert a linked record, and execute an <code>INNER JOIN</code> connecting the tables.",
-          videoId: "uxCW_EsjC60",
-          remediationVideoId: "0iCXN5ZNW7Q",
-          primaryTranscript: "Welcome to Module 5! This is the culmination of our hands-on launch: linking relational tables together.\n\nIn relational databases, information is stored in specialized tables connected by keys.\nOur 'books' table has a Primary Key: book_id.\nNow we create an 'orders' table. Notice the second column: book_id INT NOT NULL. That is our Foreign Key—it references the book that was purchased!\n\nLook at the final query:\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;\n\nNotice the dot-notation: because both tables have columns, prefixing with table.column avoids ambiguous column errors.\n\nClick 'Run MySQL Code' to execute your first relational join and complete the launch sandbox!",
-          remedyTranscript: "Troubleshooting INNER JOIN:\n1. Verify dot-notation: use orders.book_id = books.book_id in your ON clause.\n2. Confirm the orders table is created and the record is inserted before the SELECT query runs.\n3. Check that the columns in your SELECT list are properly comma-separated.",
-          template: "CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\n\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;",
-          solution: "CREATE TABLE orders (\n    order_id INT PRIMARY KEY AUTO_INCREMENT,\n    book_id INT NOT NULL,\n    order_date DATE,\n    quantity INT\n);\n\nINSERT INTO orders (book_id, order_date, quantity) VALUES (2, '2026-10-25', 1);\n\nSELECT orders.order_id, books.title, books.price, orders.quantity\nFROM orders\nINNER JOIN books ON orders.book_id = books.book_id;",
-          validate: function (rawSql) {
-            const upper = rawSql.toUpperCase();
-            if (upper.indexOf("INNER JOIN") === -1 || upper.indexOf(" ON ") === -1) {
-              throw new Error("Module 5 requires executing an INNER JOIN between 'orders' and 'books' with an ON condition.");
-            }
-            const res = db.exec("SELECT COUNT(*) FROM orders;");
-            if (res.length === 0 || res[0].values[0][0] < 1) {
-              throw new Error("Please ensure the 'orders' table is populated with at least 1 record.");
-            }
-            return true;
-          }
-        }
-      };
-
-      let db = null;
-      let currentStep = 1;
-      let completedSteps = {};
-      let attemptsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-      let sandboxStartTime = Date.now();
-      let step5Reported = false;
-
-      const editorEl = document.getElementById("sql-editor");
-      const gutterEl = document.getElementById("line-gutter");
-
-      function updateLineNumbers() {
-        const lines = editorEl.value.split("\n").length;
-        let nums = "";
-        for (let i = 1; i <= lines; i++) {
-          nums += i + "\n";
-        }
-        gutterEl.innerText = nums;
-      }
-
-      editorEl.addEventListener("input", function () {
-        updateLineNumbers();
-        const st = getStoredState() || {};
-        const drafts = st.codeDrafts || {};
-        drafts[currentStep] = editorEl.value;
-        saveState({ codeDrafts: drafts });
-      });
-
-      editorEl.addEventListener("scroll", function () {
-        gutterEl.scrollTop = editorEl.scrollTop;
-      });
-
-      // Welcome Modal Controls
-      function openWelcomeModal() {
-        const modal = document.getElementById("welcome-modal");
-        const frame = document.getElementById("welcome-video-frame");
-        if (!frame.src || frame.src.indexOf(WELCOME_VIDEO_ID) === -1) {
-          frame.src = "https://www.youtube-nocookie.com/embed/" + WELCOME_VIDEO_ID;
-        }
-        modal.classList.add("open");
-      }
-
-      function closeWelcomeModal() {
-        const modal = document.getElementById("welcome-modal");
-        modal.classList.remove("open");
-        document.getElementById("welcome-video-frame").src = "";
-        saveState({ welcomeTourSeen: true });
-      }
-
-      document.getElementById("open-tour-btn").addEventListener("click", openWelcomeModal);
-      document.getElementById("close-modal-x").addEventListener("click", closeWelcomeModal);
-      document.getElementById("start-sandbox-btn").addEventListener("click", closeWelcomeModal);
-
-      // Mid-Point Nudge Controls
-      function dismissExploreNudge() {
-        document.getElementById("explore-nudge").classList.remove("show");
-      }
-      document.getElementById("nudge-close-x").addEventListener("click", dismissExploreNudge);
-      document.getElementById("nudge-got-it-btn").addEventListener("click", dismissExploreNudge);
-
-      function escapeHtml(str) {
-        return str
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
-      }
-
-      function renderHtmlTable(columns, values) {
-        if (!columns || !columns.length) return "";
-        let html = '<table class="sql-grid"><thead><tr>';
-        columns.forEach(function (col) {
-          html += "<th>" + escapeHtml(String(col)) + "</th>";
-        });
-        html += "</tr></thead><tbody>";
-        values.forEach(function (row) {
-          html += "<tr>";
-          row.forEach(function (cell) {
-            html += "<td>" + (cell === null ? "NULL" : escapeHtml(String(cell))) + "</td>";
-          });
-          html += "</tr>";
-        });
-        html += "</tbody></table>";
-        return html;
-      }
-
-      function seedDatabaseForStep(step) {
-        if (!db) return;
-        db.run("DROP TABLE IF EXISTS orders; DROP TABLE IF EXISTS books;");
-        if (step >= 2 && step <= 4) {
-          db.run("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
-          if (step >= 3) {
-            db.run("INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020), ('Database System Concepts', 'Abraham Silberschatz', 85.00, 2011), ('Clean Code', 'Robert Martin', 37.50, 2008);");
-          }
-        } else if (step === 5) {
-          db.run("CREATE TABLE books (book_id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100) NOT NULL, author VARCHAR(50) NOT NULL, price DECIMAL(5,2), published_year INT);");
-          db.run("INSERT INTO books (title, author, price, published_year) VALUES ('The Pragmatic Programmer', 'David Thomas', 42.50, 2019), ('Learning SQL', 'Alan Beaulieu', 28.00, 2020);");
-        }
-      }
-
-      function loadStep(step) {
-        currentStep = step;
-        saveState({ currentStep: step });
-
-        const cfg = curriculum[step];
-        document.getElementById("step-title").innerText = cfg.title;
-        document.getElementById("step-instructions").innerHTML = cfg.instructions;
-        document.getElementById("video-frame").src = "https://www.youtube-nocookie.com/embed/" + cfg.videoId;
-
-        document.getElementById("primary-transcript-drawer").removeAttribute("open");
-        document.getElementById("primary-transcript-body").innerText = cfg.primaryTranscript;
-
-        const remBox = document.getElementById("remediation-box");
-        remBox.classList.remove("show");
-        document.getElementById("remediation-video-frame").src = "";
-        document.getElementById("remedy-transcript-drawer").removeAttribute("open");
-        document.getElementById("remedy-transcript-body").innerText = cfg.remedyTranscript;
-        document.getElementById("show-solution-btn").style.display = "none";
-
-        document.getElementById("prev-btn").style.display = step > 1 ? "inline-flex" : "none";
-        document.getElementById("next-btn").style.display = "none";
-        document.getElementById("complete-sandbox-btn").style.display = "none";
-
-        const st = getStoredState() || {};
-        const savedDraft = (st.codeDrafts && st.codeDrafts[step]) ? st.codeDrafts[step] : cfg.template;
-        editorEl.value = savedDraft;
-        updateLineNumbers();
-
-        const out = document.getElementById("console-output");
-        out.className = "output-ready";
-        out.innerText = "Module " + step + " loaded. Write or modify your SQL and click 'Run MySQL Code'.";
-        document.getElementById("table-output").innerHTML = "";
-
-        document.querySelectorAll(".step-tab").forEach(function (tab, idx) {
-          const s = idx + 1;
-          tab.classList.toggle("active", s === step);
-          tab.classList.toggle("completed", Boolean(completedSteps[s]));
-        });
-      }
-
-      document.querySelectorAll(".step-tab").forEach(function (tab) {
-        tab.addEventListener("click", function () {
-          const targetStep = parseInt(this.getAttribute("data-step"), 10);
-          if (targetStep >= 1 && targetStep <= 5) loadStep(targetStep);
-        });
-      });
-
-      document.getElementById("prev-btn").addEventListener("click", function () {
-        if (currentStep > 1) loadStep(currentStep - 1);
-      });
-
-      document.getElementById("reset-btn").addEventListener("click", function () {
-        editorEl.value = curriculum[currentStep].template;
-        updateLineNumbers();
-        const st = getStoredState() || {};
-        const drafts = st.codeDrafts || {};
-        drafts[currentStep] = editorEl.value;
-        saveState({ codeDrafts: drafts });
-
-        const out = document.getElementById("console-output");
-        out.className = "output-ready";
-        out.innerText = "Starter template restored. Click 'Run MySQL Code' to execute.";
-        document.getElementById("table-output").innerHTML = "";
-        document.getElementById("remediation-box").classList.remove("show");
-        document.getElementById("next-btn").style.display = "none";
-        document.getElementById("complete-sandbox-btn").style.display = "none";
-      });
-
-      document.getElementById("show-solution-btn").addEventListener("click", function () {
-        editorEl.value = curriculum[currentStep].solution;
-        updateLineNumbers();
-        const st = getStoredState() || {};
-        const drafts = st.codeDrafts || {};
-        drafts[currentStep] = editorEl.value;
-        saveState({ codeDrafts: drafts });
-
-        const out = document.getElementById("console-output");
-        out.className = "output-ready";
-        out.innerText = "Solution loaded into editor. Click 'Run MySQL Code' to execute.";
-      });
-
-      document.getElementById("next-btn").addEventListener("click", function () {
-        dismissExploreNudge();
-        if (currentStep < 5) loadStep(currentStep + 1);
-      });
-
-      document.getElementById("complete-sandbox-btn").addEventListener("click", function () {
-        saveState({ sandboxCompleted: true });
-        document.getElementById("sandbox-screen").style.display = "none";
-        document.getElementById("open-tour-btn").style.display = "none";
-        document.getElementById("graduation-screen").style.display = "block";
-        window.scrollTo({ top: 0, behavior: "smooth" });
-
-        if (typeof confetti === "function") {
-          setTimeout(function () {
-            confetti({ particleCount: 120, spread: 80, origin: { y: 0.4 } });
-          }, 200);
-        }
-      });
-
-      document.getElementById("back-to-sandbox-btn").addEventListener("click", function () {
-        document.getElementById("graduation-screen").style.display = "none";
-        document.getElementById("sandbox-screen").style.display = "block";
-        document.getElementById("open-tour-btn").style.display = "inline-flex";
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-
-      function diagnoseError(sql, errMsg) {
-        const remHint = document.getElementById("remediation-hint");
-        const upper = sql.toUpperCase();
-        if (sql.indexOf(",\n)") !== -1 || sql.indexOf(", )") !== -1) {
-          remHint.innerText = "Check your commas! You have a trailing comma after your last column before the closing parenthesis ')'.";
-        } else if (upper.indexOf("UPDATE") !== -1 && upper.indexOf("WHERE") === -1) {
-          remHint.innerText = "Safety Alert: You wrote an UPDATE statement without a WHERE clause! Always specify which row to update.";
-        } else if (errMsg.indexOf("no such table") !== -1 || errMsg.indexOf("does not exist") !== -1) {
-          remHint.innerText = "The database cannot find that table. Ensure the table name is spelled correctly.";
-        } else {
-          remHint.innerText = errMsg + " Check semicolons, keyword spelling, and single quotes around text strings.";
-        }
-      }
-
-      function executeUserQuery() {
-        if (!db) return;
-        attemptsCount[currentStep] = (attemptsCount[currentStep] || 0) + 1;
-        saveState({ attemptsCount: attemptsCount });
-
-        const rawSql = editorEl.value;
-        const out = document.getElementById("console-output");
-        const tblContainer = document.getElementById("table-output");
-        tblContainer.innerHTML = "";
-
-        seedDatabaseForStep(currentStep);
-
-        let normalizedSql = rawSql
-          .replace(/\bINT\s+PRIMARY\s+KEY\s+AUTO_INCREMENT\b/gi, "INTEGER PRIMARY KEY AUTOINCREMENT")
-          .replace(/\bINTEGER\s+PRIMARY\s+KEY\s+AUTO_INCREMENT\b/gi, "INTEGER PRIMARY KEY AUTOINCREMENT")
-          .replace(/\bAUTO_INCREMENT\b/gi, "AUTOINCREMENT");
-
-        let hasDescribe = false;
-        let describeTable = null;
-        const descMatch = rawSql.match(/\b(?:DESCRIBE|DESC)\s+([a-zA-Z0-9_]+)\s*;/i);
-        if (descMatch) {
-          hasDescribe = true;
-          describeTable = descMatch[1];
-          normalizedSql = normalizedSql.replace(/\b(?:DESCRIBE|DESC)\s+([a-zA-Z0-9_]+)\s*;/gi, "");
-        }
-
-        try {
-          if (!rawSql.trim()) {
-            throw new Error("Your editor is empty. Write or restore a SQL query first.");
-          }
-
-          let results = [];
-          if (normalizedSql.trim().length > 0) {
-            results = db.exec(normalizedSql);
-          }
-
-          if (hasDescribe) {
-            const tblCheck = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND LOWER(name)=LOWER('" + describeTable.replace(/'/g, "") + "');");
-            if (!tblCheck.length || !tblCheck[0].values.length) {
-              throw new Error("Table '" + describeTable + "' does not exist.");
-            }
-            const pragmaRes = db.exec("PRAGMA table_info(" + describeTable + ");");
-            if (pragmaRes.length > 0) {
-              results.push({
-                columns: ["Field", "Type", "Null", "Key", "Default", "Extra"],
-                values: pragmaRes[0].values.map(function (r) {
-                  return [
-                    r[1],
-                    r[2] || "INT",
-                    r[3] === 0 ? "YES" : "NO",
-                    r[5] === 1 ? "PRI" : "",
-                    r[4] !== null ? r[4] : "NULL",
-                    r[5] === 1 ? "auto_increment" : ""
-                  ];
-                })
-              });
-            }
-          }
-
-          // Render table immediately before semantic checks so student sees live output
-          if (results.length > 0) {
-            const lastRes = results[results.length - 1];
-            tblContainer.innerHTML = renderHtmlTable(lastRes.columns, lastRes.values);
-          }
-
-          curriculum[currentStep].validate(rawSql, hasDescribe);
-
-          // Success Branch
-          completedSteps[currentStep] = true;
-          saveState({ completedSteps: completedSteps });
-          document.getElementById("tab-" + currentStep).classList.add("completed");
-          document.getElementById("remediation-box").classList.remove("show");
-
-          const stNow = getStoredState() || {};
-          if (currentStep === 3 && !stNow.hasSeenRemediation && !stNow.midpointNudgeShown) {
-            saveState({ midpointNudgeShown: true });
-            document.getElementById("explore-nudge").classList.add("show");
-          }
-
-          if (currentStep < 5) {
-            out.className = "output-success";
-            out.innerHTML = '<i class="fa-solid fa-circle-check"></i> Query executed successfully! Module ' + currentStep + ' criteria satisfied.';
-            document.getElementById("next-btn").style.display = "inline-flex";
-          } else {
-            dismissExploreNudge();
-            if (typeof confetti === "function") {
-              confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
-            }
-
-            if (!step5Reported) {
-              step5Reported = true;
-              const elapsedSec = Math.max(1, Math.round((Date.now() - sandboxStartTime) / 1000));
-              sendTelemetry({
-                step: "STEP_5_COMPLETED",
-                attempts: JSON.stringify(attemptsCount) + "|SESS:" + sessionToken,
-                time_spent_seconds: elapsedSec,
-                status: "SUCCESS_ALL_STEPS"
-              });
-            }
-
-            out.className = "output-success";
-            out.innerHTML = '<strong><i class="fa-solid fa-circle-check"></i> Module 5 Validated &mdash; Hands-On SQL Launch Mastered!</strong><br>' +
-              'All modules complete. Click the gold button above to view your course next steps.';
-            document.getElementById("complete-sandbox-btn").style.display = "inline-flex";
-          }
-        } catch (err) {
-          saveState({ hasSeenRemediation: true });
-          dismissExploreNudge();
-
-          out.className = "output-error";
-          out.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Quick Tip / Syntax Check: ' + escapeHtml(err.message);
-          diagnoseError(rawSql, err.message);
-
-          document.getElementById("next-btn").style.display = "none";
-          document.getElementById("complete-sandbox-btn").style.display = "none";
-
-          const remBox = document.getElementById("remediation-box");
-          remBox.classList.add("show");
-          const remVideo = document.getElementById("remediation-video-frame");
-          const targetRemId = curriculum[currentStep].remediationVideoId;
-          if (!remVideo.src || remVideo.src.indexOf(targetRemId) === -1) {
-            remVideo.src = "https://www.youtube-nocookie.com/embed/" + targetRemId;
-          }
-
-          if ((attemptsCount[currentStep] || 0) >= 3) {
-            document.getElementById("show-solution-btn").style.display = "inline-flex";
-          }
-        }
-      }
-
-      document.getElementById("run-btn").addEventListener("click", executeUserQuery);
-
-      function initWasmEngine() {
-        if (db) {
-          loadStep(currentStep);
-          return;
-        }
-        window.initSqlJs({
-          locateFile: function (file) {
-            return "https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/" + file;
-          }
-        }).then(function (SQL) {
-          db = new SQL.Database();
-          loadStep(currentStep);
-        }).catch(function () {
-          document.getElementById("console-output").innerText = "Unable to load SQL engine. Please refresh the page.";
-        });
-      }
-
-      function enterSandbox(isFirstArrival) {
-        if (isFirstArrival) {
-          saveState({
-            currentStep: 1,
-            midpointNudgeShown: false,
-            hasSeenRemediation: false
-          });
-          currentStep = 1;
-        } else {
-          const st = getStoredState() || {};
-          currentStep = st.currentStep || 1;
-          completedSteps = st.completedSteps || {};
-          attemptsCount = st.attemptsCount || { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-        }
-
-        document.getElementById("sandbox-screen").style.display = "block";
-        document.getElementById("open-tour-btn").style.display = "inline-flex";
-        initWasmEngine();
-
-        const state = getStoredState() || {};
-        if (isFirstArrival || !state.welcomeTourSeen) {
-          openWelcomeModal();
-        }
-      }
-
-      // Initial Routing on Page Load
-      const existingState = getStoredState();
-      if (skipScreenerParam && isReviewerToken) {
+      initConsentListeners();
+      renderIlsQuestions();
+
+      // Reviewer shortcut bypass
+      if (ALLOW_SKIP_SCREENER) {
         enterSandbox(true);
-      } else if (existingState && existingState.consented === false) {
-        document.getElementById("control-heading").innerText = "Participation Opt-Out Acknowledged";
-        document.getElementById("control-screen").style.display = "block";
-      } else if (existingState && existingState.diagnosticCompleted) {
-        if ((existingState.arm || arm) === "ctrl") {
-          document.getElementById("control-screen").style.display = "block";
-        } else if (existingState.sandboxCompleted) {
-          document.getElementById("graduation-screen").style.display = "block";
+        return;
+      }
+
+      // Rehydrate saved progression
+      if (state.consentDecision === "NO") {
+        document.getElementById("screen-2a-msg").textContent = "You have chosen not to participate in the research study. Your standard D426 course materials are ready below.";
+        showOnlyScreen("screen-2a");
+        return;
+      }
+
+      if (state.consentDecision === "YES" && !state.diagnosticCompleted) {
+        showOnlyScreen("screen-1b");
+        return;
+      }
+
+      if (state.diagnosticCompleted) {
+        if (ASSIGNED_ARM === "ctrl") {
+          showOnlyScreen("screen-2a");
         } else {
           enterSandbox(false);
         }
-      } else {
-        document.getElementById("screen-1a").style.display = "block";
+        return;
       }
-    })();
+
+      showOnlyScreen("screen-1a");
+    }
+
+    // Screen 1A Consent Listeners & Confirmation Button
+    function initConsentListeners() {
+      const radios = document.querySelectorAll('input[name="consent-radio"]');
+      const btn = document.getElementById("consent-continue-btn");
+      radios.forEach(radio => {
+        radio.addEventListener("change", () => {
+          btn.disabled = false;
+          if (radio.value === "YES") {
+            btn.className = "btn btn-primary";
+            btn.innerHTML = 'Confirm &amp; Continue to Check-In <i class="fa-solid fa-arrow-right"></i>';
+          } else {
+            btn.className = "btn btn-secondary";
+            btn.innerHTML = 'Confirm &amp; Exit to Course Materials <i class="fa-solid fa-arrow-right"></i>';
+          }
+        });
+      });
+    }
+
+    function handleConsentContinue() {
+      const selected = document.querySelector('input[name="consent-radio"]:checked');
+      if (!selected) return;
+
+      state.consentDecision = selected.value;
+      saveState();
+
+      if (selected.value === "YES") {
+        sendTelemetry("CONSENT_YES", 0, "ARM:" + ASSIGNED_ARM.toUpperCase());
+        showOnlyScreen("screen-1b");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        sendTelemetry("CONSENT_DECLINED", 0, "ARM:" + ASSIGNED_ARM.toUpperCase());
+        document.getElementById("screen-2a-msg").textContent = "Thank you. You have chosen not to participate in the study. You can jump right into your standard D426 course materials below.";
+        showOnlyScreen("screen-2a");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+
+    // Screen 1B Randomized ILS Questionnaire
+    function renderIlsQuestions() {
+      const container = document.getElementById("ils-questions-container");
+      const shuffled = [...ILS_ITEMS].sort(() => Math.random() - 0.5);
+
+      container.innerHTML = shuffled.map((item, idx) => {
+        const flipOrder = Math.random() < 0.5;
+        const optSeq = `<label class="radio-option"><input type="radio" name="${item.id}" value="1"> <span>${item.seq}</span></label>`;
+        const optGlo = `<label class="radio-option"><input type="radio" name="${item.id}" value="-1"> <span>${item.glo}</span></label>`;
+        return `
+          <div class="question-block" id="block-${item.id}">
+            <div class="question-title">${idx + 2}. ${item.text}</div>
+            ${flipOrder ? optGlo + optSeq : optSeq + optGlo}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function submitDiagnostic() {
+      let firstInvalidEl = null;
+
+      const priorSelected = document.querySelector('input[name="prior_sql"]:checked');
+      const priorBlock = document.getElementById("q-prior-sql-block");
+      if (!priorSelected) {
+        priorBlock.classList.add("invalid-highlight");
+        firstInvalidEl = priorBlock;
+      } else {
+        priorBlock.classList.remove("invalid-highlight");
+      }
+
+      let ilsSum = 0;
+      const itemResponses = {};
+
+      ILS_ITEMS.forEach(item => {
+        const chosen = document.querySelector(`input[name="${item.id}"]:checked`);
+        const block = document.getElementById("block-" + item.id);
+        if (!chosen) {
+          block.classList.add("invalid-highlight");
+          if (!firstInvalidEl) firstInvalidEl = block;
+        } else {
+          block.classList.remove("invalid-highlight");
+          const val = parseInt(chosen.value, 10);
+          ilsSum += val;
+          itemResponses[item.id] = val;
+        }
+      });
+
+      const errBanner = document.getElementById("diagnostic-error-banner");
+      if (firstInvalidEl) {
+        errBanner.classList.remove("hidden");
+        firstInvalidEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+
+      errBanner.classList.add("hidden");
+      state.diagnosticCompleted = true;
+      state.priorSql = parseInt(priorSelected.value, 10);
+      state.ilsScore = ilsSum;
+      state.ilsItems = itemResponses;
+      saveState();
+
+      sendTelemetry(
+        "DIAGNOSTIC_COMPLETED",
+        { ils_total: ilsSum, ils_items: itemResponses },
+        "ARM:" + ASSIGNED_ARM.toUpperCase() + "|PRIOR_SQL:" + state.priorSql + "|ILS:" + ilsSum
+      );
+
+      if (ASSIGNED_ARM === "ctrl") {
+        showOnlyScreen("screen-2a");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        enterSandbox(true);
+      }
+    }
+
+    // =========================================================================
+    // 6. SANDBOX WORKSPACE, TOUR MODAL, & SQL.JS EXECUTION ENGINE
+    // =========================================================================
+    let SQL_ENGINE = null;
+
+    initSqlJs({
+      locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+    }).then(SQL => {
+      SQL_ENGINE = SQL;
+    });
+
+    function enterSandbox(isFirstArrival) {
+      if (isFirstArrival) {
+        state.currentStep = 1;
+        saveState();
+      }
+      showOnlyScreen("screen-2b");
+      renderStepTabs();
+      loadStep(state.currentStep);
+
+      if (!state.tourSeen && !ALLOW_SKIP_SCREENER) {
+        openWelcomeModal();
+      }
+    }
+
+    function openWelcomeModal() {
+      const frame = document.getElementById("welcome-video-frame");
+      frame.src = `https://www.youtube-nocookie.com/embed/${TOUR_VIDEO_ID}?enablejsapi=1&rel=0`;
+      document.getElementById("welcome-modal").classList.remove("hidden");
+      setTimeout(() => bindYouTubePlayer("welcome-video-frame", "TOUR"), 500);
+    }
+
+    function closeWelcomeModal() {
+      stopVideoTimer("TOUR");
+      document.getElementById("welcome-video-frame").src = "";
+      document.getElementById("welcome-modal").classList.add("hidden");
+      state.tourSeen = true;
+      saveState();
+    }
+
+    function copyPersonalLink() {
+      const personalUrl = window.location.origin + window.location.pathname + "?sid=" + encodeURIComponent(STUDY_TOKEN) + "&arm=" + encodeURIComponent(ASSIGNED_ARM);
+      navigator.clipboard.writeText(personalUrl).then(() => {
+        const btn = document.getElementById("btn-copy-link");
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Link Copied!';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+      });
+    }
+
+    function renderStepTabs() {
+      const container = document.getElementById("step-tabs");
+      const maxUnlocked = Math.max(1, ...state.completedSteps.map(s => s + 1), state.currentStep);
+
+      container.innerHTML = [1, 2, 3, 4, 5].map(stepNum => {
+        const isCompleted = state.completedSteps.includes(stepNum);
+        const isActive = state.currentStep === stepNum;
+        const isUnlocked = stepNum <= maxUnlocked || ALLOW_SKIP_SCREENER;
+        const icon = isCompleted ? '<i class="fa-solid fa-circle-check"></i>' : (isUnlocked ? '<i class="fa-regular fa-circle"></i>' : '<i class="fa-solid fa-lock"></i>');
+
+        return `
+          <button type="button"
+            class="step-tab ${isActive ? "active" : ""} ${isCompleted ? "completed" : ""}"
+            ${isUnlocked ? `onclick="navigateStep(${stepNum})"` : "disabled"}>
+            ${icon} ${MODULES[stepNum].shortLabel}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function navigateStep(stepNum) {
+      if (stepNum < 1 || stepNum > 5) return;
+      stopAllVideoTimers();
+      state.currentStep = stepNum;
+      saveState();
+      renderStepTabs();
+      loadStep(stepNum);
+    }
+
+    function loadStep(stepNum) {
+      const mod = MODULES[stepNum];
+      document.getElementById("module-kicker").textContent = `Module ${stepNum} of 5`;
+      document.getElementById("module-badge").textContent = mod.badge;
+      document.getElementById("module-title").textContent = mod.title;
+      document.getElementById("module-instructions").innerHTML = mod.instructions;
+
+      const pFrame = document.getElementById("primary-video-frame");
+      pFrame.src = `https://www.youtube-nocookie.com/embed/${mod.primaryVideoId}?enablejsapi=1&rel=0`;
+      setTimeout(() => bindYouTubePlayer("primary-video-frame", stepNum + ".1"), 500);
+
+      document.getElementById("primary-transcript-text").textContent = mod.primaryTranscript;
+      document.getElementById("primary-transcript-drawer").open = false;
+
+      // Remediation drawer hidden by default until error
+      document.getElementById("remediation-drawer").classList.add("hidden");
+      document.getElementById("remediation-video-frame").src = "";
+      document.getElementById("remediation-transcript-text").textContent = mod.remediationTranscript;
+      document.getElementById("remediation-transcript-drawer").open = false;
+
+      // Editor & Line Gutter
+      const editor = document.getElementById("sql-editor");
+      editor.value = state.savedCode[stepNum] || mod.starterCode;
+      updateLineGutter();
+
+      // Buttons
+      document.getElementById("btn-prev-step").classList.toggle("hidden", stepNum === 1);
+      const isAlreadyDone = state.completedSteps.includes(stepNum);
+      const nextBtn = document.getElementById("btn-next-step");
+      nextBtn.classList.toggle("hidden", !isAlreadyDone);
+      nextBtn.innerHTML = stepNum === 5
+        ? 'Finish &amp; View Summary <i class="fa-solid fa-flag-checkered"></i>'
+        : 'Next Module <i class="fa-solid fa-arrow-right"></i>';
+
+      document.getElementById("btn-reveal-solution").classList.toggle("hidden", (state.attempts[stepNum] || 0) < 3);
+
+      document.getElementById("console-output").innerHTML = `
+        <div style="color:var(--text-muted); font-size:0.88rem;">
+          <i class="fa-solid fa-circle-info"></i> Click <strong>Run MySQL Code</strong> to execute your query and inspect your table results here.
+        </div>
+      `;
+    }
+
+    function handleEditorInput() {
+      const editor = document.getElementById("sql-editor");
+      state.savedCode[state.currentStep] = editor.value;
+      updateLineGutter();
+    }
+
+    function updateLineGutter() {
+      const editor = document.getElementById("sql-editor");
+      const gutter = document.getElementById("line-gutter");
+      const lineCount = Math.max(1, editor.value.split("\n").length);
+      let nums = "";
+      for (let i = 1; i <= lineCount; i++) {
+        nums += i + "\n";
+      }
+      gutter.textContent = nums;
+    }
+
+    function syncEditorScroll() {
+      const editor = document.getElementById("sql-editor");
+      const gutter = document.getElementById("line-gutter");
+      gutter.scrollTop = editor.scrollTop;
+    }
+
+    function resetCurrentTemplate() {
+      const step = state.currentStep;
+      state.savedCode[step] = MODULES[step].starterCode;
+      saveState();
+      document.getElementById("sql-editor").value = state.savedCode[step];
+      updateLineGutter();
+    }
+
+    function revealWorkingSolution() {
+      const step = state.currentStep;
+      state.solutionRevealed[step] = true;
+      state.savedCode[step] = MODULES[step].starterCode;
+      saveState();
+      document.getElementById("sql-editor").value = MODULES[step].starterCode;
+      updateLineGutter();
+    }
+
+    function triggerRemediation(customReason) {
+      const step = state.currentStep;
+      state.remediationTriggered[step] = true;
+      saveState();
+
+      const drawer = document.getElementById("remediation-drawer");
+      document.getElementById("remediation-message").textContent = customReason;
+      const rFrame = document.getElementById("remediation-video-frame");
+      const targetSrc = `https://www.youtube-nocookie.com/embed/${MODULES[step].remediationVideoId}?enablejsapi=1&rel=0`;
+      if (!rFrame.src.includes(MODULES[step].remediationVideoId)) {
+        rFrame.src = targetSrc;
+        setTimeout(() => bindYouTubePlayer("remediation-video-frame", step + ".2"), 500);
+      }
+      drawer.classList.remove("hidden");
+    }
+
+    // Seed Helper for Modules 2–5
+    function seedBooksSchema(db) {
+      db.run("DROP TABLE IF EXISTS orders;");
+      db.run("DROP TABLE IF EXISTS books;");
+      db.run(`
+        CREATE TABLE books (
+          book_id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT,
+          author TEXT,
+          price REAL,
+          published_year INTEGER
+        );
+      `);
+    }
+
+    function seedFourBooks(db) {
+      seedBooksSchema(db);
+      db.run(`
+        INSERT INTO books (title, author, price, published_year) VALUES
+        ('The Pragmatic Programmer', 'Andrew Hunt', 42.50, 2019),
+        ('Learning SQL', 'Alan Beaulieu', 34.99, 2020),
+        ('Database System Concepts', 'Abraham Silberschatz', 89.00, 2019),
+        ('Clean Code', 'Robert C. Martin', 39.95, 2008);
+      `);
+    }
+
+    function normalizeMySql(rawSql) {
+      const cleaned = rawSql.replace(/--.*$/gm, "").trim();
+      return cleaned
+        .replace(/\bINT\s+PRIMARY\s+KEY\s+AUTO_INCREMENT\b/gi, "INTEGER PRIMARY KEY AUTOINCREMENT")
+        .replace(/\bINTEGER\s+PRIMARY\s+KEY\s+AUTO_INCREMENT\b/gi, "INTEGER PRIMARY KEY AUTOINCREMENT")
+        .replace(/\bAUTO_INCREMENT\b/gi, "AUTOINCREMENT");
+    }
+
+    function renderResultTable(columns, rows) {
+      if (!columns || !columns.length) return "";
+      const ths = columns.map(c => `<th>${escapeHtml(String(c))}</th>`).join("");
+      const trs = rows.map(r => `<tr>${r.map(val => `<td>${val === null ? "NULL" : escapeHtml(String(val))}</td>`).join("")}</tr>`).join("");
+      return `<table class="result-table"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table>`;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function runStudentQuery() {
+      if (!SQL_ENGINE) {
+        alert("SQL engine is still initializing—please try again in one second.");
+        return;
+      }
+
+      const step = state.currentStep;
+      const rawSql = document.getElementById("sql-editor").value;
+      state.savedCode[step] = rawSql;
+      state.attempts[step] = (state.attempts[step] || 0) + 1;
+      saveState();
+
+      if (state.attempts[step] >= 3) {
+        document.getElementById("btn-reveal-solution").classList.remove("hidden");
+      }
+
+      const consoleEl = document.getElementById("console-output");
+      const db = new SQL_ENGINE.Database();
+
+      try {
+        if (step === 1) {
+          db.run("DROP TABLE IF EXISTS orders;");
+          db.run("DROP TABLE IF EXISTS books;");
+        } else if (step === 2) {
+          seedBooksSchema(db);
+        } else if (step === 3 || step === 4) {
+          seedFourBooks(db);
+        } else if (step === 5) {
+          seedBooksSchema(db);
+          db.run(`
+            INSERT INTO books (title, author, price, published_year) VALUES
+            ('The Pragmatic Programmer', 'Andrew Hunt', 42.50, 2019),
+            ('Learning SQL', 'Alan Beaulieu', 34.99, 2020);
+          `);
+        }
+
+        const normalized = normalizeMySql(rawSql);
+        if (!normalized) {
+          throw new Error("Editor is empty. Enter your SQL statement and click Run MySQL Code.");
+        }
+
+        const statements = normalized.split(";").map(s => s.trim()).filter(Boolean);
+        let lastOutputHtml = "";
+
+        for (const stmt of statements) {
+          const descMatch = stmt.match(/^(?:DESCRIBE|DESC)\s+([a-zA-Z0-9_]+)$/i);
+          if (descMatch) {
+            const tbl = descMatch[1];
+            const info = db.exec(`PRAGMA table_info(${tbl});`);
+            if (!info.length || !info[0].values.length) {
+              throw new Error(`Table '${tbl}' doesn't exist.`);
+            }
+            const descRows = info[0].values.map(col => [
+              col[1],
+              col[2],
+              col[3] ? "NO" : "YES",
+              col[5] ? "PRI" : "",
+              col[4] === null ? "NULL" : col[4],
+              col[5] && /INT/i.test(col[2]) ? "auto_increment" : ""
+            ]);
+            lastOutputHtml = renderResultTable(["Field", "Type", "Null", "Key", "Default", "Extra"], descRows);
+          } else {
+            const res = db.exec(stmt + ";");
+            if (res.length) {
+              const last = res[res.length - 1];
+              lastOutputHtml = renderResultTable(last.columns, last.values);
+            }
+          }
+        }
+
+        // Semantic Grading per Module (Render-First)
+        let passed = false;
+        let feedbackMsg = "";
+
+        if (step === 1) {
+          const tblCheck = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='books';");
+          if (!tblCheck.length) {
+            throw new Error("Table 'books' was not created. Check your CREATE TABLE books syntax.");
+          }
+          const colsInfo = db.exec("PRAGMA table_info(books);")[0].values;
+          const colMap = {};
+          colsInfo.forEach(c => { colMap[c[1].toLowerCase()] = (c[2] || "").toUpperCase(); });
+
+          const requiredCols = ["book_id", "title", "author", "price", "published_year"];
+          const missing = requiredCols.filter(c => !(c in colMap));
+          if (missing.length) {
+            throw new Error("Missing required column(s): " + missing.join(", "));
+          }
+
+          const validTypeRegex = /^(INT|INTEGER|SMALLINT|BIGINT|VARCHAR\(\d+\)|CHAR\(\d+\)|TEXT|DECIMAL\(\d+,\d+\)|NUMERIC\(\d+,\d+\)|FLOAT|DOUBLE)$/i;
+          for (const [cName, cType] of Object.entries(colMap)) {
+            if (!validTypeRegex.test(cType)) {
+              throw new Error(`Unrecognized MySQL data type '${cType}' on column '${cName}'.`);
+            }
+          }
+          passed = true;
+          feedbackMsg = "Table 'books' created with all five valid columns!";
+        } else if (step === 2) {
+          const countRes = db.exec("SELECT COUNT(*) FROM books;");
+          const rowCount = countRes[0].values[0][0];
+          if (rowCount < 2) {
+            throw new Error(`Found ${rowCount} row(s) in books. Please insert at least 2 books.`);
+          }
+          if (!lastOutputHtml) {
+            const allRows = db.exec("SELECT * FROM books;")[0];
+            lastOutputHtml = renderResultTable(allRows.columns, allRows.values);
+          }
+          passed = true;
+          feedbackMsg = `Great job! ${rowCount} rows are now stored in the books table.`;
+        } else if (step === 3) {
+          const allRows = db.exec("SELECT * FROM books;")[0];
+          lastOutputHtml = renderResultTable(allRows.columns, allRows.values);
+
+          if (/UPDATE\s+books/i.test(rawSql) && !/WHERE/i.test(rawSql)) {
+            consoleEl.innerHTML = `<div class="notice-box notice-amber" style="margin-bottom:0.5rem;"><strong>Unfiltered UPDATE Blocked:</strong> Always include a <code>WHERE</code> clause so you don't overwrite every book's price!</div>` + lastOutputHtml;
+            triggerRemediation("Your UPDATE statement did not include a WHERE clause. Add WHERE book_id = 2 so only that row is updated.");
+            db.close();
+            return;
+          }
+
+          const b2 = db.exec("SELECT price FROM books WHERE book_id = 2;");
+          const currentPrice = b2.length && b2[0].values.length ? Number(b2[0].values[0][0]) : NaN;
+          if (isNaN(currentPrice) || Math.abs(currentPrice - 31.50) >= 0.01) {
+            consoleEl.innerHTML = `<div class="notice-box notice-amber" style="margin-bottom:0.5rem;"><strong>Almost there:</strong> Book ID 2 price is currently <strong>${currentPrice}</strong>, but the prompt asked for <strong>31.50</strong>. Inspect the updated table below!</div>` + lastOutputHtml;
+            triggerRemediation("Make sure you set price = 31.50 specifically WHERE book_id = 2.");
+            db.close();
+            return;
+          }
+          passed = true;
+          feedbackMsg = "Precision update verified! Book ID 2 is now priced at $31.50 while all other rows remained untouched.";
+        } else if (step === 4) {
+          if (/>=\s*2018/.test(rawSql)) {
+            throw new Error("Boundary check: You used '>= 2018', which includes 2018. Use strict inequality (> 2018) for books published after 2018.");
+          }
+          if (!/SELECT/i.test(rawSql) || !/WHERE/i.test(rawSql) || !/ORDER\s+BY/i.test(rawSql) || !/DESC/i.test(rawSql)) {
+            throw new Error("Ensure your query includes SELECT, WHERE published_year > 2018, and ORDER BY price DESC.");
+          }
+          if (!lastOutputHtml) {
+            throw new Error("Run a SELECT query to display the filtered results.");
+          }
+          passed = true;
+          feedbackMsg = "Spot on! Filtered to books published after 2018 and sorted highest price first.";
+        } else if (step === 5) {
+          if (!/INNER\s+JOIN/i.test(rawSql) || !/\bON\b/i.test(rawSql)) {
+            throw new Error("Make sure your query uses INNER JOIN books ON orders.book_id = books.book_id.");
+          }
+          const orderCheck = db.exec("SELECT COUNT(*) FROM orders;");
+          if (!orderCheck.length || orderCheck[0].values[0][0] < 1) {
+            throw new Error("Insert at least one row into the orders table before running the INNER JOIN.");
+          }
+          if (!lastOutputHtml) {
+            throw new Error("Make sure your SELECT ... INNER JOIN query returns joined rows.");
+          }
+          passed = true;
+          feedbackMsg = "Relational join verified! You connected orders and books across their shared book_id key.";
+        }
+
+        if (passed) {
+          consoleEl.innerHTML = `
+            <div class="notice-box notice-green" style="margin-bottom:0.5rem;">
+              <i class="fa-solid fa-circle-check"></i> <strong>Success!</strong> ${feedbackMsg}
+            </div>
+            ${lastOutputHtml}
+          `;
+          document.getElementById("remediation-drawer").classList.add("hidden");
+          markStepCompleted(step);
+        }
+      } catch (err) {
+        consoleEl.innerHTML = `
+          <div class="notice-box notice-amber" style="border-color:#DC2626; background:#FEF2F2; color:#991B1B; margin-bottom:0;">
+            <strong><i class="fa-solid fa-triangle-exclamation"></i> Syntax / Validation Check:</strong> ${escapeHtml(err.message)}
+          </div>
+        `;
+        triggerRemediation(err.message);
+      } finally {
+        db.close();
+      }
+    }
+
+    function markStepCompleted(step) {
+      const wasNewCompletion = !state.completedSteps.includes(step);
+      if (wasNewCompletion) {
+        state.completedSteps.push(step);
+        saveState();
+        renderStepTabs();
+
+        sendTelemetry(
+          `STEP_${step}_COMPLETED`,
+          buildSandboxTelemetryMeta(),
+          `ARM:${ASSIGNED_ARM.toUpperCase()}|STEP_${step}_ATTEMPTS:${state.attempts[step]}|STEP_${step}_SEC:${state.moduleSeconds[step]}`
+        );
+      }
+
+      if (step === 3 && !state.nudgeShown) {
+        const anyErrorYet = state.remediationTriggered[1] || state.remediationTriggered[2] || state.remediationTriggered[3];
+        if (!anyErrorYet) {
+          state.nudgeShown = true;
+          saveState();
+          document.getElementById("explore-nudge").classList.remove("hidden");
+        }
+      }
+
+      const nextBtn = document.getElementById("btn-next-step");
+      nextBtn.classList.remove("hidden");
+      nextBtn.innerHTML = step === 5
+        ? 'Finish &amp; View Summary <i class="fa-solid fa-flag-checkered"></i>'
+        : 'Next Module <i class="fa-solid fa-arrow-right"></i>';
+    }
+
+    function dismissExploreNudge() {
+      document.getElementById("explore-nudge").classList.add("hidden");
+    }
+
+    function handleNextStep() {
+      if (state.currentStep < 5) {
+        navigateStep(state.currentStep + 1);
+      } else {
+        stopAllVideoTimers();
+        showOnlyScreen("screen-3");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        launchConfetti();
+      }
+    }
+
+    function returnToSandboxReview() {
+      showOnlyScreen("screen-2b");
+      renderStepTabs();
+      loadStep(state.currentStep);
+    }
+
+    // Celebratory HTML5 Canvas Confetti
+    function launchConfetti() {
+      const canvas = document.getElementById("confetti-canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = ["#002F6C", "#BA8E23", "#16A34A", "#2563EB", "#F59E0B"];
+      const particles = Array.from({ length: 110 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        w: Math.random() * 9 + 5,
+        h: Math.random() * 5 + 3,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vy: Math.random() * 3 + 2,
+        vx: (Math.random() - 0.5) * 2,
+        rot: Math.random() * 360,
+        vrot: (Math.random() - 0.5) * 8
+      }));
+
+      let frames = 0;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vrot;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rot * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+        frames++;
+        if (frames < 180) {
+          requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      animate();
+    }
+
+    window.addEventListener("DOMContentLoaded", initApp);
   </script>
 </body>
 </html>
