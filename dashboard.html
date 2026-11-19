@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<!--
+  =============================================================================
+  D426 Curricular Sequencing Research Pilot — Live Operational Telemetry Dashboard
+  Copyright (c) 2026 Bruce C. Johnson III. All Rights Reserved.
+  =============================================================================
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D426 Curricular Sequencing Pilot — Live Operational Telemetry</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+  <style>
+    :root {
+      --wgu-blue: #002F6C;
+      --wgu-blue-light: #0056B3;
+      --wgu-gold: #BA8E23;
+      --teal: #0D9488;
+      --green: #16A34A;
+      --red: #DC2626;
+      --bg-slate: #F1F5F9;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --border-color: #CBD5E1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-slate);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding-bottom: 3rem;
+    }
+
+    .container {
+      max-width: 1360px;
+      margin: 1.25rem auto;
+      padding: 0 1.25rem;
+    }
+
+    /* Top Executive Header */
+    .exec-banner {
+      background: linear-gradient(135deg, var(--wgu-blue) 0%, #001D44 100%);
+      color: #FFFFFF;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 47, 108, 0.16);
+      margin-bottom: 1.25rem;
+    }
+
+    .exec-banner h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .exec-banner .sub {
+      font-size: 0.84rem;
+      color: #CBD5E1;
+      margin-top: 0.2rem;
+    }
+
+    .banner-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .live-pill {
+      background: rgba(22, 163, 74, 0.2);
+      border: 1px solid #4ADE80;
+      color: #DCFCE7;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ADE80;
+      display: inline-block;
+    }
+
+    .refresh-btn {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #FFFFFF;
+      padding: 0.4rem 0.8rem;
+      border-radius: 7px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.15s;
+    }
+
+    .refresh-btn:hover { background: rgba(255, 255, 255, 0.25); }
+
+    /* Executive Summary Grid */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.35rem;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+      margin-bottom: 1.25rem;
+    }
+
+    .exec-summary-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 1.95fr;
+      gap: 1.35rem;
+      align-items: stretch;
+    }
+
+    @media (max-width: 980px) {
+      .exec-summary-grid { grid-template-columns: 1fr; }
+    }
+
+    .pi-note-box {
+      background: #EFF6FF;
+      border: 1px solid #93C5FD;
+      border-left: 5px solid var(--wgu-blue);
+      border-radius: 8px;
+      padding: 1rem 1.15rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .section-kicker {
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--wgu-blue);
+      margin-bottom: 0.45rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .pi-note-text {
+      font-size: 0.9rem;
+      color: #1E293B;
+      line-height: 1.55;
+      white-space: pre-line;
+    }
+
+    .pi-note-footer {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #BFDBFE;
+    }
+
+    .kpi-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .kpi-bullets li {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 7px;
+      padding: 0.62rem 0.9rem;
+      font-size: 0.88rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      align-items: baseline;
+    }
+
+    .kpi-lead {
+      font-weight: 700;
+      color: var(--wgu-blue);
+      min-width: 235px;
+    }
+
+    .kpi-val {
+      color: #1E293B;
+      font-weight: 500;
+    }
+
+    /* 2x2 Visualization Grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 980px) {
+      .charts-grid { grid-template-columns: 1fr; }
+    }
+
+    .chart-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.15rem 1.25rem;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    }
+
+    .chart-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--wgu-blue);
+      margin-bottom: 0.2rem;
+    }
+
+    .chart-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .chart-canvas-wrap {
+      position: relative;
+      height: 250px;
+      width: 100%;
+    }
+
+    /* Student Drill-Down Section */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin: 0.85rem 0 1rem 0;
+      padding: 0.85rem;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      min-width: 175px;
+    }
+
+    .filter-group label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .filter-group input, .filter-group select {
+      padding: 0.42rem 0.65rem;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      background: #FFFFFF;
+      color: var(--text-main);
+    }
+
+    .clear-btn {
+      margin-top: 1.05rem;
+      padding: 0.44rem 0.85rem;
+      border: 1px solid var(--wgu-blue);
+      background: #FFFFFF;
+      color: var(--wgu-blue);
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .clear-btn:hover { background: #EFF6FF; }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      max-height: 360px;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      background: #FFFFFF;
+    }
+
+    table.data-table th {
+      background: var(--wgu-blue);
+      color: #FFFFFF;
+      text-align: left;
+      padding: 0.55rem 0.7rem;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      white-space: nowrap;
+    }
+
+    table.data-table td {
+      padding: 0.5rem 0.7rem;
+      border-bottom: 1px solid #E2E8F0;
+      white-space: nowrap;
+    }
+
+    table.data-table tbody tr {
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    table.data-table tbody tr:hover { background: #EFF6FF; }
+    table.data-table tbody tr.selected-row { background: #DBEAFE; font-weight: 600; }
+
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+
+    .badge-interv { background: #DBEAFE; color: #1E40AF; }
+    .badge-ctrl { background: #F1F5F9; color: #334155; }
+    .badge-yes { background: #DCFCE7; color: #166534; }
+    .badge-no { background: #FEE2E2; color: #991B1B; }
+    .badge-pend { background: #FEF3C7; color: #92400E; }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Top Executive Header -->
+    <header class="exec-banner">
+      <div>
+        <h1>D426 Curricular Sequencing Pilot — Operational Telemetry Dashboard</h1>
+        <div class="sub">
+          <i class="fa-solid fa-shield-halved"></i> Privacy Safeguard Active: Anonymous <code>S26_</code> Study Tokens Only &bull; Zero Institutional Student IDs or PII
+        </div>
+      </div>
+      <div class="banner-actions">
+        <span class="live-pill"><span class="live-dot"></span> LIVE READ-ONLY VIEW</span>
+        <button type="button" class="refresh-btn" onclick="loadDashboardData()">
+          <i class="fa-solid fa-rotate"></i> Refresh Feed
+        </button>
+      </div>
+    </header>
+
+    <!-- Top Executive Summary: Manual PI Status Update + Automated KPI Bullets -->
+    <section class="card">
+      <div class="exec-summary-grid">
+        <div class="pi-note-box">
+          <div>
+            <div class="section-kicker"><i class="fa-solid fa-clipboard-check"></i> PI Status &amp; Ramp-Up Update</div>
+            <div class="pi-note-text" id="pi-status-note">Loading latest status update...</div>
+          </div>
+          <div class="pi-note-footer" id="last-updated-label">Synced with telemetry feed</div>
+        </div>
+
+        <div>
+          <div class="section-kicker"><i class="fa-solid fa-chart-line"></i> Automated Executive Telemetry Summary</div>
+          <ul class="kpi-bullets">
+            <li>
+              <span class="kpi-lead">&bull; Invitations &amp; Consent Funnel:</span>
+              <span class="kpi-val" id="bullet-funnel">0 invited (0 Control / 0 Intervention) &nbsp;|&nbsp; 0 Links Opened &nbsp;|&nbsp; 0 Agreed (0%) &nbsp;|&nbsp; 0 Declined</span>
+            </li>
+            <li>
+              <span class="kpi-lead">&bull; Sandbox Engagement (Interv):</span>
+              <span class="kpi-val" id="bullet-sandbox">0 Full 5-Module Completions &nbsp;|&nbsp; 0 Partial Activity (M1–M4) &nbsp;|&nbsp; 0 Consented / Not Started</span>
+            </li>
+            <li>
+              <span class="kpi-lead">&bull; Active Time-on-Task Guardrail:</span>
+              <span class="kpi-val" id="bullet-time">0.0 min median active sandbox time (30.0 min safety ceiling; excludes idle/hidden tabs)</span>
+            </li>
+            <li>
+              <span class="kpi-lead">&bull; Cohort Learning &amp; SQL Profile:</span>
+              <span class="kpi-val" id="bullet-cohort">0% Sequential vs. 0% Global (ILS) &nbsp;|&nbsp; 0% Novice / No-Prior-SQL (Levels 1–2)</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2x2 Data Visualizations -->
+    <section class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">Cumulative Recruitment &amp; Sandbox Completion Over Time</div>
+        <div class="chart-subtitle">Tracks phased invitation ramp-up, consent opt-ins, and sandbox completions by date</div>
+        <div class="chart-canvas-wrap"><canvas id="chart-funnel-time"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Intervention Sandbox Engagement Breakdown</div>
+        <div class="chart-subtitle">Completed all 5 modules vs. partial activity (M1–M4) vs. not started</div>
+        <div class="chart-canvas-wrap"><canvas id="chart-engagement"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Active Sandbox Time-on-Task vs. 30-Min Guardrail</div>
+        <div class="chart-subtitle">Daily median active minutes compared against the 30-minute student pacing ceiling</div>
+        <div class="chart-canvas-wrap"><canvas id="chart-time-guardrail"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Module-by-Module Completion Funnel (Modules 1–5)</div>
+        <div class="chart-subtitle">Unique intervention participants passing each SQL module</div>
+        <div class="chart-canvas-wrap"><canvas id="chart-modules"></canvas></div>
+      </div>
+    </section>
+
+    <!-- Student-Level Drill-Down & Chronological Event Audit -->
+    <section class="card">
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:0.5rem;">
+        <div>
+          <div class="section-kicker" style="margin-bottom:0.15rem;"><i class="fa-solid fa-magnifying-glass-chart"></i> Participant Drill-Down &amp; Event Audit</div>
+          <p style="font-size:0.83rem; color:var(--text-muted);">Filter or click any anonymous <code>S26_</code> token row below to inspect that participant's complete chronological interaction log.</p>
+        </div>
+        <div style="font-size:0.82rem; font-weight:700; color:var(--wgu-blue);" id="selected-student-banner">
+          Showing All Participants
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label for="filter-token">Search Study Token</label>
+          <input type="text" id="filter-token" placeholder="e.g. S26_8K4P9M" oninput="applyStudentFilters()">
+        </div>
+        <div class="filter-group">
+          <label for="filter-arm">Assigned Arm</label>
+          <select id="filter-arm" onchange="applyStudentFilters()">
+            <option value="ALL">All Arms</option>
+            <option value="INTERV">Intervention (INTERV)</option>
+            <option value="CTRL">Control (CTRL)</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-consent">Consent Status</label>
+          <select id="filter-consent" onchange="applyStudentFilters()">
+            <option value="ALL">All Statuses</option>
+            <option value="Agreed">Agreed (18+)</option>
+            <option value="Declined">Declined</option>
+            <option value="Pending">Pending / Invited Only</option>
+          </select>
+        </div>
+        <button type="button" class="clear-btn" onclick="resetStudentFilters()">
+          <i class="fa-solid fa-filter-circle-xmark"></i> Reset Filters
+        </button>
+      </div>
+
+      <!-- Table 1: Participant Roll-Up -->
+      <h3 style="font-size:0.92rem; color:var(--wgu-blue); margin-bottom:0.45rem;">1. Participant Summary Table (Click a Row to Drill Down)</h3>
+      <div class="table-wrap" style="margin-bottom:1.35rem;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Study Token</th>
+              <th>Arm</th>
+              <th>Invited Date</th>
+              <th>Consent</th>
+              <th>Screener</th>
+              <th>Prior SQL</th>
+              <th>ILS Style</th>
+              <th>Highest Mod</th>
+              <th>Active Min</th>
+              <th>Videos Started</th>
+              <th>Videos Done</th>
+              <th>Exit Pathway</th>
+              <th>Sessions</th>
+            </tr>
+          </thead>
+          <tbody id="student-table-body">
+            <tr><td colspan="13" class="empty-state">Loading participant summary...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table 2: Chronological Activity Timeline -->
+      <h3 style="font-size:0.92rem; color:var(--wgu-blue); margin-bottom:0.45rem;" id="timeline-heading">2. Chronological Activity Timeline (Most Recent Events)</h3>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Timestamp (UTC)</th>
+              <th>Study Token</th>
+              <th>Event / Milestone</th>
+              <th>Arm</th>
+              <th>Active Min</th>
+              <th>Video ID</th>
+              <th>Device</th>
+              <th>Session Hash</th>
+            </tr>
+          </thead>
+          <tbody id="events-table-body">
+            <tr><td colspan="8" class="empty-state">Loading event log...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="footer-note">
+      &copy; 2026 Bruce C. Johnson III. All Rights Reserved. | Independent Faculty Research Pilot &bull; Read-Only Operational Telemetry
+    </footer>
+  </div>
+
+  <script>
+    // =========================================================================
+    // CONFIGURATION: Live Google Apps Script JSON Endpoint
+    // =========================================================================
+    const TELEMETRY_FEED_URL = "https://script.google.com/macros/s/AKfycbxsw1AJtmsn9rwmqc5AIh15owBo909L0NchTVAJw7tX4offSpxDloWKS2wJ1Mf31LdOKQ/exec";
+
+    let rawDashboardData = { kpis: {}, events: [], students: [] };
+    let selectedToken = null;
+    let charts = {};
+
+    async function loadDashboardData() {
+      try {
+        const res = await fetch(TELEMETRY_FEED_URL + "?t=" + Date.now());
+        const json = await res.json();
+        if (json.error) throw new Error(json.error);
+        rawDashboardData = json;
+        renderExecutiveSummary();
+        renderCharts();
+        applyStudentFilters();
+        const ts = json.generatedAt ? new Date(json.generatedAt).toLocaleString() : new Date().toLocaleString();
+        document.getElementById("last-updated-label").textContent = "Last synced: " + ts;
+      } catch (err) {
+        document.getElementById("pi-status-note").textContent =
+          "Day 1 Soft-Launch: Phased ramp-up initialized; automated telemetry active using anonymous S26_ tokens only.";
+        document.getElementById("last-updated-label").textContent = "Awaiting initial telemetry rows";
+        renderCharts();
+        applyStudentFilters();
+      }
+    }
+
+    function renderExecutiveSummary() {
+      const k = rawDashboardData.kpis || {};
+      const students = rawDashboardData.students || [];
+
+      document.getElementById("pi-status-note").textContent =
+        k.PI_Status_Note || "Day 1 Soft-Launch: Phased ramp-up initialized; automated telemetry active using anonymous S26_ tokens only.";
+
+      const invCtrl = Number(k.Invited_Control || 0);
+      const invInterv = Number(k.Invited_Intervention || 0);
+      const totalInv = invCtrl + invInterv;
+      const opened = Number(k.Links_Opened || 0);
+      const yes = Number(k.Consented_Yes || 0);
+      const no = Number(k.Consented_No || 0);
+      const optInPct = totalInv > 0 ? ((yes / totalInv) * 100).toFixed(1) : "0.0";
+
+      document.getElementById("bullet-funnel").textContent =
+        `${totalInv} invited (${invCtrl} Control / ${invInterv} Intervention)  |  ${opened} Links Opened  |  ${yes} Agreed (${optInPct}%)  |  ${no} Declined`;
+
+      const fullComp = Number(k.Sandbox_Full_Completions || 0);
+      const anyAct = Number(k.Sandbox_Any_Activity || 0);
+      const partialAct = Math.max(0, anyAct - fullComp);
+      const intervConsented = students.filter(s => s.arm === "INTERV" && s.consent === "Agreed").length;
+      const notStarted = Math.max(0, intervConsented - anyAct);
+
+      document.getElementById("bullet-sandbox").textContent =
+        `${fullComp} Full 5-Module Completions  |  ${partialAct} Partial Activity (M1–M4)  |  ${notStarted} Consented / Not Started`;
+
+      const medMin = Number(k.Median_Sandbox_Minutes || 0).toFixed(1);
+      document.getElementById("bullet-time").textContent =
+        `${medMin} min median active sandbox time (30.0 min safety ceiling; excludes idle/hidden tabs)`;
+
+      const pctSeq = Math.round(Number(k.Pct_Sequential || 0) * 100);
+      const pctGlo = Math.round(Number(k.Pct_Global || 0) * 100);
+      const pctNov = Math.round(Number(k.Pct_Novice_SQL || 0) * 100);
+      document.getElementById("bullet-cohort").textContent =
+        `${pctSeq}% Sequential vs. ${pctGlo}% Global (ILS)  |  ${pctNov}% Novice / No-Prior-SQL (Levels 1–2)`;
+    }
+
+    function destroyChartIfExists(id) {
+      if (charts[id]) {
+        charts[id].destroy();
+        delete charts[id];
+      }
+    }
+
+    function renderCharts() {
+      const events = rawDashboardData.events || [];
+      const students = rawDashboardData.students || [];
+
+      // Collect sorted unique dates (or Day 0 placeholder)
+      const dateSet = new Set(events.map(e => e.date).filter(Boolean));
+      const dates = Array.from(dateSet).sort();
+      const labels = dates.length ? dates : ["Day 0 (Launch)"];
+
+      // 1. Cumulative Funnel Over Time
+      const cumInvited = [], cumConsent = [], cumSbActive = [], cumSbComp = [];
+      const seenInv = new Set(), seenCon = new Set(), seenAct = new Set(), seenComp = new Set();
+
+      if (dates.length === 0) {
+        cumInvited.push(0); cumConsent.push(0); cumSbActive.push(0); cumSbComp.push(0);
+      } else {
+        dates.forEach(d => {
+          events.filter(e => e.date === d).forEach(e => {
+            if (e.step === "INVITED") seenInv.add(e.studyToken);
+            if (e.step === "CONSENT_YES") seenCon.add(e.studyToken);
+            if (e.step.startsWith("STEP_")) seenAct.add(e.studyToken);
+            if (e.step === "STEP_5_COMPLETED") seenComp.add(e.studyToken);
+          });
+          cumInvited.push(seenInv.size);
+          cumConsent.push(seenCon.size);
+          cumSbActive.push(seenAct.size);
+          cumSbComp.push(seenComp.size);
+        });
+      }
+
+      destroyChartIfExists("chart-funnel-time");
+      charts["chart-funnel-time"] = new Chart(document.getElementById("chart-funnel-time"), {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
+            { label: "Total Invited", data: cumInvited, borderColor: "#002F6C", backgroundColor: "#002F6C", tension: 0.25 },
+            { label: "Consented (Yes)", data: cumConsent, borderColor: "#0D9488", backgroundColor: "#0D9488", tension: 0.25 },
+            { label: "Sandbox Active (M1–M5)", data: cumSbActive, borderColor: "#BA8E23", backgroundColor: "#BA8E23", borderDash: [5, 4], tension: 0.25 },
+            { label: "Sandbox Completed (M5)", data: cumSbComp, borderColor: "#16A34A", backgroundColor: "#16A34A", tension: 0.25 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+
+      // 2. Intervention Sandbox Engagement Breakdown
+      const intervStudents = students.filter(s => s.arm === "INTERV" && s.consent === "Agreed");
+      const compCount = intervStudents.filter(s => s.highestModule === 5).length;
+      const partCount = intervStudents.filter(s => s.highestModule >= 1 && s.highestModule < 5).length;
+      const noneCount = intervStudents.filter(s => s.highestModule === 0).length;
+
+      destroyChartIfExists("chart-engagement");
+      charts["chart-engagement"] = new Chart(document.getElementById("chart-engagement"), {
+        type: "bar",
+        data: {
+          labels: ["Completed All 5 Modules", "Partial Activity (M1–M4)", "Consented / Not Started"],
+          datasets: [{
+            label: "Intervention Participants",
+            data: [compCount, partCount, noneCount],
+            backgroundColor: ["#16A34A", "#BA8E23", "#94A3B8"],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+
+      // 3. Median Active Sandbox Time vs 30-Min Guardrail
+      const medSeries = dates.length === 0 ? [0] : dates.map(d => {
+        const vals = events
+          .filter(e => e.date === d && e.step.startsWith("STEP_") && e.activeMinutes > 0)
+          .map(e => e.activeMinutes)
+          .sort((a, b) => a - b);
+        if (!vals.length) return 0;
+        const mid = Math.floor(vals.length / 2);
+        return vals.length % 2 !== 0 ? vals[mid] : Number(((vals[mid - 1] + vals[mid]) / 2).toFixed(1));
+      });
+
+      destroyChartIfExists("chart-time-guardrail");
+      charts["chart-time-guardrail"] = new Chart(document.getElementById("chart-time-guardrail"), {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Median Active Minutes",
+              data: medSeries,
+              borderColor: "#0056B3",
+              backgroundColor: "rgba(0, 86, 179, 0.12)",
+              fill: true,
+              tension: 0.25
+            },
+            {
+              label: "30.0 Min Guardrail Ceiling",
+              data: labels.map(() => 30),
+              borderColor: "#DC2626",
+              borderDash: [6, 5],
+              pointRadius: 0,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { y: { beginAtZero: true, suggestedMax: 36 } }
+        }
+      });
+
+      // 4. Module-by-Module Completion Funnel
+      const modCounts = [1, 2, 3, 4, 5].map(m => {
+        const set = new Set(events.filter(e => e.step === `STEP_${m}_COMPLETED`).map(e => e.studyToken));
+        return set.size;
+      });
+
+      destroyChartIfExists("chart-modules");
+      charts["chart-modules"] = new Chart(document.getElementById("chart-modules"), {
+        type: "bar",
+        data: {
+          labels: ["M1: CREATE", "M2: INSERT", "M3: UPDATE", "M4: SELECT", "M5: JOIN"],
+          datasets: [{
+            label: "Unique Completions",
+            data: modCounts,
+            backgroundColor: ["#002F6C", "#004B8D", "#0056B3", "#0D9488", "#16A34A"],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+    }
+
+    function applyStudentFilters() {
+      const tokenQuery = (document.getElementById("filter-token").value || "").trim().toUpperCase();
+      const armFilter = document.getElementById("filter-arm").value;
+      const consentFilter = document.getElementById("filter-consent").value;
+
+      const filteredStudents = (rawDashboardData.students || []).filter(s => {
+        if (tokenQuery && !s.studyToken.toUpperCase().includes(tokenQuery)) return false;
+        if (armFilter !== "ALL" && s.arm !== armFilter) return false;
+        if (consentFilter !== "ALL" && s.consent !== consentFilter) return false;
+        return true;
+      });
+
+      renderStudentTable(filteredStudents);
+      renderEventsTable();
+    }
+
+    function resetStudentFilters() {
+      document.getElementById("filter-token").value = "";
+      document.getElementById("filter-arm").value = "ALL";
+      document.getElementById("filter-consent").value = "ALL";
+      selectedToken = null;
+      document.getElementById("selected-student-banner").textContent = "Showing All Participants";
+      applyStudentFilters();
+    }
+
+    function selectStudentRow(token) {
+      selectedToken = (selectedToken === token) ? null : token;
+      document.getElementById("selected-student-banner").textContent =
+        selectedToken ? `Drilling Down: ${selectedToken} (Click row again to clear)` : "Showing All Participants";
+      applyStudentFilters();
+    }
+
+    function renderStudentTable(students) {
+      const tbody = document.getElementById("student-table-body");
+      if (!students.length) {
+        tbody.innerHTML = `<tr><td colspan="13" class="empty-state">No participant records match the current filter (Day-0 clean state ready for Wave 1 intake).</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = students.map(s => {
+        const armBadge = s.arm === "INTERV"
+          ? `<span class="badge badge-interv">INTERV</span>`
+          : `<span class="badge badge-ctrl">CTRL</span>`;
+        const conBadge = s.consent === "Agreed"
+          ? `<span class="badge badge-yes">Agreed</span>`
+          : (s.consent === "Declined" ? `<span class="badge badge-no">Declined</span>` : `<span class="badge badge-pend">Pending</span>`);
+        const isSel = selectedToken === s.studyToken ? "selected-row" : "";
+
+        return `
+          <tr class="${isSel}" onclick="selectStudentRow('${s.studyToken}')">
+            <td><code>${s.studyToken}</code></td>
+            <td>${armBadge}</td>
+            <td>${s.invitedDate || "--"}</td>
+            <td>${conBadge}</td>
+            <td>${s.screenerDone}</td>
+            <td>${s.priorSql !== null ? s.priorSql : "--"}</td>
+            <td>${s.ilsStyle || "--"}</td>
+            <td>${s.highestModule} / 5</td>
+            <td>${s.maxActiveMin.toFixed(1)}</td>
+            <td>${s.videosStarted}</td>
+            <td>${s.videosCompleted}</td>
+            <td>${s.exitPath}</td>
+            <td>${s.distinctSessions}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderEventsTable() {
+      const tbody = document.getElementById("events-table-body");
+      const heading = document.getElementById("timeline-heading");
+      let events = rawDashboardData.events || [];
+
+      if (selectedToken) {
+        events = events.filter(e => e.studyToken === selectedToken);
+        heading.textContent = `2. Chronological Activity Timeline for ${selectedToken} (${events.length} event${events.length === 1 ? "" : "s"})`;
+      } else {
+        events = events.slice(-50).reverse();
+        heading.textContent = "2. Chronological Activity Timeline (50 Most Recent Events Across Study)";
+      }
+
+      if (!events.length) {
+        tbody.innerHTML = `<tr><td colspan="8" class="empty-state">No activity events recorded yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = events.map(e => `
+        <tr>
+          <td><code>${e.timestamp}</code></td>
+          <td><code>${e.studyToken}</code></td>
+          <td><strong>${e.step}</strong></td>
+          <td>${e.arm || "--"}</td>
+          <td>${e.activeMinutes.toFixed(1)}</td>
+          <td>${e.videoId || "--"}</td>
+          <td>${e.device || "--"}</td>
+          <td><code>${e.sessionHash || "--"}</code></td>
+        </tr>
+      `).join("");
+    }
+
+    window.addEventListener("DOMContentLoaded", loadDashboardData);
+  </script>
+</body>
+</html>
