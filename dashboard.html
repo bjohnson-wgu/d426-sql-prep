@@ -568,4 +568,722 @@
     <!-- Top Executive Summary: Manual PI Update | Key Metric Bullets | Live Funnel Graphic -->
     <section class="card">
       <div class="card-header-row">
-        <div class="section-kicker" style="margin-bottom:0;"><i class
+        <div class="section-kicker" style="margin-bottom:0;"><i class="fa-solid fa-clipboard-check"></i> Executive Summary &amp; Live Participation Funnel</div>
+        <button type="button" class="def-toggle-btn" onclick="toggleDef('def-exec')">
+          <i class="fa-solid fa-circle-question"></i> Definitions
+        </button>
+      </div>
+
+      <div id="def-exec" class="def-popover hidden">
+        <dl>
+          <dt>PI Status Update:</dt>
+          <dd>Manual progress note posted by the Principal Investigator (Bruce Johnson) summarizing current recruitment pacing and operational status.</dd>
+          <dt>Randomization &amp; Consent:</dt>
+          <dd>Invited students are split 50/50 into the <strong>Control</strong> group (standard D426 course path) or <strong>Intervention</strong> group (optional 5-module SQL practice sandbox before standard coursework). Students confirm they are 18+ and choose whether to participate on Screen 1A.</dd>
+          <dt>Participation Funnel:</dt>
+          <dd>Visualizes step-by-step progression from <strong>Total Invited</strong> &rarr; <strong>Links Opened</strong> &rarr; <strong>Consented (18+)</strong> &rarr; <strong>Intervention Sandbox Active (M1–M4)</strong> &rarr; <strong>Intervention Sandbox Completed (M5)</strong>.</dd>
+          <dt>Median Active Time:</dt>
+          <dd>The middle (median) number of minutes students actively spent working inside the SQL sandbox. Time pauses automatically if a browser tab is hidden or inactive for over 2 minutes.</dd>
+          <dt>Cohort Profile:</dt>
+          <dd>Self-reported baseline SQL experience (Levels 1–2 = Novice/None) and learning style preference (Sequential = step-by-step; Global = big-picture first) from the optional 3-minute check-in.</dd>
+        </dl>
+      </div>
+
+      <div class="exec-summary-grid">
+        <!-- Column 1: Live Editable PI Note -->
+        <div class="pi-note-box">
+          <div>
+            <div class="section-kicker"><i class="fa-solid fa-pen-to-square"></i> PI Status &amp; Ramp-Up Update</div>
+            <div class="pi-note-text" id="pi-status-note">Loading latest status update...</div>
+          </div>
+          <div class="pi-note-footer" id="last-updated-label">Synced with telemetry feed</div>
+        </div>
+
+        <!-- Column 2: Concise Key Metric Bullets -->
+        <div class="bullets-panel">
+          <div class="section-kicker"><i class="fa-solid fa-list-check"></i> Key Study Indicators</div>
+          <ul class="kpi-bullets">
+            <li>
+              <span class="kpi-lead">&bull; Arm Parity &amp; Opt-Outs:</span>
+              <span class="kpi-val" id="bullet-arms">0 Control / 0 Intervention invited &nbsp;|&nbsp; 0 Declined consent</span>
+            </li>
+            <li>
+              <span class="kpi-lead">&bull; Sandbox Progress (Interv):</span>
+              <span class="kpi-val" id="bullet-sandbox">0 Full (M5) &nbsp;|&nbsp; 0 Partial (M1–M4) &nbsp;|&nbsp; 0 Not started</span>
+            </li>
+            <li>
+              <span class="kpi-lead">&bull; Median Active Sandbox Time:</span>
+              <span class="kpi-val" id="bullet-time">0.0 min across sandbox participants</span>
+            </li>
+            <li>
+              <span class="kpi-lead">&bull; Cohort Learning &amp; SQL Profile:</span>
+              <span class="kpi-val" id="bullet-cohort">0% Sequential vs. 0% Global &nbsp;|&nbsp; 0% Novice SQL (Levels 1–2)</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Column 3: Live 5-Tier Conversion Funnel Graphic -->
+        <div class="funnel-panel">
+          <div class="section-kicker" style="margin-bottom:0.2rem;"><i class="fa-solid fa-filter"></i> Live Participation Funnel</div>
+          <div class="funnel-svg-wrap" id="funnel-svg-container">
+            <svg viewBox="0 0 420 222" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Study Participation Funnel">
+              <!-- Tier 1: Total Invited -->
+              <polygon points="10,4 410,4 392,42 28,42" fill="#002F6C" rx="4"/>
+              <text x="210" y="20" fill="#FFFFFF" font-size="11.5" font-weight="700" text-anchor="middle">1. Total Invited</text>
+              <text x="210" y="35" fill="#E2E8F0" font-size="11" font-weight="600" text-anchor="middle" id="f-val-1">0 students (100%)</text>
+
+              <!-- Tier 2: Links Opened -->
+              <polygon points="32,47 388,47 370,85 50,85" fill="#004B8D"/>
+              <text x="210" y="63" fill="#FFFFFF" font-size="11.5" font-weight="700" text-anchor="middle">2. Links Opened</text>
+              <text x="210" y="78" fill="#E2E8F0" font-size="11" font-weight="600" text-anchor="middle" id="f-val-2">0 (0.0% of invited)</text>
+
+              <!-- Tier 3: Consented (18+) -->
+              <polygon points="54,90 366,90 348,128 72,128" fill="#0D9488"/>
+              <text x="210" y="106" fill="#FFFFFF" font-size="11.5" font-weight="700" text-anchor="middle">3. Consented (18+)</text>
+              <text x="210" y="121" fill="#F0FDFA" font-size="11" font-weight="600" text-anchor="middle" id="f-val-3">0 (0.0% of invited)</text>
+
+              <!-- Tier 4: Interv Sandbox Active (M1-M4+) -->
+              <polygon points="76,133 344,133 326,171 94,171" fill="#BA8E23"/>
+              <text x="210" y="149" fill="#FFFFFF" font-size="11.5" font-weight="700" text-anchor="middle">4. Interv: Sandbox Active (M1–M5)</text>
+              <text x="210" y="164" fill="#FEF3C7" font-size="11" font-weight="600" text-anchor="middle" id="f-val-4">0 (0.0% of Interv consented)</text>
+
+              <!-- Tier 5: Interv Sandbox Completed (M5) -->
+              <polygon points="98,176 322,176 306,214 114,214" fill="#16A34A"/>
+              <text x="210" y="192" fill="#FFFFFF" font-size="11.5" font-weight="700" text-anchor="middle">5. Interv: Sandbox Completed (M5)</text>
+              <text x="210" y="207" fill="#DCFCE7" font-size="11" font-weight="600" text-anchor="middle" id="f-val-5">0 (0.0% of Interv consented)</text>
+            </svg>
+          </div>
+          <div class="funnel-caption">Tiers 4–5 reflect Intervention arm participants only (Control arm routes directly to standard coursework).</div>
+        </div>
+      </div>
+
+      <p class="exec-footnote">
+        Note: The SQL practice sandbox is 100% voluntary and self-paced—no time limit or cutoff is ever enforced on students. Active time measurements exclude periods when the browser tab is hidden or inactive for more than 2 minutes.
+      </p>
+    </section>
+
+    <!-- 2x2 Data Visualizations -->
+    <section class="charts-grid">
+      <div class="chart-card">
+        <div class="card-header-row">
+          <div>
+            <div class="chart-title">Cumulative Recruitment &amp; Sandbox Completion Over Time</div>
+            <div class="chart-subtitle">Running totals of invitations sent, consent opt-ins, and sandbox completions by date</div>
+          </div>
+          <button type="button" class="def-toggle-btn" onclick="toggleDef('def-chart-1')">
+            <i class="fa-solid fa-circle-question"></i> Definitions
+          </button>
+        </div>
+        <div id="def-chart-1" class="def-popover hidden">
+          <dl>
+            <dt>Total Invited:</dt>
+            <dd>Cumulative count of unique study invitations dispatched across both Control and Intervention groups.</dd>
+            <dt>Consented (Yes):</dt>
+            <dd>Cumulative count of invited students (18+) who voluntarily agreed to participate.</dd>
+            <dt>Sandbox Active / Completed:</dt>
+            <dd>Cumulative count of Intervention participants who passed at least Module 1 (Active) or finished all 5 modules (Completed).</dd>
+          </dl>
+        </div>
+        <div class="chart-canvas-wrap"><canvas id="chart-funnel-time"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-header-row">
+          <div>
+            <div class="chart-title">Intervention Sandbox Engagement Breakdown</div>
+            <div class="chart-subtitle">Comparison of full completions, partial progress, and consented non-starters</div>
+          </div>
+          <button type="button" class="def-toggle-btn" onclick="toggleDef('def-chart-2')">
+            <i class="fa-solid fa-circle-question"></i> Definitions
+          </button>
+        </div>
+        <div id="def-chart-2" class="def-popover hidden">
+          <dl>
+            <dt>Completed All 5 Modules:</dt>
+            <dd>Intervention participants who successfully ran valid SQL solutions for all five exercises (CREATE, INSERT, UPDATE, SELECT, JOIN).</dd>
+            <dt>Partial Activity (M1–M4):</dt>
+            <dd>Intervention participants who completed between 1 and 4 modules (or attempted code) without finishing Module 5 yet.</dd>
+            <dt>Consented / Not Started:</dt>
+            <dd>Intervention participants who completed the check-in survey but have not yet completed a sandbox exercise.</dd>
+          </dl>
+        </div>
+        <div class="chart-canvas-wrap"><canvas id="chart-engagement"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-header-row">
+          <div>
+            <div class="chart-title">Median Active Sandbox Time by Date</div>
+            <div class="chart-subtitle">Typical active minutes spent working in the SQL practice tool (excludes idle/hidden tabs)</div>
+          </div>
+          <button type="button" class="def-toggle-btn" onclick="toggleDef('def-chart-3')">
+            <i class="fa-solid fa-circle-question"></i> Definitions
+          </button>
+        </div>
+        <div id="def-chart-3" class="def-popover hidden">
+          <dl>
+            <dt>Median Active Minutes:</dt>
+            <dd>The middle value of active time-on-task recorded across sandbox module completions on each date. Using the median prevents a single student leaving their browser open from skewing the average.</dd>
+            <dt>Idle Pause Rule:</dt>
+            <dd>The timer stops counting whenever a student switches browser tabs or stops typing/clicking for more than 2 minutes.</dd>
+          </dl>
+        </div>
+        <div class="chart-canvas-wrap"><canvas id="chart-time-guardrail"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-header-row">
+          <div>
+            <div class="chart-title">Module-by-Module Completion Funnel (Modules 1–5)</div>
+            <div class="chart-subtitle">Unique intervention participants passing each hands-on SQL exercise</div>
+          </div>
+          <button type="button" class="def-toggle-btn" onclick="toggleDef('def-chart-4')">
+            <i class="fa-solid fa-circle-question"></i> Definitions
+          </button>
+        </div>
+        <div id="def-chart-4" class="def-popover hidden">
+          <dl>
+            <dt>M1 (CREATE):</dt>
+            <dd>Creating a relational table with specified columns and data types.</dd>
+            <dt>M2 (INSERT):</dt>
+            <dd>Populating the table with multi-row book records.</dd>
+            <dt>M3 (UPDATE):</dt>
+            <dd>Safely modifying a specific row using a <code>WHERE</code> clause.</dd>
+            <dt>M4 (SELECT):</dt>
+            <dd>Filtering records with <code>WHERE</code> and sorting with <code>ORDER BY DESC</code>.</dd>
+            <dt>M5 (JOIN):</dt>
+            <dd>Creating a second table and combining both tables via <code>INNER JOIN</code>.</dd>
+          </dl>
+        </div>
+        <div class="chart-canvas-wrap"><canvas id="chart-modules"></canvas></div>
+      </div>
+    </section>
+
+    <!-- Student-Level Drill-Down & Chronological Event Audit -->
+    <section class="card">
+      <div class="card-header-row">
+        <div>
+          <div class="section-kicker" style="margin-bottom:0.15rem;"><i class="fa-solid fa-magnifying-glass-chart"></i> Participant Drill-Down &amp; Activity Log</div>
+          <p style="font-size:0.83rem; color:var(--text-muted);">Filter or click any anonymous <code>S26_</code> token row below to inspect that participant's complete chronological interaction history.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.65rem; flex-wrap:wrap;">
+          <span style="font-size:0.82rem; font-weight:700; color:var(--wgu-blue);" id="selected-student-banner">
+            Showing All Participants
+          </span>
+          <button type="button" class="def-toggle-btn" onclick="toggleDef('def-drilldown')">
+            <i class="fa-solid fa-circle-question"></i> Table Column Definitions
+          </button>
+        </div>
+      </div>
+
+      <div id="def-drilldown" class="def-popover hidden">
+        <dl>
+          <dt>Study Token:</dt>
+          <dd>Randomly generated, non-identifying research code (<code>S26_XXXXXX</code>). Contains zero student names, emails, or institutional IDs.</dd>
+          <dt>Arm:</dt>
+          <dd><code>INTERV</code> = Intervention Group (SQL sandbox before course text); <code>CTRL</code> = Control Group (standard course sequence).</dd>
+          <dt>Consent &amp; Screener:</dt>
+          <dd>Whether the student agreed to participate (18+) and submitted the 3-minute prior SQL and learning style check-in.</dd>
+          <dt>Prior SQL (1–5):</dt>
+          <dd>Self-rated SQL experience before D426: 1 = None, 2 = Very little, 3 = Moderate, 4 = Comfortable, 5 = Professional.</dd>
+          <dt>ILS Style:</dt>
+          <dd>Index of Learning Styles preference: <strong>Sequential</strong> (prefers step-by-step progression) or <strong>Global</strong> (prefers big-picture overview first).</dd>
+          <dt>Highest Mod &amp; Active Min:</dt>
+          <dd>Highest SQL exercise completed (0 to 5) and total active minutes spent in the tool.</dd>
+          <dt>Videos Started / Done:</dt>
+          <dd>Count of unique walkthrough or troubleshooting videos started vs. watched to completion (out of 11 total videos).</dd>
+          <dt>Exit Pathway:</dt>
+          <dd>Which course link the student clicked upon finishing Module 5: <strong>Pathway A</strong> (jump straight to zyBooks Chapter 2 SQL) or <strong>Pathway B</strong> (start at Chapter 1 theory).</dd>
+          <dt>Sessions:</dt>
+          <dd>Count of distinct browser sessions recorded for that token (helps verify whether a student resumed their work later).</dd>
+        </dl>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label for="filter-token">Search Study Token</label>
+          <input type="text" id="filter-token" placeholder="e.g. S26_8K4P9M" oninput="applyStudentFilters()">
+        </div>
+        <div class="filter-group">
+          <label for="filter-arm">Assigned Arm</label>
+          <select id="filter-arm" onchange="applyStudentFilters()">
+            <option value="ALL">All Arms</option>
+            <option value="INTERV">Intervention (INTERV)</option>
+            <option value="CTRL">Control (CTRL)</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-consent">Consent Status</label>
+          <select id="filter-consent" onchange="applyStudentFilters()">
+            <option value="ALL">All Statuses</option>
+            <option value="Agreed">Agreed (18+)</option>
+            <option value="Declined">Declined</option>
+            <option value="Pending">Pending / Invited Only</option>
+          </select>
+        </div>
+        <button type="button" class="clear-btn" onclick="resetStudentFilters()">
+          <i class="fa-solid fa-filter-circle-xmark"></i> Reset Filters
+        </button>
+      </div>
+
+      <!-- Table 1: Participant Roll-Up -->
+      <h3 style="font-size:0.92rem; color:var(--wgu-blue); margin-bottom:0.45rem;">1. Participant Summary Table (Click Any Row to Drill Down)</h3>
+      <div class="table-wrap" style="margin-bottom:1.35rem;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Study Token</th>
+              <th>Arm</th>
+              <th>Invited Date</th>
+              <th>Consent</th>
+              <th>Screener</th>
+              <th>Prior SQL</th>
+              <th>ILS Style</th>
+              <th>Highest Mod</th>
+              <th>Active Min</th>
+              <th>Videos Started</th>
+              <th>Videos Done</th>
+              <th>Exit Pathway</th>
+              <th>Sessions</th>
+            </tr>
+          </thead>
+          <tbody id="student-table-body">
+            <tr><td colspan="13" class="empty-state">Loading participant summary...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table 2: Chronological Activity Timeline -->
+      <h3 style="font-size:0.92rem; color:var(--wgu-blue); margin-bottom:0.45rem;" id="timeline-heading">2. Chronological Activity Timeline (Most Recent Events)</h3>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Timestamp (UTC)</th>
+              <th>Study Token</th>
+              <th>Event / Milestone</th>
+              <th>Arm</th>
+              <th>Active Min</th>
+              <th>Video ID</th>
+              <th>Device</th>
+              <th>Session Hash</th>
+            </tr>
+          </thead>
+          <tbody id="events-table-body">
+            <tr><td colspan="8" class="empty-state">Loading event log...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Comprehensive Bottom Data Dictionary Drawer -->
+    <details class="master-dictionary" id="full-data-dictionary">
+      <summary>
+        <span><i class="fa-solid fa-book-open"></i> Complete Study Guide &amp; Metric Data Dictionary (Click to Expand)</span>
+        <span style="font-size:0.8rem; font-weight:600; color:var(--text-muted);">Plain-Language Reference for All Stakeholders</span>
+      </summary>
+      <div class="dictionary-body">
+        <p style="margin-bottom:0.75rem;">
+          This dashboard monitors operational health and student engagement for the independent D426 Curricular Sequencing Pilot. All records are keyed strictly to randomly generated <code>S26_</code> tokens—no student names, email addresses, grades, or institutional IDs are stored in this system.
+        </p>
+
+        <div class="dict-grid">
+          <div class="dict-group">
+            <h4>1. Study Groups &amp; Recruitment Funnel</h4>
+            <ul>
+              <li><strong>Control Group (CTRL):</strong> Students assigned to the standard D426 course sequence. After the brief check-in, they go directly to their regular D426 course shell and textbook.</li>
+              <li><strong>Intervention Group (INTERV):</strong> Students offered optional access to the 5-module interactive SQL practice sandbox before starting their standard D426 textbook chapters.</li>
+              <li><strong>Invited:</strong> Total unique students sent a study invitation email (tracked via <code>INVITED</code>).</li>
+              <li><strong>Links Opened:</strong> Unique students who clicked their personalized link and loaded the consent page (<code>LINK_OPENED</code>).</li>
+              <li><strong>Consented (Agreed vs. Declined):</strong> Voluntary participation decision on Screen 1A. Students under 18 or preferring not to join select "NO" (<code>CONSENT_DECLINED</code>) and proceed straight to standard course resources.</li>
+              <li><strong>Screener Completed:</strong> Consented students who submitted the 12-question baseline SQL &amp; study preference check-in (<code>DIAGNOSTIC_COMPLETED</code>).</li>
+            </ul>
+          </div>
+
+          <div class="dict-group">
+            <h4>2. Sandbox Progress &amp; Time Metrics</h4>
+            <ul>
+              <li><strong>Self-Paced Design (No Time Limit):</strong> Students may pause, close their browser, or return anytime using their personal link. No cutoff or timer restriction is ever imposed.</li>
+              <li><strong>Active Time (Minutes):</strong> Measured only while the browser tab is visible and the user has interacted within the past 2 minutes. Idle or background tabs are automatically excluded.</li>
+              <li><strong>Full vs. Partial Completion:</strong> <em>Full Completion</em> means passing all 5 SQL exercises (<code>STEP_5_COMPLETED</code>). <em>Partial Activity</em> means starting or passing 1–4 exercises without finishing Module 5 yet.</li>
+              <li><strong>Attempt &amp; Tip Events:</strong> Each module logs code runs, syntax/validation checks (<code>STEP_X_ATTEMPT_FAIL</code>), and whether the student opened the troubleshooting drawer or revealed the starter solution after 3 tries.</li>
+            </ul>
+          </div>
+
+          <div class="dict-group">
+            <h4>3. Video Engagement &amp; Exit Pathways</h4>
+            <ul>
+              <li><strong>11 Embedded Micro-Videos:</strong> Includes 1 Welcome Tour video (<code>TOUR</code>), 5 primary module walkthroughs (<code>1.1</code>–<code>5.1</code>), and 5 troubleshooting tip videos (<code>1.2</code>–<code>5.2</code>).</li>
+              <li><strong>Videos Started vs. Completed:</strong> <code>VIDEO_STARTED</code> fires when playback begins; <code>VIDEO_COMPLETED</code> fires when a video reaches its end (counted accurately even if watched at 1.5x or 2x speed).</li>
+              <li><strong>Pathway A vs. Pathway B:</strong> Upon finishing Module 5, students choose either <strong>Pathway A</strong> (<code>EXIT_PATHWAY_A</code>: jump straight into zyBooks Chapter 2 SQL coding) or <strong>Pathway B</strong> (<code>EXIT_PATHWAY_B</code>: start at Chapter 1 database theory).</li>
+              <li><strong>Session Exit / Pause:</strong> <code>SESSION_PAUSE</code> and <code>SESSION_EXIT</code> record where a student leaves off if they switch tabs or close the browser before clicking a pathway link.</li>
+            </ul>
+          </div>
+
+          <div class="dict-group">
+            <h4>4. Baseline Survey &amp; Privacy Identifiers</h4>
+            <ul>
+              <li><strong>Prior SQL Familiarity (1–5):</strong> Self-reported experience before starting D426 (1 = None, 2 = Very little, 3 = Moderate, 4 = Comfortable, 5 = Professional). Levels 1–2 are grouped as "Novice / No Prior SQL" in the executive summary.</li>
+              <li><strong>ILS Learning Preference:</strong> Based on the 11-item Felder-Soloman Sequential/Global scale (scored from &minus;11 to +11). Positive scores (+1 to +11) indicate a <strong>Sequential</strong> preference (step-by-step); negative scores (&minus;1 to &minus;11) indicate a <strong>Global</strong> preference (big-picture first).</li>
+              <li><strong>Study Token &amp; Session Hash:</strong> <code>S26_XXXXXX</code> links events for the same participant anonymously; <code>sess_...</code> is a temporary browser-tab ID used only to detect multi-session returns.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <footer class="footer-note">
+      &copy; 2026 Bruce C. Johnson III. All Rights Reserved. | Independent Faculty Research Pilot &bull; Read-Only Operational Telemetry
+    </footer>
+  </div>
+
+  <script>
+    // =========================================================================
+    // CONFIGURATION: Live Google Apps Script JSON Endpoint
+    // =========================================================================
+    const TELEMETRY_FEED_URL = "https://script.google.com/macros/s/AKfycbxsw1AJtmsn9rwmqc5AIh15owBo909L0NchTVAJw7tX4offSpxDloWKS2wJ1Mf31LdOKQ/exec";
+
+    let rawDashboardData = { kpis: {}, events: [], students: [] };
+    let selectedToken = null;
+    let charts = {};
+
+    function toggleDef(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle("hidden");
+    }
+
+    function openMasterDictionary() {
+      const dict = document.getElementById("full-data-dictionary");
+      if (dict) dict.open = true;
+    }
+
+    async function loadDashboardData() {
+      try {
+        const res = await fetch(TELEMETRY_FEED_URL + "?t=" + Date.now());
+        const json = await res.json();
+        if (json.error) throw new Error(json.error);
+        rawDashboardData = json;
+        renderExecutiveSummary();
+        renderCharts();
+        applyStudentFilters();
+        const ts = json.generatedAt ? new Date(json.generatedAt).toLocaleString() : new Date().toLocaleString();
+        document.getElementById("last-updated-label").textContent = "Last synced: " + ts;
+      } catch (err) {
+        document.getElementById("pi-status-note").textContent =
+          "Day 1 Soft-Launch: Phased ramp-up initialized; automated telemetry active using anonymous S26_ tokens only.";
+        document.getElementById("last-updated-label").textContent = "Awaiting initial telemetry rows";
+        renderExecutiveSummary();
+        renderCharts();
+        applyStudentFilters();
+      }
+    }
+
+    function renderExecutiveSummary() {
+      const k = rawDashboardData.kpis || {};
+      const students = rawDashboardData.students || [];
+
+      document.getElementById("pi-status-note").textContent =
+        k.PI_Status_Note || "Day 1 Soft-Launch: Phased ramp-up initialized; automated telemetry active using anonymous S26_ tokens only.";
+
+      const invCtrl = Number(k.Invited_Control || 0);
+      const invInterv = Number(k.Invited_Intervention || 0);
+      const totalInv = invCtrl + invInterv;
+      const opened = Number(k.Links_Opened || 0);
+      const yes = Number(k.Consented_Yes || 0);
+      const no = Number(k.Consented_No || 0);
+
+      // Update Bullets
+      document.getElementById("bullet-arms").textContent =
+        `${invCtrl} Control / ${invInterv} Intervention invited  |  ${no} Declined consent`;
+
+      const fullComp = Number(k.Sandbox_Full_Completions || 0);
+      const anyAct = Number(k.Sandbox_Any_Activity || 0);
+      const partialAct = Math.max(0, anyAct - fullComp);
+      const intervConsented = students.filter(s => s.arm === "INTERV" && s.consent === "Agreed").length;
+      const notStarted = Math.max(0, intervConsented - anyAct);
+
+      document.getElementById("bullet-sandbox").textContent =
+        `${fullComp} Full (M5)  |  ${partialAct} Partial (M1–M4)  |  ${notStarted} Not started`;
+
+      const medMin = Number(k.Median_Sandbox_Minutes || 0).toFixed(1);
+      document.getElementById("bullet-time").textContent =
+        `${medMin} min across sandbox participants`;
+
+      const pctSeq = Math.round(Number(k.Pct_Sequential || 0) * 100);
+      const pctGlo = Math.round(Number(k.Pct_Global || 0) * 100);
+      const pctNov = Math.round(Number(k.Pct_Novice_SQL || 0) * 100);
+      document.getElementById("bullet-cohort").textContent =
+        `${pctSeq}% Sequential vs. ${pctGlo}% Global  |  ${pctNov}% Novice SQL (Levels 1–2)`;
+
+      // Update Live 5-Tier Conversion Funnel SVG
+      const openPct = totalInv > 0 ? ((opened / totalInv) * 100).toFixed(1) : "0.0";
+      const yesPct = totalInv > 0 ? ((yes / totalInv) * 100).toFixed(1) : "0.0";
+      const actPct = intervConsented > 0 ? ((anyAct / intervConsented) * 100).toFixed(1) : "0.0";
+      const compPct = intervConsented > 0 ? ((fullComp / intervConsented) * 100).toFixed(1) : "0.0";
+
+      document.getElementById("f-val-1").textContent =
+        `${totalInv} student${totalInv === 1 ? "" : "s"} (100%)`;
+      document.getElementById("f-val-2").textContent =
+        `${opened} (${openPct}% of invited)`;
+      document.getElementById("f-val-3").textContent =
+        `${yes} (${yesPct}% of invited)`;
+      document.getElementById("f-val-4").textContent =
+        `${anyAct} (${actPct}% of Interv consented)`;
+      document.getElementById("f-val-5").textContent =
+        `${fullComp} (${compPct}% of Interv consented)`;
+    }
+
+    function destroyChartIfExists(id) {
+      if (charts[id]) {
+        charts[id].destroy();
+        delete charts[id];
+      }
+    }
+
+    function renderCharts() {
+      const events = rawDashboardData.events || [];
+      const students = rawDashboardData.students || [];
+
+      const dateSet = new Set(events.map(e => e.date).filter(Boolean));
+      const dates = Array.from(dateSet).sort();
+      const labels = dates.length ? dates : ["Day 0 (Launch)"];
+
+      // 1. Cumulative Funnel Over Time
+      const cumInvited = [], cumConsent = [], cumSbActive = [], cumSbComp = [];
+      const seenInv = new Set(), seenCon = new Set(), seenAct = new Set(), seenComp = new Set();
+
+      if (dates.length === 0) {
+        cumInvited.push(0); cumConsent.push(0); cumSbActive.push(0); cumSbComp.push(0);
+      } else {
+        dates.forEach(d => {
+          events.filter(e => e.date === d).forEach(e => {
+            if (e.step === "INVITED") seenInv.add(e.studyToken);
+            if (e.step === "CONSENT_YES") seenCon.add(e.studyToken);
+            if (e.step.startsWith("STEP_")) seenAct.add(e.studyToken);
+            if (e.step === "STEP_5_COMPLETED") seenComp.add(e.studyToken);
+          });
+          cumInvited.push(seenInv.size);
+          cumConsent.push(seenCon.size);
+          cumSbActive.push(seenAct.size);
+          cumSbComp.push(seenComp.size);
+        });
+      }
+
+      destroyChartIfExists("chart-funnel-time");
+      charts["chart-funnel-time"] = new Chart(document.getElementById("chart-funnel-time"), {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
+            { label: "Total Invited", data: cumInvited, borderColor: "#002F6C", backgroundColor: "#002F6C", tension: 0.25 },
+            { label: "Consented (Yes)", data: cumConsent, borderColor: "#0D9488", backgroundColor: "#0D9488", tension: 0.25 },
+            { label: "Sandbox Active (M1–M5)", data: cumSbActive, borderColor: "#BA8E23", backgroundColor: "#BA8E23", borderDash: [5, 4], tension: 0.25 },
+            { label: "Sandbox Completed (M5)", data: cumSbComp, borderColor: "#16A34A", backgroundColor: "#16A34A", tension: 0.25 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+
+      // 2. Intervention Sandbox Engagement Breakdown
+      const intervStudents = students.filter(s => s.arm === "INTERV" && s.consent === "Agreed");
+      const compCount = intervStudents.filter(s => s.highestModule === 5).length;
+      const partCount = intervStudents.filter(s => s.highestModule >= 1 && s.highestModule < 5).length;
+      const noneCount = intervStudents.filter(s => s.highestModule === 0).length;
+
+      destroyChartIfExists("chart-engagement");
+      charts["chart-engagement"] = new Chart(document.getElementById("chart-engagement"), {
+        type: "bar",
+        data: {
+          labels: ["Completed All 5 Modules", "Partial Activity (M1–M4)", "Consented / Not Started"],
+          datasets: [{
+            label: "Intervention Participants",
+            data: [compCount, partCount, noneCount],
+            backgroundColor: ["#16A34A", "#BA8E23", "#94A3B8"],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+
+      // 3. Median Active Sandbox Time by Date
+      const medSeries = dates.length === 0 ? [0] : dates.map(d => {
+        const vals = events
+          .filter(e => e.date === d && e.step.startsWith("STEP_") && e.activeMinutes > 0)
+          .map(e => e.activeMinutes)
+          .sort((a, b) => a - b);
+        if (!vals.length) return 0;
+        const mid = Math.floor(vals.length / 2);
+        return vals.length % 2 !== 0 ? vals[mid] : Number(((vals[mid - 1] + vals[mid]) / 2).toFixed(1));
+      });
+
+      destroyChartIfExists("chart-time-guardrail");
+      charts["chart-time-guardrail"] = new Chart(document.getElementById("chart-time-guardrail"), {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Median Active Minutes",
+              data: medSeries,
+              borderColor: "#0056B3",
+              backgroundColor: "rgba(0, 86, 179, 0.12)",
+              fill: true,
+              tension: 0.25
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              suggestedMax: 30,
+              title: { display: true, text: "Active Minutes" }
+            }
+          }
+        }
+      });
+
+      // 4. Module-by-Module Completion Funnel
+      const modCounts = [1, 2, 3, 4, 5].map(m => {
+        const set = new Set(events.filter(e => e.step === `STEP_${m}_COMPLETED`).map(e => e.studyToken));
+        return set.size;
+      });
+
+      destroyChartIfExists("chart-modules");
+      charts["chart-modules"] = new Chart(document.getElementById("chart-modules"), {
+        type: "bar",
+        data: {
+          labels: ["M1: CREATE", "M2: INSERT", "M3: UPDATE", "M4: SELECT", "M5: JOIN"],
+          datasets: [{
+            label: "Unique Completions",
+            data: modCounts,
+            backgroundColor: ["#002F6C", "#004B8D", "#0056B3", "#0D9488", "#16A34A"],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+    }
+
+    function applyStudentFilters() {
+      const tokenQuery = (document.getElementById("filter-token").value || "").trim().toUpperCase();
+      const armFilter = document.getElementById("filter-arm").value;
+      const consentFilter = document.getElementById("filter-consent").value;
+
+      const filteredStudents = (rawDashboardData.students || []).filter(s => {
+        if (tokenQuery && !s.studyToken.toUpperCase().includes(tokenQuery)) return false;
+        if (armFilter !== "ALL" && s.arm !== armFilter) return false;
+        if (consentFilter !== "ALL" && s.consent !== consentFilter) return false;
+        return true;
+      });
+
+      renderStudentTable(filteredStudents);
+      renderEventsTable();
+    }
+
+    function resetStudentFilters() {
+      document.getElementById("filter-token").value = "";
+      document.getElementById("filter-arm").value = "ALL";
+      document.getElementById("filter-consent").value = "ALL";
+      selectedToken = null;
+      document.getElementById("selected-student-banner").textContent = "Showing All Participants";
+      applyStudentFilters();
+    }
+
+    function selectStudentRow(token) {
+      selectedToken = (selectedToken === token) ? null : token;
+      document.getElementById("selected-student-banner").textContent =
+        selectedToken ? `Drilling Down: ${selectedToken} (Click row again to clear)` : "Showing All Participants";
+      applyStudentFilters();
+    }
+
+    function renderStudentTable(students) {
+      const tbody = document.getElementById("student-table-body");
+      if (!students.length) {
+        tbody.innerHTML = `<tr><td colspan="13" class="empty-state">No participant records match the current filter (Day-0 clean state ready for Wave 1 intake).</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = students.map(s => {
+        const armBadge = s.arm === "INTERV"
+          ? `<span class="badge badge-interv">INTERV</span>`
+          : `<span class="badge badge-ctrl">CTRL</span>`;
+        const conBadge = s.consent === "Agreed"
+          ? `<span class="badge badge-yes">Agreed</span>`
+          : (s.consent === "Declined" ? `<span class="badge badge-no">Declined</span>` : `<span class="badge badge-pend">Pending</span>`);
+        const isSel = selectedToken === s.studyToken ? "selected-row" : "";
+
+        return `
+          <tr class="${isSel}" onclick="selectStudentRow('${s.studyToken}')">
+            <td><code>${s.studyToken}</code></td>
+            <td>${armBadge}</td>
+            <td>${s.invitedDate || "--"}</td>
+            <td>${conBadge}</td>
+            <td>${s.screenerDone}</td>
+            <td>${s.priorSql !== null ? s.priorSql : "--"}</td>
+            <td>${s.ilsStyle || "--"}</td>
+            <td>${s.highestModule} / 5</td>
+            <td>${s.maxActiveMin.toFixed(1)}</td>
+            <td>${s.videosStarted}</td>
+            <td>${s.videosCompleted}</td>
+            <td>${s.exitPath}</td>
+            <td>${s.distinctSessions}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderEventsTable() {
+      const tbody = document.getElementById("events-table-body");
+      const heading = document.getElementById("timeline-heading");
+      let events = rawDashboardData.events || [];
+
+      if (selectedToken) {
+        events = events.filter(e => e.studyToken === selectedToken);
+        heading.textContent = `2. Chronological Activity Timeline for ${selectedToken} (${events.length} event${events.length === 1 ? "" : "s"})`;
+      } else {
+        events = events.slice(-50).reverse();
+        heading.textContent = "2. Chronological Activity Timeline (50 Most Recent Events Across Study)";
+      }
+
+      if (!events.length) {
+        tbody.innerHTML = `<tr><td colspan="8" class="empty-state">No activity events recorded yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = events.map(e => `
+        <tr>
+          <td><code>${e.timestamp}</code></td>
+          <td><code>${e.studyToken}</code></td>
+          <td><strong>${e.step}</strong></td>
+          <td>${e.arm || "--"}</td>
+          <td>${e.activeMinutes.toFixed(1)}</td>
+          <td>${e.videoId || "--"}</td>
+          <td>${e.device || "--"}</td>
+          <td><code>${e.sessionHash || "--"}</code></td>
+        </tr>
+      `).join("");
+    }
+
+    window.addEventListener("DOMContentLoaded", loadDashboardData);
+  </script>
+</body>
+</html>
